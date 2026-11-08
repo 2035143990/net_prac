@@ -91,5 +91,8 @@ campus-lab/configs/
 # 由 gen-drawio.sh 生成的拓扑图
 campus-lab/campus-lab.clab.drawio
 
+# 自动化测试结果
+campus-lab/tests/results/
+
 # Containerlab 可能产生的日志
 *.clab.log

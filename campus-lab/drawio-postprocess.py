@@ -40,7 +40,10 @@ LINK_STYLE_NEW = (
 def main(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
 
-    text = EDGE_LABEL_RE.sub("", text)
+    text, label_count = EDGE_LABEL_RE.subn("", text)
+    link_count = text.count(LINK_STYLE_OLD)
+    if link_count == 0:
+        raise SystemExit("未匹配到旧链路样式，clab-io-draw 输出格式可能已变化")
     text = text.replace(LINK_STYLE_OLD, LINK_STYLE_NEW)
 
     max_y = 0.0
@@ -52,7 +55,9 @@ def main(path: Path) -> None:
         max_y = max(max_y, new_y)
         return f"{match.group(1)}{new_y:.1f}{match.group(3)}"
 
-    text = VERTEX_GEOM_RE.sub(scale, text)
+    text, vertex_count = VERTEX_GEOM_RE.subn(scale, text)
+    if vertex_count == 0:
+        raise SystemExit("未匹配到节点坐标，文件格式可能已变化")
 
     # 节点高 75 px，底部再留 100 px 空白。
     page_height = max_y + 75.0 + BOTTOM_MARGIN
@@ -68,7 +73,8 @@ def main(path: Path) -> None:
     path.write_text(text, encoding="utf-8")
     print(
         f"优化完成：行距 {ROW_OLD:.0f} -> {ROW_NEW:.0f} px，"
-        f"页面高度 {page_height:.0f} px，已移除接口标签。"
+        f"页面高度 {page_height:.0f} px，移除接口标签 {label_count} 个，"
+        f"重写链路样式 {link_count} 条，缩放节点 {vertex_count} 个。"
     )
 
 
