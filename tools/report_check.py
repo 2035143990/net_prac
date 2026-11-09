@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+import ipaddress
 import json
 import re
 import sys
@@ -74,6 +75,132 @@ def check_dhcp_count(text: str, facts: dict) -> list[str]:
     return errors
 
 
+DHCP_RANGE_RE = re.compile(r"^\s*dhcp-range=set:v(\d+),([\d.]+),([\d.]+),[\d.]+,(\d+)\s*$")
+
+
+def check_dhcp_example(text: str, facts: dict) -> list[str]:
+    """7.2 的 dnsmasq 配置示例必须与 facts.json 的池定义一致。"""
+    errors: list[str] = []
+    section = re.search(r"^#### 7\.2\.4 .*?(?=^#### 7\.2\.5 )",
+                        text, re.MULTILINE | re.DOTALL)
+    if not section:
+        return ["missing section: 7.2.4"]
+
+    pools = {p["vid"]: p for p in facts["dhcp"]["pools"]}
+    found = 0
+    for line in section.group(0).splitlines():
+        m = DHCP_RANGE_RE.match(line)
+        if not m:
+            continue
+        found += 1
+        vid, start, end, lease = int(m.group(1)), m.group(2), m.group(3), int(m.group(4))
+        pool = pools.get(vid)
+        if pool is None:
+            errors.append(f"7.2 配置示例中的 VLAN {vid} 不在仿真池定义中")
+            continue
+        if (pool["start"], pool["end"], pool["lease"]) != (start, end, lease):
+            errors.append(
+                f"7.2 VLAN {vid} 示例与仿真不一致："
+                f"示例 {start}-{end}/{lease}s，仿真 "
+                f"{pool['start']}-{pool['end']}/{pool['lease']}s")
+
+    if found == 0:
+        errors.append("7.2.4 未找到 dhcp-range 配置示例")
+    return errors
+
+
+def check_relay_example(text: str, facts: dict) -> list[str]:
+    """7.2 的 Relay 示例必须指向真实的 DHCP 服务器，且 giaddr 在已规划的 SVI 网段内。"""
+    import c_address_plan as cap
+
+    section = re.search(r"^#### 7\.2\.4 .*?(?=^#### 7\.2\.5 )",
+                        text, re.MULTILINE | re.DOTALL)
+    if not section:
+        return []
+    server = facts["dhcp"]["server"]
+    pairs = re.findall(r"dhcp-relay=([\d.]+),([\d.]+)", section.group(0))
+    if not pairs:
+        return ["7.2.4 未找到 dhcp-relay 配置示例"]
+
+    errors: list[str] = []
+    planned = [r.subnet for r in cap.all_rows()]
+    for giaddr, target in pairs:
+        if target != server:
+            errors.append(f"7.2 Relay 目标 {target} 与实际服务器 {server} 不一致")
+        if not any(ipaddress.ip_address(giaddr) in net for net in planned):
+            errors.append(f"7.2 Relay giaddr {giaddr} 不在任何已规划网段内")
+    return errors
+
+
+def check_dns_section(text: str) -> list[str]:
+    """5.3.6 的 DNS 服务器表必须与 c_dns_plan 一致。"""
+    import c_dns_plan as dns
+
+    section = re.search(r"^#### 5\.3\.6 .*?(?=^#### 5\.3\.7 )",
+                        text, re.MULTILINE | re.DOTALL)
+    if not section:
+        return ["missing section: 5.3.6"]
+    servers = {s.name: s for s in dns.build_servers()}
+    errors: list[str] = []
+    rows = re.findall(r"^\|\s*(srv-[a-z0-9]+)\s*\|[^|\n]*\|\s*([\d.]+)\s*\|",
+                      section.group(0), re.MULTILINE)
+    if len(rows) != len(servers):
+        errors.append(f"5.3.6 列出 {len(rows)} 台 DNS，设计为 {len(servers)} 台")
+    for name, ip in rows:
+        server = servers.get(name)
+        if server is None:
+            errors.append(f"5.3.6 中的 {name} 不在 DNS 设计中")
+        elif server.ip != ip:
+            errors.append(f"5.3.6 {name} 地址 {ip} 与设计 {server.ip} 不一致")
+    return errors
+
+
+def check_auth_section(text: str) -> list[str]:
+    """5.3.7 的认证表必须与 c_8021x_plan 一致（场景数与无线 VLAN）。"""
+    import c_8021x_plan as auth
+
+    section = re.search(r"^#### 5\.3\.7 .*?(?=^### 5\.4 )",
+                        text, re.MULTILINE | re.DOTALL)
+    if not section:
+        return ["missing section: 5.3.7"]
+    errors: list[str] = []
+    rules = auth.build_rules()
+    for r in rules:
+        # 每个设计场景必须在报告表格中出现（按场景名精确匹配单元格）
+        if not re.search(rf"^\|\s*{re.escape(r.scenario)}\s*\|", section.group(0), re.MULTILINE):
+            errors.append(f"5.3.7 缺少认证场景「{r.scenario}」")
+        if r.ssid != "—" and f"| {r.ssid} |" not in section.group(0):
+            errors.append(f"5.3.7 缺少 SSID {r.ssid}")
+    for vlan in ("500", "510", "999"):
+        if vlan not in section.group(0):
+            errors.append(f"5.3.7 缺少 VLAN {vlan}")
+    return errors
+
+
+def check_pool_table(text: str, facts: dict) -> list[str]:
+    """7.2.4 的完整池定义表必须与 facts.json 的 8 个池逐条一致。"""
+    section = re.search(r"^#### 7\.2\.4 .*?(?=^#### 7\.2\.5 )",
+                        text, re.MULTILINE | re.DOTALL)
+    if not section:
+        return []
+    pools = {p["vid"]: p for p in facts["dhcp"]["pools"]}
+    rows = re.findall(
+        r"^\|\s*v(\d+)\s*\|\s*\d+\s*\|\s*([\d.]+)[–-]([\d.]+)\s*\|\s*(\d+)\s*\|\s*([\d.]+)\s*\|",
+        section.group(0), re.MULTILINE)
+    if len(rows) != len(pools):
+        return [f"7.2.4 完整池表 {len(rows)} 行，仿真实际 {len(pools)} 个池"]
+    errors: list[str] = []
+    for vid_s, start, end, lease, gw in rows:
+        vid = int(vid_s)
+        p = pools.get(vid)
+        if p is None:
+            errors.append(f"7.2.4 池 v{vid} 不在仿真定义中")
+            continue
+        if (p["start"], p["end"], p["lease"], p["gateway"]) != (start, end, int(lease), gw):
+            errors.append(f"7.2.4 池 v{vid} 与仿真定义不一致")
+    return errors
+
+
 def main() -> int:
     if not FACTS_PATH.exists():
         print(f"missing facts: {FACTS_PATH}")
@@ -124,6 +251,11 @@ def main() -> int:
 
     errors.extend(check_vlan_table(text))
     errors.extend(check_dhcp_count(text, facts))
+    errors.extend(check_dhcp_example(text, facts))
+    errors.extend(check_relay_example(text, facts))
+    errors.extend(check_dns_section(text))
+    errors.extend(check_auth_section(text))
+    errors.extend(check_pool_table(text, facts))
 
     if errors:
         for error in errors:
