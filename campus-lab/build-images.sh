@@ -22,6 +22,16 @@ docker build -t campus-l2:latest images/l2
 echo '==> campus-fw:latest'
 docker build -t campus-fw:latest images/fw
 
+echo '==> campus-host:latest'
+docker build -t campus-host:latest images/host
+
+echo '==> checking dnsmasq DHCP relay support (>= 2.86)'
+ver=$(docker run --rm campus-frr:latest dnsmasq --version 2>/dev/null | sed -n '1s/.*version //p')
+case "$ver" in
+  2.8[6-9]*|2.9*|3.*) echo "    dnsmasq $ver OK" ;;
+  *) echo "    dnsmasq version '$ver' is too old for dhcp-relay" >&2; exit 1 ;;
+esac
+
 echo
 echo '==> local images'
 docker image ls --filter reference='campus-*' --format '{{.Repository}}:{{.Tag}} {{.Size}}'

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="680" viewBox="0 0 1000 680">
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill:#1f2937; }
+    .title { font-size: 24px; font-weight: 700; fill:#0f172a; }
+    .label { font-size: 13px; fill:#475569; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .agg { fill:#ede9fe; stroke:#7c3aed; }
+    .access { fill:#dcfce7; stroke:#16a34a; }
+    .host { fill:#f1f5f9; stroke:#64748b; }
+    .vip { fill:#fff7ed; stroke:#ea580c; stroke-dasharray:5 4; }
+    .line { stroke:#475569; stroke-width:2; fill:none; }
+    .trunk { stroke:#7c3aed; stroke-width:3; fill:none; }
+  </style>
+  <rect width="1000" height="680" fill="#f8fafc"/>
+  <text x="500" y="36" text-anchor="middle" class="title">教学区 VLAN / Trunk / VRRP 配置示意</text>
+  <text x="500" y="62" text-anchor="middle" class="label">每栋楼一个子网；接入 Trunk 到汇聚，汇聚 SVI 提供 VRRP 虚拟网关</text>
+
+  <rect x="380" y="95" width="110" height="46" class="box core"/><text x="435" y="123" text-anchor="middle">core1</text>
+  <rect x="510" y="95" width="110" height="46" class="box core"/><text x="565" y="123" text-anchor="middle">core2</text>
+  <path d="M490,118 L510,118" class="line" stroke-width="4"/>
+
+  <rect x="280" y="205" width="130" height="52" class="box agg"/>
+  <text x="345" y="227" text-anchor="middle">agg-t1</text>
+  <text x="345" y="246" text-anchor="middle" class="label">10.10.0.252 / .253</text>
+  <rect x="610" y="205" width="130" height="52" class="box agg"/>
+  <text x="675" y="227" text-anchor="middle">agg-t2</text>
+  <text x="675" y="246" text-anchor="middle" class="label">10.50.0.252 / .253</text>
+  <path d="M430,141 L345,205" class="line"/>
+  <path d="M470,141 L675,205" class="line"/>
+  <path d="M550,141 L345,205" class="line"/>
+  <path d="M580,141 L675,205" class="line"/>
+
+  <rect x="180" y="320" width="150" height="48" class="box access"/>
+  <text x="255" y="349" text-anchor="middle">acc-ta</text>
+  <rect x="680" y="320" width="150" height="48" class="box access"/>
+  <text x="755" y="349" text-anchor="middle">acc-tb</text>
+  <path d="M320,257 L255,320" class="trunk"/>
+  <path d="M370,257 L255,320" class="trunk"/>
+  <path d="M650,257 L755,320" class="trunk"/>
+  <path d="M700,257 L755,320" class="trunk"/>
+  <text x="230" y="292" class="label">Trunk: 101,500</text>
+  <text x="700" y="292" class="label">Trunk: 102</text>
+
+  <rect x="90" y="430" width="120" height="42" class="box host"/><text x="150" y="456" text-anchor="middle">pc-ta1</text>
+  <rect x="225" y="430" width="120" height="42" class="box host"/><text x="285" y="456" text-anchor="middle">pc-ta2</text>
+  <rect x="360" y="430" width="120" height="42" class="box host"/><text x="420" y="456" text-anchor="middle">ap-ta</text>
+  <rect x="500" y="430" width="130" height="42" class="box host"/><text x="565" y="456" text-anchor="middle">pc-dyn1</text>
+  <rect x="645" y="430" width="130" height="42" class="box host"/><text x="710" y="456" text-anchor="middle">pc-tb1</text>
+  <text x="150" y="492" text-anchor="middle" class="label">VLAN101 / 10.10.0.11</text>
+  <text x="285" y="492" text-anchor="middle" class="label">VLAN101 / 10.10.0.12</text>
+  <text x="420" y="492" text-anchor="middle" class="label">VLAN500 / 10.50.0.11</text>
+  <text x="565" y="492" text-anchor="middle" class="label">VLAN101 / DHCP</text>
+  <text x="710" y="492" text-anchor="middle" class="label">VLAN102 / 10.10.1.11</text>
+  <path d="M150,430 L255,368" class="line"/>
+  <path d="M285,430 L255,368" class="line"/>
+  <path d="M420,430 L255,368" class="line"/>
+  <path d="M565,430 L255,368" class="line"/>
+  <path d="M710,430 L755,368" class="line"/>
+
+  <rect x="420" y="205" width="240" height="120" class="vip"/>
+  <text x="540" y="230" text-anchor="middle" class="label">VRRP 虚拟网关</text>
+  <text x="540" y="253" text-anchor="middle">VLAN101：10.10.0.1</text>
+  <text x="540" y="276" text-anchor="middle">VLAN500：10.50.0.1</text>
+  <text x="540" y="299" text-anchor="middle" class="label">主优先级 120 / 备 100</text>
+
+  <text x="500" y="585" text-anchor="middle" class="label">接入端口为 Access（PVID untagged）；上联为 Trunk，携带 VLAN 101/102/500</text>
+  <text x="500" y="612" text-anchor="middle" class="label">验证：CONN-01~CONN-08 全部通过；无线 VLAN 500 与有线 VLAN 101 三层互通</text>
+</svg>

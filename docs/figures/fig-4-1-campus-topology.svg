@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="910" viewBox="0 0 1260 910">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill: #1f2937; }
+    .title { font-size: 26px; font-weight: 700; fill:#0f172a; }
+    .sub { font-size: 15px; fill:#475569; }
+    .label { font-size: 13px; fill:#475569; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .internet { fill:#e0f2fe; stroke:#0284c7; }
+    .router { fill:#fef3c7; stroke:#d97706; }
+    .fw { fill:#fee2e2; stroke:#dc2626; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .agg { fill:#ede9fe; stroke:#7c3aed; }
+    .access { fill:#dcfce7; stroke:#16a34a; }
+    .host { fill:#f1f5f9; stroke:#64748b; }
+    .dc { fill:#fce7f3; stroke:#db2777; }
+    .line { stroke:#475569; stroke-width:2; fill:none; }
+    .link { stroke:#94a3b8; stroke-width:1.6; fill:none; }
+    .vip { fill:#fff7ed; stroke:#ea580c; stroke-dasharray:5 4; }
+  </style>
+
+  <rect width="1260" height="910" fill="#f8fafc"/>
+  <text x="600" y="38" text-anchor="middle" class="title">奉贤校区校园网总体拓扑</text>
+  <text x="600" y="64" text-anchor="middle" class="sub">双核心 · 区域双汇聚 · 双防火墙 · DMZ 独立接入</text>
+
+  <rect x="530" y="88" width="140" height="48" class="box internet"/>
+  <text x="600" y="117" text-anchor="middle">Internet</text>
+
+  <rect x="470" y="168" width="120" height="44" class="box router"/>
+  <text x="530" y="195" text-anchor="middle">r1</text>
+  <rect x="610" y="168" width="120" height="44" class="box router"/>
+  <text x="670" y="195" text-anchor="middle">r2</text>
+  <path d="M600,136 L530,168" class="line" marker-end="url(#arrow)"/>
+  <path d="M600,136 L670,168" class="line" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="242" width="300" height="38" class="box"/>
+  <text x="600" y="266" text-anchor="middle">untrust-sw（Untrust 10.90.1.0/24）</text>
+  <path d="M530,212 L530,242" class="line"/>
+  <path d="M670,212 L670,242" class="line"/>
+
+  <rect x="430" y="318" width="140" height="46" class="box fw"/>
+  <text x="500" y="347" text-anchor="middle">fw1</text>
+  <rect x="630" y="318" width="140" height="46" class="box fw"/>
+  <text x="700" y="347" text-anchor="middle">fw2</text>
+  <path d="M540,280 L500,318" class="line"/>
+  <path d="M660,280 L700,318" class="line"/>
+
+  <rect x="295" y="402" width="190" height="38" class="box"/>
+  <text x="390" y="426" text-anchor="middle">trust-sw（Trust 10.0.100.0/24）</text>
+  <rect x="715" y="402" width="190" height="38" class="box"/>
+  <text x="810" y="426" text-anchor="middle">dmz-sw（DMZ 10.80.0.0/24）</text>
+  <path d="M500,364 L390,402" class="line"/>
+  <path d="M700,364 L810,402" class="line"/>
+
+  <rect x="420" y="480" width="150" height="52" class="box core"/>
+  <text x="495" y="502" text-anchor="middle">core1</text>
+  <text x="495" y="522" text-anchor="middle" class="label">10.255.0.1</text>
+  <rect x="630" y="480" width="150" height="52" class="box core"/>
+  <text x="705" y="502" text-anchor="middle">core2</text>
+  <text x="705" y="522" text-anchor="middle" class="label">10.255.0.2</text>
+  <path d="M570,500 L630,500" class="line" stroke-width="5"/>
+  <path d="M570,512 L630,512" class="line" stroke-width="5"/>
+  <text x="600" y="458" text-anchor="middle" class="label">bond0 802.3ad</text>
+  <path d="M390,440 L470,480" class="line"/>
+  <path d="M390,440 L680,480" class="line"/>
+  <path d="M810,440 L520,480" class="line"/>
+  <path d="M810,440 L730,480" class="line"/>
+
+  <g>
+    <rect x="60" y="585" width="96" height="40" class="box agg"/><text x="108" y="610" text-anchor="middle">agg-t1</text>
+    <rect x="166" y="585" width="96" height="40" class="box agg"/><text x="214" y="610" text-anchor="middle">agg-t2</text>
+    <rect x="292" y="585" width="96" height="40" class="box agg"/><text x="340" y="610" text-anchor="middle">agg-d1</text>
+    <rect x="398" y="585" width="96" height="40" class="box agg"/><text x="446" y="610" text-anchor="middle">agg-d2</text>
+    <rect x="524" y="585" width="96" height="40" class="box agg"/><text x="572" y="610" text-anchor="middle">agg-l1</text>
+    <rect x="630" y="585" width="96" height="40" class="box agg"/><text x="678" y="610" text-anchor="middle">agg-l2</text>
+    <rect x="756" y="585" width="96" height="40" class="box agg"/><text x="804" y="610" text-anchor="middle">agg-lib1</text>
+    <rect x="862" y="585" width="96" height="40" class="box agg"/><text x="910" y="610" text-anchor="middle">agg-lib2</text>
+    <rect x="988" y="585" width="96" height="40" class="box agg"/><text x="1036" y="610" text-anchor="middle">agg-life1</text>
+    <rect x="1094" y="585" width="96" height="40" class="box agg"/><text x="1142" y="610" text-anchor="middle">agg-life2</text>
+  </g>
+  <text x="600" y="565" text-anchor="middle" class="label">五个区域各 2 台汇聚，双上行到双核心；VRRP 提供业务网关</text>
+
+  <g class="link">
+    <path d="M470,532 L108,585"/><path d="M470,532 L214,585"/>
+    <path d="M520,532 L340,585"/><path d="M520,532 L446,585"/>
+    <path d="M560,532 L572,585"/><path d="M560,532 L678,585"/>
+    <path d="M660,532 L804,585"/><path d="M660,532 L910,585"/>
+    <path d="M730,532 L1036,585"/><path d="M730,532 L1142,585"/>
+  </g>
+
+  <g>
+    <rect x="78" y="675" width="160" height="38" class="box access"/><text x="158" y="699" text-anchor="middle">acc-ta / acc-tb</text>
+    <rect x="310" y="675" width="160" height="38" class="box access"/><text x="390" y="699" text-anchor="middle">acc-d1</text>
+    <rect x="542" y="675" width="160" height="38" class="box access"/><text x="622" y="699" text-anchor="middle">acc-la</text>
+    <rect x="774" y="675" width="160" height="38" class="box access"/><text x="854" y="699" text-anchor="middle">acc-lib</text>
+    <rect x="1006" y="675" width="160" height="38" class="box access"/><text x="1086" y="699" text-anchor="middle">acc-life</text>
+  </g>
+  <g class="link">
+    <path d="M108,625 L158,675"/><path d="M214,625 L158,675"/>
+    <path d="M340,625 L390,675"/><path d="M446,625 L390,675"/>
+    <path d="M572,625 L622,675"/><path d="M678,625 L622,675"/>
+    <path d="M804,625 L854,675"/><path d="M910,625 L854,675"/>
+    <path d="M1036,625 L1086,675"/><path d="M1142,625 L1086,675"/>
+  </g>
+
+  <g>
+    <rect x="58" y="755" width="200" height="42" class="box host"/><text x="158" y="781" text-anchor="middle">pc-ta1 / pc-ta2 / ap-ta</text>
+    <rect x="290" y="755" width="200" height="42" class="box host"/><text x="390" y="781" text-anchor="middle">pc-d1 / ap-d1</text>
+    <rect x="522" y="755" width="200" height="42" class="box host"/><text x="622" y="781" text-anchor="middle">pc-la1</text>
+    <rect x="754" y="755" width="200" height="42" class="box host"/><text x="854" y="781" text-anchor="middle">pc-lib</text>
+    <rect x="986" y="755" width="200" height="42" class="box host"/><text x="1086" y="781" text-anchor="middle">pc-life</text>
+  </g>
+  <g class="link">
+    <path d="M158,713 L158,755"/><path d="M390,713 L390,755"/>
+    <path d="M622,713 L622,755"/><path d="M854,713 L854,755"/>
+    <path d="M1086,713 L1086,755"/>
+  </g>
+
+  <rect x="920" y="480" width="150" height="52" class="box dc"/>
+  <text x="995" y="501" text-anchor="middle">dc-sw</text>
+  <text x="995" y="521" text-anchor="middle" class="label">VLAN 70 / 90</text>
+  <rect x="900" y="585" width="190" height="40" class="box host"/>
+  <text x="995" y="610" text-anchor="middle">srv-dc1 / srv-dc2</text>
+  <rect x="900" y="650" width="190" height="40" class="box host"/>
+  <text x="995" y="675" text-anchor="middle">mgmt-pc（VLAN 90）</text>
+  <path d="M780,505 L920,505" class="line"/>
+  <path d="M995,532 L995,585" class="line"/>
+  <path d="M995,625 L995,650" class="line"/>
+  <text x="850" y="470" text-anchor="middle" class="label">数据中心</text>
+
+  <rect x="930" y="402" width="120" height="44" class="box host"/>
+  <text x="990" y="429" text-anchor="middle">srv-dmz</text>
+  <path d="M905,421 L930,421" class="line"/>
+  <text x="1000" y="392" text-anchor="middle" class="label">10.80.0.10</text>
+
+  <rect x="70" y="825" width="10" height="10" class="core"/><text x="88" y="834" class="label">核心</text>
+  <rect x="150" y="825" width="10" height="10" class="agg"/><text x="168" y="834" class="label">汇聚</text>
+  <rect x="230" y="825" width="10" height="10" class="access"/><text x="248" y="834" class="label">接入</text>
+  <rect x="310" y="825" width="10" height="10" class="fw"/><text x="328" y="834" class="label">防火墙</text>
+  <text x="600" y="845" text-anchor="middle" class="label">完整设计覆盖全部楼宇；仿真拓扑按区域取代表性楼栋，规模见下页图 4-2</text>
+</svg>
