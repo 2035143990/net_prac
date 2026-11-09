@@ -14,6 +14,14 @@
 
 > 每个 SVG 旁已生成同名 `.png`（2400 px 宽），报告正文引用的是 PNG，可直接插入 Word；SVG 保留为可编辑源文件。
 
+PNG 由仓库内脚本 `tools/svg2png.py` 生成（无头浏览器渲染，中文、描边、圆角与浏览器一致）：
+
+```sh
+python3 tools/svg2png.py            # 转换 docs/figures 下全部 SVG，输出 2400 px 宽
+python3 tools/svg2png.py --width 3000
+python3 tools/svg2png.py --backend svglib   # 无浏览器时的纯 Python 备选
+```
+
 ## 2. 正式拓扑图从哪来
 
 `campus-lab/gen-drawio.sh` 会用 Containerlab 的 `graph --drawio` 生成完整拓扑：
@@ -48,7 +56,13 @@ python3 drawio-postprocess.py campus-lab.clab.drawio
 
 ## 3. 示意图转 PNG（Word 用）
 
-报告里的 7 张示意图是 SVG，Markdown/浏览器可直接显示。若老师要求 Word，建议转 PNG 后插入：
+报告里的 7 张示意图是 SVG，Markdown/浏览器可直接显示。若老师要求 Word，用仓库内脚本转换（推荐，跨平台且中文渲染正确）：
+
+```sh
+python3 tools/svg2png.py
+```
+
+脚本优先调用无头 Chrome / Edge；找不到浏览器时自动回退到 svglib 纯 Python 链路。手工转换的备选方法：
 
 - 方法一：浏览器打开 SVG → 右键“图片另存为”/截图（最简单）；
 - 方法二：macOS Quick Look 缩略图：
