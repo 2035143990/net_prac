@@ -71,6 +71,10 @@ def main() -> int:
         if not re.search(rf"\b{prefix}-\d{{2}}\b", text):
             errors.append(f"missing test case reference: {prefix}-xx")
 
+    for ref in re.findall(r"!\[[^\]]*\]\((figures/[^)]+)\)", text):
+        if not (REPORT_PATH.parent / ref).exists():
+            errors.append(f"missing figure: {ref}")
+
     if errors:
         for error in errors:
             print("FAIL", error)

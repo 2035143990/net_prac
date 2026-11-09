@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="870" viewBox="0 0 1000 870">
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 16px; fill:#1f2937; }
+    .title { font-size: 25px; font-weight: 700; fill:#0f172a; }
+    .sub { font-size: 15px; fill:#475569; }
+    .label { font-size: 13px; fill:#475569; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .internet { fill:#e0f2fe; stroke:#0284c7; }
+    .router { fill:#fef3c7; stroke:#d97706; }
+    .fw { fill:#fee2e2; stroke:#dc2626; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .agg { fill:#ede9fe; stroke:#7c3aed; }
+    .access { fill:#dcfce7; stroke:#16a34a; }
+    .host { fill:#f1f5f9; stroke:#64748b; }
+    .line { stroke:#475569; stroke-width:2; fill:none; }
+    .count { font-size: 20px; font-weight: 700; fill:#0f172a; }
+  </style>
+  <rect width="1000" height="870" fill="#f8fafc"/>
+  <text x="500" y="36" text-anchor="middle" class="title">Containerlab 仿真拓扑与节点规模</text>
+  <text x="500" y="62" text-anchor="middle" class="sub">44 个容器 · 66 条链路 · 8 个测试套件 · 64 条用例</text>
+
+  <rect x="400" y="88" width="200" height="46" class="box internet"/>
+  <text x="500" y="116" text-anchor="middle">internet（1）</text>
+  <rect x="400" y="154" width="200" height="40" class="box"/>
+  <text x="500" y="179" text-anchor="middle">inet-sw（1）</text>
+  <rect x="340" y="214" width="140" height="40" class="box router"/>
+  <text x="410" y="239" text-anchor="middle">r1（1）</text>
+  <rect x="520" y="214" width="140" height="40" class="box router"/>
+  <text x="590" y="239" text-anchor="middle">r2（1）</text>
+  <rect x="400" y="274" width="200" height="40" class="box"/>
+  <text x="500" y="299" text-anchor="middle">untrust-sw（1）</text>
+  <rect x="340" y="334" width="140" height="40" class="box fw"/>
+  <text x="410" y="359" text-anchor="middle">fw1（1）</text>
+  <rect x="520" y="334" width="140" height="40" class="box fw"/>
+  <text x="590" y="359" text-anchor="middle">fw2（1）</text>
+  <rect x="260" y="394" width="180" height="40" class="box"/>
+  <text x="350" y="419" text-anchor="middle">trust-sw（1）</text>
+  <rect x="560" y="394" width="180" height="40" class="box"/>
+  <text x="650" y="419" text-anchor="middle">dmz-sw（1）</text>
+  <rect x="340" y="454" width="140" height="46" class="box core"/>
+  <text x="410" y="482" text-anchor="middle">core1/core2（2）</text>
+  <rect x="520" y="454" width="140" height="46" class="box core"/>
+  <text x="590" y="482" text-anchor="middle">srv-dmz（1）</text>
+
+  <rect x="120" y="530" width="760" height="52" class="box agg"/>
+  <text x="500" y="552" text-anchor="middle">区域汇聚（10）</text>
+  <text x="500" y="572" text-anchor="middle" class="label">agg-t1/t2 · agg-d1/d2 · agg-l1/l2 · agg-lib1/lib2 · agg-life1/life2</text>
+
+  <rect x="100" y="610" width="800" height="52" class="box access"/>
+  <text x="500" y="632" text-anchor="middle">接入/数据中心交换机（7）</text>
+  <text x="500" y="652" text-anchor="middle" class="label">acc-ta · acc-tb · acc-d1 · acc-la · acc-lib · acc-life · dc-sw</text>
+
+  <rect x="100" y="690" width="800" height="60" class="box host"/>
+  <text x="500" y="712" text-anchor="middle">终端/服务器（17）</text>
+  <text x="500" y="734" text-anchor="middle" class="label">pc-ta1/ta2/tb1 · pc-d1 · pc-la1 · pc-lib · pc-life · ap-ta/ap-d1 · srv-dc1/dc2 · srv-dmz · internet · mgmt-pc · pc-dyn1/2/3</text>
+
+  <g class="line">
+    <path d="M500,134 L500,154"/>
+    <path d="M500,194 L410,214"/><path d="M500,194 L590,214"/>
+    <path d="M410,254 L500,274"/><path d="M590,254 L500,274"/>
+    <path d="M500,314 L410,334"/><path d="M500,314 L590,334"/>
+    <path d="M410,374 L350,394"/><path d="M410,374 L650,394"/>
+    <path d="M350,434 L410,454"/><path d="M650,434 L590,454"/>
+    <path d="M360,500 L500,530"/><path d="M560,500 L500,530"/>
+    <path d="M500,582 L500,610"/><path d="M500,662 L500,690"/>
+  </g>
+
+  <rect x="760" y="90" width="210" height="120" fill="#fff" stroke="#94a3b8" stroke-dasharray="5 4" rx="8"/>
+  <text x="865" y="115" text-anchor="middle" class="label">4 台传输二层桥</text>
+  <text x="865" y="138" text-anchor="middle" class="label">trust-sw / untrust-sw</text>
+  <text x="865" y="161" text-anchor="middle" class="label">dmz-sw / inet-sw</text>
+  <text x="865" y="184" text-anchor="middle" class="label">已计入总数 44</text>
+
+  <text x="500" y="786" text-anchor="middle" class="count">14 FRR + 7 L2 + 17 Host + 2 FW + 4 Bridge = 44 节点</text>
+  <text x="500" y="806" text-anchor="middle" class="label">图中括号数字为仿真节点数量；链路共 66 条，含 3 台动态终端、1 台管理终端和 1 条服务器聚合第二链路</text>
+</svg>

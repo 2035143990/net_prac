@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="820" viewBox="0 0 1220 820">
+  <defs>
+    <marker id="allow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/>
+    </marker>
+    <marker id="block" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill:#1f2937; }
+    .title { font-size: 24px; font-weight: 700; fill:#0f172a; }
+    .label { font-size: 13px; fill:#475569; }
+    .mono { font-family: Menlo,Consolas,monospace; font-size: 12px; fill:#334155; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .dorm { fill:#ede9fe; stroke:#7c3aed; }
+    .allowbox { fill:#dcfce7; stroke:#16a34a; }
+    .blockbox { fill:#fee2e2; stroke:#dc2626; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .host { fill:#f1f5f9; stroke:#64748b; }
+    .allowline { stroke:#16a34a; stroke-width:2.5; fill:none; marker-end:url(#allow); }
+    .blockline { stroke:#dc2626; stroke-width:2; fill:none; stroke-dasharray:6 5; marker-end:url(#block); }
+  </style>
+  <rect width="1220" height="820" fill="#f8fafc"/>
+  <text x="590" y="36" text-anchor="middle" class="title">宿舍区访问控制与管理网保护</text>
+  <text x="590" y="62" text-anchor="middle" class="label">宿舍流量在区域汇聚进入 dorm_filter；管理目的由核心统一拦截</text>
+
+  <rect x="50" y="120" width="160" height="50" class="box host"/>
+  <text x="130" y="142" text-anchor="middle">pc-d1</text>
+  <text x="130" y="161" text-anchor="middle" class="label">VLAN301 / 10.32.0.11</text>
+  <rect x="50" y="205" width="160" height="50" class="box host"/>
+  <text x="130" y="227" text-anchor="middle">ap-d1</text>
+  <text x="130" y="246" text-anchor="middle" class="label">VLAN510 / 10.51.0.11</text>
+
+  <rect x="270" y="145" width="230" height="170" class="box dorm"/>
+  <text x="385" y="170" text-anchor="middle">agg-d1 / agg-d2</text>
+  <text x="385" y="193" text-anchor="middle" class="label">table inet zone</text>
+  <text x="385" y="217" text-anchor="middle" class="mono">iifname eth3.301 / eth3.510</text>
+  <text x="385" y="239" text-anchor="middle" class="mono">ip saddr @dorm_nets jump dorm_filter</text>
+  <text x="385" y="262" text-anchor="middle" class="mono">iso.src_guard（源地址校验）</text>
+  <text x="385" y="285" text-anchor="middle" class="mono">iso.dorm2teaching 等计数器</text>
+  <path d="M210,145 L262,190" class="allowline"/>
+  <path d="M210,230 L262,235" class="allowline"/>
+
+  <rect x="560" y="100" width="270" height="70" class="box allowbox"/>
+  <text x="695" y="124" text-anchor="middle">放行</text>
+  <text x="695" y="148" text-anchor="middle" class="label">宿舍互访 · DNS:53 · Internet · DMZ:80/443</text>
+  <rect x="560" y="205" width="270" height="96" class="box blockbox"/>
+  <text x="695" y="229" text-anchor="middle">拒绝</text>
+  <text x="695" y="253" text-anchor="middle" class="label">管理网 10.70.0.0/24</text>
+  <text x="695" y="274" text-anchor="middle" class="label">教学 10.10.0.0/16 · 实验 10.20.0.0/13</text>
+  <text x="695" y="295" text-anchor="middle" class="label">数据中心 10.60.0.0/24</text>
+  <path d="M500,205 L560,140" class="allowline"/>
+  <path d="M500,235 L560,250" class="blockline"/>
+
+  
+
+  <rect x="270" y="430" width="520" height="145" class="box"/>
+  <text x="290" y="458" class="label">dorm_filter 规则顺序（节选）</text>
+  <text x="290" y="483" class="mono">1 ip daddr @dorm_nets accept</text>
+  <text x="290" y="505" class="mono">2 ip daddr @dns_hosts udp/tcp dport 53 accept</text>
+  <text x="290" y="527" class="mono">3 ip daddr @internet_nets accept</text>
+  <text x="290" y="549" class="mono">4 ip daddr @dmz_nets tcp dport {80,443} accept</text>
+  <text x="290" y="571" class="mono">5-8 依次 drop mgmt / teaching / lab / dc；末条默认 drop</text>
+
+  <rect x="810" y="430" width="330" height="165" class="box core"/>
+  <text x="830" y="458" class="label">管理网保护（核心统一拦截）</text>
+  <text x="830" y="483" class="mono">ip saddr @mgmt_nets accept</text>
+  <text x="830" y="505" class="mono">ip daddr @mgmt_nets ip saddr != @mgmt_nets drop</text>
+  <text x="830" y="527" class="label">汇聚增加 10.70.0.0/24 回程路由：</text>
+  <text x="830" y="549" class="mono">core1 distance 1 · core2 distance 2</text>
+  <text x="830" y="571" class="label">解决 VRRP/ECMP 回程不对称</text>
+
+  <text x="590" y="625" text-anchor="middle" class="label">实测：ISO-01~ISO-12 首次 11/12；ISO-09 修复后 mgmt-pc→pc-ta1 丢包率 0%</text>
+  <text x="590" y="650" text-anchor="middle" class="label">宿舍→管理/教学/实验/数据中心均失败；宿舍→Internet/DMZ 成功；宿舍有线与无线互通</text>
+  <text x="590" y="720" text-anchor="middle" class="label">说明：绿色实线为放行，红色虚线为拒绝；所有关键规则均带 iso.* 计数器，便于验收取证</text>
+</svg>

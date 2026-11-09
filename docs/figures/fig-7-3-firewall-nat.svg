@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="780" viewBox="0 0 1100 780">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+    <marker id="green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/>
+    </marker>
+    <marker id="red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill:#1f2937; }
+    .title { font-size: 24px; font-weight: 700; fill:#0f172a; }
+    .label { font-size: 13px; fill:#475569; }
+    .mono { font-family: Menlo,Consolas,monospace; font-size: 12px; fill:#334155; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .internet { fill:#e0f2fe; stroke:#0284c7; }
+    .router { fill:#fef3c7; stroke:#d97706; }
+    .fw { fill:#fee2e2; stroke:#dc2626; }
+    .trust { fill:#dcfce7; stroke:#16a34a; }
+    .dmz { fill:#fce7f3; stroke:#db2777; }
+    .line { stroke:#475569; stroke-width:2; fill:none; marker-end:url(#arrow); }
+    .snat { stroke:#16a34a; stroke-width:2.5; fill:none; marker-end:url(#green); }
+    .dnat { stroke:#db2777; stroke-width:2.5; fill:none; marker-end:url(#red); }
+  </style>
+  <rect width="1100" height="780" fill="#f8fafc"/>
+  <text x="550" y="36" text-anchor="middle" class="title">防火墙三区、源 NAT 与 DMZ 目的 NAT</text>
+  <text x="550" y="62" text-anchor="middle" class="label">forward 链默认 drop；仅放行已建立会话、Trust→Untrust/DMZ 和经 DNAT 的 Untrust→DMZ 80/443</text>
+
+  <rect x="470" y="90" width="160" height="46" class="box internet"/><text x="550" y="118" text-anchor="middle">Internet</text>
+  <rect x="400" y="165" width="120" height="42" class="box router"/><text x="460" y="191" text-anchor="middle">r1</text>
+  <rect x="580" y="165" width="120" height="42" class="box router"/><text x="640" y="191" text-anchor="middle">r2</text>
+  <path d="M520,136 L460,165" class="line"/>
+  <path d="M580,136 L640,165" class="line"/>
+  <rect x="380" y="232" width="340" height="40" class="box"/>
+  <text x="550" y="257" text-anchor="middle">untrust-sw · 10.90.1.0/24</text>
+  <path d="M460,207 L460,232" class="line"/>
+  <path d="M640,207 L640,232" class="line"/>
+
+  <rect x="380" y="305" width="340" height="110" class="box fw"/>
+  <text x="550" y="331" text-anchor="middle">fw1 / fw2（VRRP 10.90.1.253）</text>
+  <text x="550" y="355" text-anchor="middle" class="label">eth1 Trust · eth2 Untrust · eth3 DMZ</text>
+  <text x="550" y="379" text-anchor="middle" class="mono">eth2: 198.51.100.80/32（发布地址）</text>
+  <text x="550" y="400" text-anchor="middle" class="label">nftables: prerouting / forward / postrouting</text>
+  <path d="M550,272 L550,305" class="line"/>
+
+  <rect x="120" y="305" width="190" height="56" class="box trust"/>
+  <text x="215" y="328" text-anchor="middle">Trust</text>
+  <text x="215" y="348" text-anchor="middle" class="label">10.0.100.0/24</text>
+  <rect x="780" y="305" width="190" height="56" class="box dmz"/>
+  <text x="875" y="328" text-anchor="middle">DMZ</text>
+  <text x="875" y="348" text-anchor="middle" class="label">10.80.0.0/24</text>
+  <path d="M380,340 L310,340" class="line"/>
+  <path d="M720,340 L780,340" class="line"/>
+
+  <rect x="60" y="430" width="190" height="52" class="box trust"/>
+  <text x="155" y="453" text-anchor="middle">pc-ta1</text>
+  <text x="155" y="472" text-anchor="middle" class="label">10.10.0.11</text>
+  <rect x="800" y="430" width="190" height="52" class="box dmz"/>
+  <text x="895" y="453" text-anchor="middle">srv-dmz</text>
+  <text x="895" y="472" text-anchor="middle" class="label">10.80.0.10:80/443</text>
+  <path d="M155,378 L155,430" class="line"/>
+  <path d="M895,361 L895,430" class="line"/>
+
+  <rect x="60" y="540" width="420" height="145" class="box"/>
+  <text x="80" y="567" class="label">源 NAT（Trust → Untrust）</text>
+  <text x="80" y="592" class="mono">10.10.0.11:xxxx → 10.90.1.11:yyyy</text>
+  <text x="80" y="616" class="mono">postrouting: iifname eth1 oifname eth2 masquerade</text>
+  <text x="80" y="640" class="label">DNAT 回程不匹配该方向，不会被二次改写</text>
+  <text x="80" y="664" class="label">计数器：nat.snat</text>
+
+  <rect x="560" y="540" width="480" height="145" class="box"/>
+  <text x="580" y="567" class="label">目的 NAT（Internet → DMZ）</text>
+  <text x="580" y="592" class="mono">198.51.100.80:80/443 → 10.80.0.10:80/443</text>
+  <text x="580" y="616" class="mono">prerouting: iifname eth2 daddr 198.51.100.80 dnat</text>
+  <text x="580" y="640" class="label">forward: ct status dnat accept；私网直达 drop</text>
+  <text x="580" y="664" class="label">计数器：nat.dnat80 / nat.dnat443 / nat.private_direct_drop</text>
+
+  <path d="M250,360 C300,500 330,560 420,600" class="snat"/>
+  <path d="M800,400 C700,470 620,540 560,590" class="dnat" stroke-dasharray="7 5"/>
+
+  <text x="550" y="730" text-anchor="middle" class="label">实测：NAT-01~07、SEC-01~06 全部通过；Internet 直达 10.80.0.10 失败</text>
+</svg>

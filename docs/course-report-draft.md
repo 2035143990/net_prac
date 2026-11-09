@@ -143,7 +143,7 @@
 
 ### 4.1 网络拓扑结构
 
-完整设计采用“双核心 + 区域双汇聚 + 接入交换机”的三层结构。核心 `core1/core2` 通过两条链路聚合成 `bond0`，各区域汇聚双上行到双核心，接入交换机通过 Trunk 上联汇聚，终端通过 Access 端口接入。出口方向由 `fw1/fw2` 双防火墙连接 `r1/r2` 双出口路由器，再连接 Internet；DMZ 服务器挂在独立 DMZ 交换机上。
+完整设计采用“双核心 + 区域双汇聚 + 接入交换机”的三层结构。核心 `core1/core2` 通过两条链路聚合成 `bond0`，各区域汇聚双上行到双核心，接入交换机通过 Trunk 上联汇聚，终端通过 Access 端口接入。出口方向由 `fw1/fw2` 双防火墙连接 `r1/r2` 双出口路由器，再连接 Internet；DMZ 服务器挂在独立 DMZ 交换机上。校园网总体拓扑如图 4-1 所示。
 
 ```text
                         Internet
@@ -165,7 +165,11 @@
       终端   终端   终端    终端     终端
 ```
 
-可运行仿真拓扑由 `campus-lab/gen.py` 生成，当前为 **44 个容器、66 条链路**：14 台 FRR 路由节点、7 台二层交换机、17 台终端/服务器、2 台防火墙、4 台传输二层桥。新增 VLAN 90 管理网与 `mgmt-pc`，新增 3 台 DHCP 动态终端，服务器 `srv-dc1` 增加第二条接入链路做 active-backup 聚合。
+![图 4-1 校园网总体拓扑](figures/fig-4-1-campus-topology.png)
+
+**图 4-1 校园网总体拓扑**
+
+可运行仿真拓扑由 `campus-lab/gen.py` 生成，当前为 **44 个容器、66 条链路**：14 台 FRR 路由节点、7 台二层交换机、17 台终端/服务器、2 台防火墙、4 台传输二层桥。新增 VLAN 90 管理网与 `mgmt-pc`，新增 3 台 DHCP 动态终端，服务器 `srv-dc1` 增加第二条接入链路做 active-backup 聚合。仿真拓扑与节点规模如图 4-2 所示。
 
 <!-- facts:begin -->
 nodes=44
@@ -176,6 +180,10 @@ dhcp_pools=8
 nat_publish=198.51.100.80:80,198.51.100.80:443
 lags=core-lag0,dc-srv-lag0
 <!-- facts:end -->
+
+![图 4-2 Containerlab 仿真拓扑与节点规模](figures/fig-4-2-simulation-topology.png)
+
+**图 4-2 Containerlab 仿真拓扑与节点规模**
 
 ### 4.2 IP 地址分配与 VLAN 划分
 
@@ -334,7 +342,11 @@ DHCP 共 8 个动态池：VLAN 50、61、101、102、201、301、500、510。动
 
 #### 7.1.3 网络配置拓扑结构
 
-教学区由 `agg-t1`、`agg-t2` 两台汇聚与 `acc-ta`、`acc-tb` 两台接入组成。`acc-ta` 的 `eth1/eth2` 分别 Trunk 到两台汇聚，承载 VLAN 101 和 500；`eth3/eth4` 为 VLAN 101 Access，接 `pc-ta1`、`pc-ta2`；`eth5` 为 VLAN 500 Access，接 `ap-ta`；新增 `eth6/eth7` 接 DHCP 动态终端 `pc-dyn1`、`pc-dyn3`。`acc-tb` 的 `eth3` 接 VLAN 102 的 `pc-tb1`。
+教学区由 `agg-t1`、`agg-t2` 两台汇聚与 `acc-ta`、`acc-tb` 两台接入组成。`acc-ta` 的 `eth1/eth2` 分别 Trunk 到两台汇聚，承载 VLAN 101 和 500；`eth3/eth4` 为 VLAN 101 Access，接 `pc-ta1`、`pc-ta2`；`eth5` 为 VLAN 500 Access，接 `ap-ta`；新增 `eth6/eth7` 接 DHCP 动态终端 `pc-dyn1`、`pc-dyn3`。`acc-tb` 的 `eth3` 接 VLAN 102 的 `pc-tb1`。教学区 VLAN、Trunk 与 VRRP 关系如图 7-1 所示。
+
+![图 7-1 教学区 VLAN、Trunk 与 VRRP](figures/fig-7-1-teaching-vlan.png)
+
+**图 7-1 教学区 VLAN、Trunk 与 VRRP**
 
 #### 7.1.4 交换机配置
 
@@ -388,7 +400,11 @@ DHCP 客户端通过 Discover、Offer、Request、Ack 四个步骤获取地址�
 
 #### 7.2.3 网络配置拓扑结构
 
-DHCP 服务器部署在 `srv-dc1`（10.60.0.10），通过 VLAN 70 接入 `dc-sw`；10 台区域汇聚运行 dnsmasq relay。动态终端 `pc-dyn1`、`pc-dyn2`、`pc-dyn3` 分别接入 VLAN 101、301、500，通过 `udhcpc` 获取地址。服务器与 Relay 之间的路由由 OSPF 提供。
+DHCP 服务器部署在 `srv-dc1`（10.60.0.10），通过 VLAN 70 接入 `dc-sw`；10 台区域汇聚运行 dnsmasq relay。动态终端 `pc-dyn1`、`pc-dyn2`、`pc-dyn3` 分别接入 VLAN 101、301、500，通过 `udhcpc` 获取地址。服务器与 Relay 之间的路由由 OSPF 提供。DHCP Relay 报文流程如图 7-2 所示。
+
+![图 7-2 DHCP Relay 地址获取流程](figures/fig-7-2-dhcp-relay.png)
+
+**图 7-2 DHCP Relay 地址获取流程**
 
 #### 7.2.4 路由器配置
 
@@ -459,7 +475,11 @@ table inet fw {
 }
 ```
 
-DMZ 发布使用 DNAT：`198.51.100.80:80/443` 映射到 `10.80.0.10:80/443`。源 NAT 只对 Trust→Untrust 生效，DNAT 回程由 conntrack 自动还原，避免被 masquerade 改写。
+DMZ 发布使用 DNAT：`198.51.100.80:80/443` 映射到 `10.80.0.10:80/443`。源 NAT 只对 Trust→Untrust 生效，DNAT 回程由 conntrack 自动还原，避免被 masquerade 改写。防火墙三区与 SNAT/DNAT 路径如图 7-3 所示。
+
+![图 7-3 防火墙三区与 SNAT/DNAT](figures/fig-7-3-firewall-nat.png)
+
+**图 7-3 防火墙三区与 SNAT/DNAT**
 
 #### 7.3.4 实验成果验证
 
@@ -486,7 +506,11 @@ OSPF 通过 Hello 报文建立邻居，选举 DR/BDR，交换 LSA 并计算最�
 
 #### 7.4.2 网络配置拓扑结构
 
-核心 `core1/core2` 的 `eth11/eth14` 组成 `bond0`，逻辑地址为 `10.0.0.1/30` 和 `10.0.0.2/30`。服务器 `srv-dc1` 的 `eth1/eth2` 组成 active-backup `bond0`，接入 `dc-sw` 的两个 VLAN 70 端口。各区域汇聚双上行到双核心，OSPF 形成 11 条 Full 邻居。
+核心 `core1/core2` 的 `eth11/eth14` 组成 `bond0`，逻辑地址为 `10.0.0.1/30` 和 `10.0.0.2/30`。服务器 `srv-dc1` 的 `eth1/eth2` 组成 active-backup `bond0`，接入 `dc-sw` 的两个 VLAN 70 端口。各区域汇聚双上行到双核心，OSPF 形成 11 条 Full 邻居。OSPF 邻居与链路聚合关系如图 7-4 所示。
+
+![图 7-4 OSPF 动态路由与链路聚合](figures/fig-7-4-ospf-lag.png)
+
+**图 7-4 OSPF 动态路由与链路聚合**
 
 #### 7.4.3 路由器配置
 
@@ -538,7 +562,11 @@ FAIL-04 首次失败：断开 `agg-t1` 上联后，OSPF 邻居恢复超过测试
 
 #### 7.5.1 宿舍区访问控制原理
 
-宿舍区与教学区、实验区、管理网、数据中心之间的流量不经过出口防火墙，因此隔离策略部署在区域汇聚的 `table inet zone`。规则顺序为：放行已建立会话与 DHCP；宿舍 SVI 源地址校验；宿舍流量进入 `dorm_filter`；管理源放行；管理目的由核心统一保护。
+宿舍区与教学区、实验区、管理网、数据中心之间的流量不经过出口防火墙，因此隔离策略部署在区域汇聚的 `table inet zone`。规则顺序为：放行已建立会话与 DHCP；宿舍 SVI 源地址校验；宿舍流量进入 `dorm_filter`；管理源放行；管理目的由核心统一保护。宿舍区访问控制路径如图 7-5 所示。
+
+![图 7-5 宿舍区访问控制与管理网保护](figures/fig-7-5-dorm-isolation.png)
+
+**图 7-5 宿舍区访问控制与管理网保护**
 
 `dorm_filter` 内仅放行宿舍互访、DNS 53、Internet、DMZ 80/443，随后依次拒绝管理网、教学区、实验区、数据中心，末条默认 drop。每条关键规则带 `iso.*` 计数器，便于验证命中。
 

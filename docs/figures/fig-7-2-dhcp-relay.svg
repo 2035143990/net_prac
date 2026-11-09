@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="700" viewBox="0 0 1100 700">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill:#1f2937; }
+    .title { font-size: 24px; font-weight: 700; fill:#0f172a; }
+    .label { font-size: 13px; fill:#475569; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .host { fill:#f1f5f9; stroke:#64748b; }
+    .access { fill:#dcfce7; stroke:#16a34a; }
+    .agg { fill:#ede9fe; stroke:#7c3aed; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .srv { fill:#fce7f3; stroke:#db2777; }
+    .life { stroke:#cbd5e1; stroke-width:1.5; stroke-dasharray:5 5; }
+    .msg { stroke:#475569; stroke-width:2; fill:none; marker-end:url(#arrow); }
+    .relay { stroke:#7c3aed; stroke-width:2.5; fill:none; marker-end:url(#arrow); }
+  </style>
+  <rect width="1100" height="700" fill="#f8fafc"/>
+  <text x="550" y="36" text-anchor="middle" class="title">DHCP Relay 地址获取流程</text>
+  <text x="550" y="62" text-anchor="middle" class="label">动态终端广播 Discover，汇聚 Relay 以 SVI 地址作为 giaddr 单播到数据中心</text>
+
+  <rect x="60" y="95" width="150" height="52" class="box host"/><text x="135" y="119" text-anchor="middle">pc-dyn1</text><text x="135" y="138" text-anchor="middle" class="label">VLAN 101</text>
+  <rect x="270" y="95" width="150" height="52" class="box access"/><text x="345" y="119" text-anchor="middle">acc-ta</text><text x="345" y="138" text-anchor="middle" class="label">Access / Trunk</text>
+  <rect x="480" y="95" width="180" height="52" class="box agg"/><text x="570" y="119" text-anchor="middle">agg-t1 / agg-t2</text><text x="570" y="138" text-anchor="middle" class="label">dnsmasq relay</text>
+  <rect x="720" y="95" width="150" height="52" class="box core"/><text x="795" y="119" text-anchor="middle">core1 / core2</text><text x="795" y="138" text-anchor="middle" class="label">OSPF 路由</text>
+  <rect x="930" y="95" width="140" height="52" class="box srv"/><text x="1000" y="119" text-anchor="middle">srv-dc1</text><text x="1000" y="138" text-anchor="middle" class="label">10.60.0.10</text>
+
+  <line x1="135" y1="147" x2="135" y2="520" class="life"/>
+  <line x1="345" y1="147" x2="345" y2="520" class="life"/>
+  <line x1="570" y1="147" x2="570" y2="520" class="life"/>
+  <line x1="795" y1="147" x2="795" y2="520" class="life"/>
+  <line x1="1000" y1="147" x2="1000" y2="520" class="life"/>
+
+  <path d="M135,190 L345,190" class="msg"/><text x="240" y="181" text-anchor="middle" class="label">① Discover（广播）</text>
+  <path d="M345,230 L570,230" class="msg"/><text x="457" y="221" text-anchor="middle" class="label">② 进入 SVI</text>
+  <path d="M570,275 L795,275" class="relay"/><text x="682" y="266" text-anchor="middle" class="label">③ Relay 单播 giaddr=10.10.0.252</text>
+  <path d="M795,315 L1000,315" class="msg"/><text x="897" y="306" text-anchor="middle" class="label">④ 按 giaddr 选池</text>
+  <path d="M1000,355 L570,355" class="relay"/><text x="785" y="346" text-anchor="middle" class="label">⑤ Offer / Ack 返回 Relay</text>
+  <path d="M570,395 L135,395" class="msg"/><text x="352" y="386" text-anchor="middle" class="label">⑥ Relay 转发 Offer / Ack</text>
+  <path d="M135,435 L570,435" class="msg"/><text x="352" y="426" text-anchor="middle" class="label">⑦ Request（续租/确认）</text>
+  <path d="M570,475 L1000,475" class="relay"/><text x="785" y="466" text-anchor="middle" class="label">⑧ 服务器确认并写租约</text>
+  <path d="M1000,510 L135,510" class="msg"/><text x="567" y="501" text-anchor="middle" class="label">⑨ 客户端配置地址、网关、DNS</text>
+
+  <rect x="60" y="545" width="480" height="70" class="box"/>
+  <text x="80" y="570" class="label">服务器池：VLAN 101 .100-.200，租期 14400s</text>
+  <text x="80" y="592" class="label">网关 10.10.0.1；DNS 10.60.0.10；保留 .1-.11</text>
+  <text x="80" y="610" class="label">客户端 MAC 固定，服务器按 MAC 复用租约</text>
+
+  <rect x="560" y="545" width="480" height="70" class="box"/>
+  <text x="580" y="570" class="label">实测：pc-dyn1 10.10.0.133 / 14400</text>
+  <text x="580" y="592" class="label">pc-dyn2 10.32.0.134 / 43200</text>
+  <text x="580" y="610" class="label">pc-dyn3 10.50.0.135 / 14400；DHCP 8/8 通过</text>
+</svg>

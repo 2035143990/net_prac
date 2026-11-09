@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="770" viewBox="0 0 1050 770">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 15px; fill:#1f2937; }
+    .title { font-size: 24px; font-weight: 700; fill:#0f172a; }
+    .label { font-size: 13px; fill:#475569; }
+    .mono { font-family: Menlo,Consolas,monospace; font-size: 12px; fill:#334155; }
+    .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:8; }
+    .core { fill:#dbeafe; stroke:#2563eb; }
+    .agg { fill:#ede9fe; stroke:#7c3aed; }
+    .dc { fill:#fce7f3; stroke:#db2777; }
+    .access { fill:#dcfce7; stroke:#16a34a; }
+    .line { stroke:#475569; stroke-width:2; fill:none; }
+    .bond { stroke:#2563eb; stroke-width:5; fill:none; }
+  </style>
+  <rect width="1050" height="770" fill="#f8fafc"/>
+  <text x="525" y="36" text-anchor="middle" class="title">OSPF 动态路由与链路聚合</text>
+  <text x="525" y="62" text-anchor="middle" class="label">核心互联 bond0 802.3ad；服务器 bond0 active-backup；OSPF Area 0 共 11 条 Full 邻居</text>
+
+  <rect x="360" y="95" width="140" height="56" class="box core"/>
+  <text x="430" y="119" text-anchor="middle">core1</text>
+  <text x="430" y="139" text-anchor="middle" class="mono">10.0.0.1/30</text>
+  <rect x="550" y="95" width="140" height="56" class="box core"/>
+  <text x="620" y="119" text-anchor="middle">core2</text>
+  <text x="620" y="139" text-anchor="middle" class="mono">10.0.0.2/30</text>
+  <path d="M500,113 L550,113" class="bond"/>
+  <path d="M500,133 L550,133" class="bond"/>
+  <text x="525" y="103" text-anchor="middle" class="label">eth11</text>
+  <text x="525" y="153" text-anchor="middle" class="label">eth14</text>
+  <text x="525" y="178" text-anchor="middle" class="label">bond0 802.3ad / layer3+4</text>
+
+  <rect x="60" y="250" width="170" height="52" class="box agg"/>
+  <text x="145" y="273" text-anchor="middle">agg-t1 / agg-t2</text>
+  <text x="145" y="292" text-anchor="middle" class="label">VLAN 101/102/500</text>
+  <rect x="280" y="250" width="170" height="52" class="box agg"/>
+  <text x="365" y="273" text-anchor="middle">agg-d1 / agg-d2</text>
+  <text x="365" y="292" text-anchor="middle" class="label">VLAN 301/510</text>
+  <rect x="500" y="250" width="170" height="52" class="box agg"/>
+  <text x="585" y="273" text-anchor="middle">agg-l1 / agg-l2</text>
+  <text x="585" y="292" text-anchor="middle" class="label">VLAN 201</text>
+  <rect x="720" y="250" width="180" height="52" class="box agg"/>
+  <text x="810" y="273" text-anchor="middle">agg-lib / agg-life</text>
+  <text x="810" y="292" text-anchor="middle" class="label">VLAN 50 / 61</text>
+
+  <g class="line">
+    <path d="M390,151 L145,250"/>
+    <path d="M430,151 L365,250"/>
+    <path d="M620,151 L585,250"/>
+    <path d="M660,151 L810,250"/>
+    <path d="M500,151 L145,250"/>
+    <path d="M520,151 L365,250"/>
+    <path d="M570,151 L585,250"/>
+    <path d="M600,151 L810,250"/>
+  </g>
+  <text x="525" y="215" text-anchor="middle" class="label">每台汇聚双上行到双核心；OSPF 邻居共 10 + 1 = 11 条</text>
+
+  <rect x="760" y="370" width="150" height="50" class="box dc"/>
+  <text x="835" y="393" text-anchor="middle">dc-sw</text>
+  <text x="835" y="412" text-anchor="middle" class="label">VLAN 70</text>
+  <rect x="690" y="460" width="290" height="74" class="box dc"/>
+  <text x="835" y="485" text-anchor="middle">srv-dc1 · bond0 active-backup</text>
+  <text x="835" y="507" text-anchor="middle" class="mono">eth1（主） + eth2（备） → dc-sw</text>
+  <text x="835" y="525" text-anchor="middle" class="label">10.60.0.10/24</text>
+  <path d="M790,420 L790,460" class="line"/>
+  <path d="M880,420 L880,460" class="line"/>
+  <path d="M720,302 L760,370" class="line"/>
+  <path d="M680,302 L760,370" class="line"/>
+
+  <rect x="60" y="370" width="620" height="190" class="box"/>
+  <text x="80" y="398" class="label">OSPF 关键配置</text>
+  <text x="80" y="424" class="mono">router ospf</text>
+  <text x="80" y="446" class="mono"> network 10.0.0.0/30 area 0</text>
+  <text x="80" y="468" class="mono"> network 10.10.0.0/24 area 0</text>
+  <text x="80" y="490" class="mono"> maximum-paths 4</text>
+  <text x="80" y="512" class="mono"> default-information originate</text>
+  <text x="80" y="540" class="label">业务网段作为 passive-interface 发布，避免在接入网段建立邻居</text>
+
+  <rect x="60" y="595" width="930" height="70" class="box access"/>
+  <text x="80" y="620" class="label">链路聚合要点</text>
+  <text x="80" y="643" class="label">核心：802.3ad 动态协商，成员 eth11/eth14，成员故障由 bond 内部切换，OSPF 不重建邻居</text>
+  <text x="80" y="660" class="label">服务器：active-backup，主链路 eth1 故障时切换 eth2；LAG-01~07 全部通过</text>
+</svg>
