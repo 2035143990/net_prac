@@ -149,26 +149,6 @@
 
 完整设计采用“双核心 + 区域双汇聚 + 接入交换机”的三层结构。核心 `core1/core2` 通过两条链路聚合成 `bond0`，各区域汇聚双上行到双核心，接入交换机通过 Trunk 上联汇聚，终端通过 Access 端口接入。出口方向由 `fw1/fw2` 双防火墙连接 `r1/r2` 双出口路由器，再连接 Internet；DMZ 服务器挂在独立 DMZ 交换机上。校园网总体拓扑如图 4-1 所示。
 
-```text
-                        Internet
-                           |
-                    r1 ---------- r2
-                         |     |
-                    untrust-sw
-                         |     |
-                      fw1 ---- fw2
-                         |     |
-              trust-sw        dmz-sw
-                 |                 |
-        core1 ===== core2       srv-dmz
-          |   \   /   |
-      agg-t  agg-d  agg-l  agg-lib  agg-life
-        |      |      |       |        |
-      acc-*  acc-*  acc-*   acc-*    acc-*
-        |      |      |       |        |
-      终端   终端   终端    终端     终端
-```
-
 ![图 4-1 校园网总体拓扑](figures/fig-4-1-campus-topology.png)
 
 **图 4-1 校园网总体拓扑**
