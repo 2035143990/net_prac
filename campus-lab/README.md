@@ -28,8 +28,9 @@ campus-lab/
 │  └─ facts.json           # 生成期事实快照，测试与报告读取
 ├─ tests/
 │  ├─ lib.sh               # 断言、编号、JSONL 结果库
-│  ├─ cases.tsv            # 64 条用例清单
+│  ├─ cases.tsv            # 72 条用例清单
 │  ├─ run-all.sh           # 统一 runner，退出码 0/1/2
+│  ├─ switching.sh         # SWITCH-01~08（VLAN/Trunk/Access/STP）
 │  ├─ connectivity.sh      # CONN-01~10
 │  ├─ routing.sh           # ROUTE-01~08
 │  ├─ security.sh          # SEC-01~06
@@ -55,15 +56,17 @@ campus-lab/
 | 实验区汇聚 | `agg-l1` `agg-l2` | 上联双核心，下联 `acc-la`，VRRP 网关，DHCP Relay，区域 ACL |
 | 图书馆汇聚 | `agg-lib1` `agg-lib2` | 上联双核心，下联 `acc-lib`，VRRP 网关，DHCP Relay |
 | 生活区汇聚 | `agg-life1` `agg-life2` | 上联双核心，下联 `acc-life`，VRRP 网关，DHCP Relay |
-| 接入/二层 | `acc-ta` `acc-tb` `acc-d1` `acc-la` `acc-lib` `acc-life` `dc-sw` | Linux VLAN-filtering bridge，Trunk + Access 端口 |
+| 接入/二层 | `acc-ta` `acc-tb` `acc-d1` `acc-la` `acc-lib` `acc-life` `dc-sw` | Linux VLAN-filtering bridge，Trunk + Access 端口，启用 STP 防环 |
 | 边界防火墙 | `fw1` `fw2` | nftables 三区策略、SNAT、DMZ DNAT、VRRP 双机热备 |
 | 出口路由 | `r1` `r2` | 连接 Untrust 与模拟 Internet，静态路由 + VRRP |
 | 传输二层 | `trust-sw` `untrust-sw` `dmz-sw` `inet-sw` | Trust / Untrust / DMZ / Internet 汇聚二层转发 |
 | 终端 | `pc-*` `ap-*` `srv-*` `mgmt-pc` `internet` | 17 台 Alpine 终端/服务器，3 台动态终端 |
 
-路由：核心、汇聚之间运行 OSPF（Area 0），核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
+路由：核心、汇聚之间运行 OSPF（Area 0），所有 `/30` 直连传输链路显式设置为 point-to-point，核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
 
 安全：`fw1/fw2` 上 Trust 可访问 Untrust/DMZ；Untrust 仅可通过 `198.51.100.80` 的 DNAT 访问 DMZ TCP 80/443；Untrust→Trust、DMZ→Trust 默认丢弃；Trust→Untrust 出方向做源 NAT。宿舍区在区域汇聚被限制访问管理网、教学区、实验区与数据中心，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务。
+
+二层防环：7 台接入交换机的 `br0` 均启用 STP，桥优先级为 28672。当前仿真采用路由接入，接入交换机的两个 Trunk 分别终结在两台三层汇聚设备，汇聚间不存在贯通同一 VLAN 的二层通道，因此正常情况下两个上联都保持 Forwarding；STP 用于防止误接线或后续扩展形成环路，不应把“无阻塞端口”误判为 STP 未生效。
 
 ## 3. VLAN 与地址规划
 
@@ -204,6 +207,7 @@ sh tests/run-all.sh
 也可单独执行某个套件：
 
 ```sh
+sh tests/switching.sh
 sh tests/connectivity.sh
 sh tests/routing.sh
 sh tests/security.sh
@@ -218,6 +222,7 @@ sh tests/failover.sh
 
 | 套件 | 用例 | 内容 |
 | --- | --- | --- |
+| SWITCH | SWITCH-01~08 | STP 状态、教学/宿舍/图书馆 Trunk 与 Access VLAN |
 | CONN | CONN-01~10 | 同 VLAN、跨 VLAN、跨区域、无线、NAT、DMZ |
 | ROUTE | ROUTE-01~08 | OSPF 邻居（11）、OSPF 路由、默认路由、VRRP VIP |
 | SEC | SEC-01~06 | Internet→DMZ 放行、Internet→内网阻断、私网直达阻断、计数器 |
@@ -237,11 +242,11 @@ sh tests/failover.sh
 
 ### 5.2 能力开关与 SKIP
 
-`configs/facts.json` 的 `capabilities` 为 `dhcp/acl/dnat/lag/report`。能力为 `false` 时对应套件 SKIP；能力为 `true` 但断言失败必须 FAIL，不得跳过。
+`configs/facts.json` 的 `capabilities` 为 `dhcp/acl/dnat/lag/switching/report`。能力为 `false` 时对应套件 SKIP；能力为 `true` 但断言失败必须 FAIL，不得跳过。
 
 ### 5.3 实测状态（2026-11-08）
 
-首次全量运行 run-id `20261108T115247Z` 结果为 **61/64 通过、3 失败**：
+首次全量运行 run-id `20261108T115247Z` 结果为 **61/64 通过、3 失败**。该历史运行早于 SWITCH 套件加入，因此不包含新增的 8 条二层交换检查：
 
 | 套件 | 通过/总数 | 失败项 |
 | --- | --- | --- |
@@ -254,7 +259,11 @@ sh tests/failover.sh
 | LAG | 7/7 | — |
 | FAIL | 4/6 | FAIL-04、FAIL-06 |
 
-3 项失败均已定位并修复：DHCP 脚本执行权限、Relay 早于路由收敛、核心 ACL 加载不完整、管理回程不对称、OSPF 恢复等待窗口。修复后完成关键路径复核，但**未重跑 64 条全量回归**。详细证据见 `../docs/verification-report.md`。答辩前应重新执行 `sh tests/run-all.sh` 并用新 run-id 替换本节数据。
+3 项失败均已定位并修复：DHCP 脚本执行权限、Relay 早于路由收敛、核心 ACL 加载不完整、管理回程不对称、OSPF 恢复等待窗口。该记录作为缺陷修复历史保留，详细证据见 `../docs/verification-report.md`。
+
+2026-11-09 新增 SWITCH 套件后执行 B 组专项回归（run-id `B-20261109-pass`）：SWITCH 8/8、CONN 10/10，合计 **18/18 通过**。该结果只覆盖交换与端到端连通性，不等同于 72 条全量回归。
+
+最终全量回归 run-id `FULL-20261109`：9 个套件、**72/72 全部通过**，0 失败、0 跳过。原始 JSONL、汇总与逐项日志归档于 `../docs/evidence/FULL-20261109/`。
 
 ## 6. 注意事项
 
@@ -265,11 +274,12 @@ sh tests/failover.sh
 5. **DHCP Relay 依赖 dnsmasq >= 2.86**：构建脚本已检查版本。双汇聚同时运行 relay，服务器按 MAC 复用租约；需在实测中确认无重复分配。
 6. **DMZ 443 不做 TLS**：`srv-dmz` 用 busybox `nc` 返回明文 banner，仅验证端口映射与策略。
 7. **无线部分为逻辑验证**：VLAN 500/510 模拟无线业务网段，未模拟射频、信道、关联与漫游。
-8. **测试脚本依赖容器名前缀** `clab-campus-lab-`；如修改拓扑 `name`，需同步调整 `tests/lib.sh` 的 `P` 变量。
-9. **报告与事实一致性**：修改 `gen.py` 后重新生成 `facts.json`，并执行：
+8. **STP 为接入层防护**：当前路由接入拓扑没有跨汇聚二层环路，两个上联正常保持 Forwarding；如要演示 Blocking，必须另建受控的二层冗余链路实验，不能在现网拓扑中随意加线。
+9. **测试脚本依赖容器名前缀** `clab-campus-lab-`；如修改拓扑 `name`，需同步调整 `tests/lib.sh` 的 `P` 变量。
+10. **报告与事实一致性**：修改 `gen.py` 后重新生成 `facts.json`，并执行：
 
    ```sh
    cd net_prac
    python3 tools/report_check.py
    ```
-10. **幂等校验排除 facts.json**：`facts.json` 含 `generated_at`，两次生成的 SHA 比对应排除该文件。
+11. **幂等校验排除 facts.json**：`facts.json` 含 `generated_at`，两次生成的 SHA 比对应排除该文件。

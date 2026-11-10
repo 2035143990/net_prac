@@ -1,4 +1,12 @@
 id	suite	capability	spec_section	report_section	precondition
+SWITCH-01	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-02	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-03	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-04	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-05	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-06	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-07	SWITCH	switching	5.5	7.1	capability switching
+SWITCH-08	SWITCH	switching	5.5	7.1	capability switching
 CONN-01	CONN	base	5.5	6.4	lab deployed
 CONN-02	CONN	base	5.5	6.4	lab deployed
 CONN-03	CONN	base	5.5	6.4	lab deployed

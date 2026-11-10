@@ -20,7 +20,10 @@ HOST_META = {}
 BRIDGES = []
 FW_NODES = {}
 
-CAPABILITIES = {"dhcp": True, "acl": True, "dnat": True, "lag": True, "report": True}
+CAPABILITIES = {
+    "dhcp": True, "acl": True, "dnat": True, "lag": True,
+    "switching": True, "report": True,
+}
 
 VLAN_PLAN = {
     50: {"name": "library", "subnet": "10.55.0.0/24", "gateway": "10.55.0.1", "region": "library"},
@@ -492,7 +495,10 @@ def gen_frr(node_name, node):
         "!",
     ]
     for ifname, ip in node["ifs"].items():
-        lines += [f"interface {ifname}", f" ip address {ip}", "!"]
+        lines += [f"interface {ifname}", f" ip address {ip}"]
+        if node["ospf"] and ipaddress.ip_interface(ip).network.prefixlen == 30:
+            lines.append(" ip ospf network point-to-point")
+        lines.append("!")
     for parent, subs in node["trunks"].items():
         for vid, ip in subs:
             lines += [f"interface {parent}.{vid}", f" ip address {ip}", "!"]
@@ -591,6 +597,11 @@ def gen_access(node_name, cfg):
     ports = list(cfg["trunks"].keys()) + list(cfg["access"].keys())
     lines = ["#!/bin/sh", "set -e",
              "ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0 2>/dev/null || true",
+             # Each access switch is its own L2 domain in this routed-access
+             # simulation. STP remains enabled as a loop-safety control; with
+             # no L2 path between the two routed aggregation peers, both
+             # uplinks are expected to stay forwarding.
+             "ip link set dev br0 type bridge stp_state 1 priority 28672 forward_delay 4",
              "ip link set br0 up"]
     for p in ports:
         lines += [f"ip link set {p} up",
@@ -919,6 +930,12 @@ def gen_facts():
              "peers": cfg["peers"]}
             for name, cfg in LAGS.items()
         ],
+        "switching": {
+            "access_nodes": sorted(ACCESS_NODES),
+            "stp_enabled": True,
+            "bridge_priority": 28672,
+            "design": "routed-access-no-l2-loop",
+        },
         "capabilities": CAPABILITIES,
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }

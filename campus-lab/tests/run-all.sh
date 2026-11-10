@@ -30,7 +30,7 @@ if [ "${EXPECTED:-0}" -le 0 ] || [ "${ACTUAL:-0}" -lt "${EXPECTED:-0}" ]; then
   exit 2
 fi
 
-DEFAULT_SUITES="connectivity routing security dhcp iso nat lag failover"
+DEFAULT_SUITES="switching connectivity routing security dhcp iso nat lag failover"
 SUITES=${*:-$DEFAULT_SUITES}
 OVERALL=0
 for suite in $SUITES; do

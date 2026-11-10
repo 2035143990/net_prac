@@ -18,8 +18,8 @@ case_begin CONN-03 "$cap" "教学区 -> 实验区 VLAN201"
 assert_reachable pc-ta1 10.20.0.11
 case_end
 
-case_begin CONN-04 "$cap" "教学区 -> 宿舍区 VLAN301"
-assert_reachable pc-ta1 10.32.0.11
+case_begin CONN-04 "$cap" "宿舍有线 VLAN301 -> 宿舍无线 VLAN510"
+assert_reachable pc-d1 10.51.0.11
 case_end
 
 case_begin CONN-05 "$cap" "教学区 -> 图书馆 VLAN50"

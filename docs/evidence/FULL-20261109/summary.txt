@@ -1,0 +1,15 @@
+run_id=FULL-20261109
+started=2026-11-09T08:07:36Z
+finished=2026-11-09T08:09:29Z
+env=containerlab / campus-lab / 44 nodes
+total=72 pass=72 fail=0 skip=0
+suite SWITCH: pass=8 fail=0 skip=0
+suite CONN: pass=10 fail=0 skip=0
+suite ROUTE: pass=8 fail=0 skip=0
+suite SEC: pass=6 fail=0 skip=0
+suite DHCP: pass=8 fail=0 skip=0
+suite ISO: pass=12 fail=0 skip=0
+suite NAT: pass=7 fail=0 skip=0
+suite LAG: pass=7 fail=0 skip=0
+suite FAIL: pass=6 fail=0 skip=0
+result=PASS
