@@ -1,202 +1,330 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>奉贤校区校园网拓扑 · 44 节点 / 66 链路</title>
+<title>奉贤校区校园网拓扑 · 完整布局与仿真</title>
 <style>
-  :root { --border:#e2e8f0; --muted:#64748b; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,-apple-system,"PingFang SC",sans-serif;
-          background:#f8fafc; color:#0f172a; }
-  header { padding:14px 22px 10px; background:#fff; border-bottom:1px solid var(--border); }
-  h1 { margin:0; font-size:16px; font-weight:650; letter-spacing:.2px; }
-  .meta { margin-top:4px; font-size:12px; color:var(--muted); }
-  .bar { display:flex; flex-wrap:wrap; gap:14px; align-items:center;
-          padding:10px 22px; background:#fff; border-bottom:1px solid var(--border);
-          position:sticky; top:0; z-index:5; }
-  .tg { display:inline-flex; align-items:center; gap:6px; font-size:12.5px;
-         cursor:pointer; user-select:none; padding:4px 9px; border-radius:999px;
-         border:1px solid var(--border); background:#fff; transition:.15s; }
-  .tg:hover { background:#f1f5f9; }
-  .tg input { margin:0; cursor:pointer; }
-  .tg i { width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .tg .cnt { color:var(--muted); font-size:11px; }
-  .spacer { flex:1; }
-  .btns { display:flex; gap:6px; }
-  button { font:inherit; font-size:12.5px; padding:5px 12px; border-radius:7px;
-            border:1px solid var(--border); background:#fff; cursor:pointer; color:#0f172a; }
-  button:hover { background:#f1f5f9; }
-  #wrap { height:calc(100vh - 108px); overflow:auto; padding:18px;
-           display:flex; justify-content:center; align-items:flex-start; }
-  svg { background:#fff; border-radius:12px; box-shadow:0 1px 3px rgba(15,23,42,.08);
-         flex:none; }
-  .node circle { transition:r .12s ease; }
-  .node:hover circle { stroke:#0f172a; }
-  .node text { pointer-events:none; }
-  .hidden-layer { display:none; }
-  .link.hidden-layer { display:none; }
+  :root{--bd:#e2e8f0;--muted:#64748b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"PingFang SC",sans-serif;background:#f8fafc;color:#0f172a}
+  header{padding:14px 22px 10px;background:#fff;border-bottom:1px solid var(--bd)}
+  h1{margin:0;font-size:16px;font-weight:650}
+  .meta{margin-top:4px;font-size:12px;color:var(--muted)}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 22px;background:#fff;
+       border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+  .tabs{display:flex;gap:4px;margin-right:14px}
+  .tab{font:inherit;font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid var(--bd);
+        background:#fff;cursor:pointer;font-weight:600;color:#475569}
+  .tab.on{background:#0f172a;color:#fff;border-color:#0f172a}
+  .tg{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;user-select:none;
+       padding:4px 9px;border-radius:999px;border:1px solid var(--bd);background:#fff}
+  .tg:hover{background:#f1f5f9}
+  .tg i,.lg i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .lg{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:4px 9px;
+       border-radius:999px;border:1px solid var(--bd);background:#fff}
+  .cnt{color:var(--muted);font-size:11px}
+  .spacer{flex:1}
+  button.act{font:inherit;font-size:12.5px;padding:5px 12px;border-radius:7px;border:1px solid var(--bd);
+              background:#fff;cursor:pointer}
+  button.act:hover{background:#f1f5f9}
+  #wrap{height:calc(100vh - 112px);overflow:auto;padding:18px;display:flex;justify-content:center;
+         align-items:flex-start}
+  svg{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.08);flex:none}
+  .hidden-layer,.link.hidden-layer{display:none}
+  .totals{font-size:12.5px;color:var(--muted);margin-left:8px}
 </style></head><body>
 <header>
-  <h1>奉贤校区校园网 · 仿真拓扑</h1>
-  <div class="meta">44 个节点 · 66 条链路 · 由 containerlab 生成 · 可勾选图层单独查看</div>
+  <h1>奉贤校区校园网 · 拓扑总览</h1>
+  <div class="meta" id="sub">完整设计布局：50 个楼宇/网段，涵盖教学楼 A–E、实验楼 A–H、学生公寓 1–28 号楼、图书馆、食堂与体育馆等</div>
 </header>
 <div class="bar">
-  <label class="tg" data-layer="internet"><input type="checkbox" checked onchange="toggle(this, 'internet')"><i style="background:#64748b"></i>外网<span class="cnt">1</span></label><label class="tg" data-layer="inet_sw"><input type="checkbox" checked onchange="toggle(this, 'inet_sw')"><i style="background:#94a3b8"></i>外网汇聚<span class="cnt">1</span></label><label class="tg" data-layer="edge"><input type="checkbox" checked onchange="toggle(this, 'edge')"><i style="background:#ea580c"></i>出口路由<span class="cnt">2</span></label><label class="tg" data-layer="untrust_sw"><input type="checkbox" checked onchange="toggle(this, 'untrust_sw')"><i style="background:#a78bfa"></i>Untrust 二层<span class="cnt">1</span></label><label class="tg" data-layer="fw"><input type="checkbox" checked onchange="toggle(this, 'fw')"><i style="background:#9333ea"></i>防火墙<span class="cnt">2</span></label><label class="tg" data-layer="zone_sw"><input type="checkbox" checked onchange="toggle(this, 'zone_sw')"><i style="background:#34d399"></i>Trust / DMZ 二层<span class="cnt">2</span></label><label class="tg" data-layer="core"><input type="checkbox" checked onchange="toggle(this, 'core')"><i style="background:#dc2626"></i>核心<span class="cnt">2</span></label><label class="tg" data-layer="agg"><input type="checkbox" checked onchange="toggle(this, 'agg')"><i style="background:#2563eb"></i>汇聚<span class="cnt">10</span></label><label class="tg" data-layer="access"><input type="checkbox" checked onchange="toggle(this, 'access')"><i style="background:#16a34a"></i>接入<span class="cnt">7</span></label><label class="tg" data-layer="host"><input type="checkbox" checked onchange="toggle(this, 'host')"><i style="background:#0891b2"></i>终端/服务器<span class="cnt">16</span></label>
+  <div class="tabs">
+    <button class="tab on" onclick="showView('design',this)">完整设计布局</button>
+    <button class="tab" onclick="showView('sim',this)">仿真运行拓扑</button>
+  </div>
+  <span id="legend-design"><span class="lg"><i style="background:#2563eb"></i>教学区<span class="cnt">5</span></span><span class="lg"><i style="background:#7c3aed"></i>实验区<span class="cnt">8</span></span><span class="lg"><i style="background:#0d9488"></i>宿舍区<span class="cnt">28</span></span><span class="lg"><i style="background:#b45309"></i>图书馆<span class="cnt">1</span></span><span class="lg"><i style="background:#be123c"></i>生活区<span class="cnt">3</span></span><span class="lg"><i style="background:#0891b2"></i>数据中心 / 计算机实验中心<span class="cnt">1</span></span><span class="lg"><i style="background:#475569"></i>网络管理<span class="cnt">1</span></span><span class="lg"><i style="background:#9333ea"></i>DMZ（出口发布区）<span class="cnt">1</span></span><span class="lg"><i style="background:#64748b"></i>无线子网<span class="cnt">2</span></span></span>
+  <span id="legend-sim" style="display:none"><label class="tg" data-layer="internet"><input type="checkbox" checked onchange="toggleLayer(this,'internet')"><i style="background:#64748b"></i>外网<span class="cnt">1</span></label><label class="tg" data-layer="inet_sw"><input type="checkbox" checked onchange="toggleLayer(this,'inet_sw')"><i style="background:#94a3b8"></i>外网汇聚<span class="cnt">1</span></label><label class="tg" data-layer="edge"><input type="checkbox" checked onchange="toggleLayer(this,'edge')"><i style="background:#ea580c"></i>出口路由<span class="cnt">2</span></label><label class="tg" data-layer="untrust_sw"><input type="checkbox" checked onchange="toggleLayer(this,'untrust_sw')"><i style="background:#a78bfa"></i>Untrust 二层<span class="cnt">1</span></label><label class="tg" data-layer="fw"><input type="checkbox" checked onchange="toggleLayer(this,'fw')"><i style="background:#9333ea"></i>防火墙<span class="cnt">2</span></label><label class="tg" data-layer="zone_sw"><input type="checkbox" checked onchange="toggleLayer(this,'zone_sw')"><i style="background:#34d399"></i>Trust / DMZ 二层<span class="cnt">2</span></label><label class="tg" data-layer="core"><input type="checkbox" checked onchange="toggleLayer(this,'core')"><i style="background:#dc2626"></i>核心<span class="cnt">2</span></label><label class="tg" data-layer="agg"><input type="checkbox" checked onchange="toggleLayer(this,'agg')"><i style="background:#2563eb"></i>汇聚<span class="cnt">10</span></label><label class="tg" data-layer="access"><input type="checkbox" checked onchange="toggleLayer(this,'access')"><i style="background:#16a34a"></i>接入<span class="cnt">7</span></label><label class="tg" data-layer="host"><input type="checkbox" checked onchange="toggleLayer(this,'host')"><i style="background:#0891b2"></i>终端/服务器<span class="cnt">16</span></label></span>
   <span class="spacer"></span>
-  <span class="btns">
-    <button onclick="setZoom(-0.15)">−</button>
-    <button onclick="setZoom(0.15)">+</button>
-    <button onclick="fit()">适应窗口</button>
-    <button onclick="allOn()">全部显示</button>
+  <span id="ops-sim" style="display:none">
+    <button class="act" onclick="setZoom(-0.15)">−</button>
+    <button class="act" onclick="setZoom(0.15)">+</button>
+    <button class="act" onclick="fit()">适应窗口</button>
+    <button class="act" onclick="allOn()">全部显示</button>
   </span>
 </div>
 <div id="wrap">
-<svg id="topo" viewBox="0 0 1870 1800" xmlns="http://www.w3.org/2000/svg">
-<line class="link l-agg l-core" x1="825" y1="1080" x2="1600" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="1790" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="1600" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="1790" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="80" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="270" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="80" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="270" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="460" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="650" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="460" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="650" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="840" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="1030" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="840" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="1030" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="1220" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="825" y1="1080" x2="1410" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="1220" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-core" x1="1045" y1="1080" x2="1410" y2="1245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core" x1="825" y1="1080" x2="1045" y2="1080" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core" x1="825" y1="1080" x2="1045" y2="1080" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-zone_sw" x1="825" y1="1080" x2="1045" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-zone_sw" x1="1045" y1="1080" x2="1045" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-access" x1="825" y1="1080" x2="1385" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-access" x1="1045" y1="1080" x2="1385" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1600" y1="1245" x2="1085" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1790" y1="1245" x2="1085" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1600" y1="1245" x2="1235" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1790" y1="1245" x2="1235" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="80" y1="1245" x2="485" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="270" y1="1245" x2="485" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="460" y1="1245" x2="635" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="650" y1="1245" x2="635" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="840" y1="1245" x2="785" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1030" y1="1245" x2="785" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1220" y1="1245" x2="935" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-agg l-access" x1="1410" y1="1245" x2="935" y2="1410" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1410" x2="1198" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1410" x2="1302" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1410" x2="252" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1410" x2="568" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1410" x2="778" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1235" y1="1410" x2="1408" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1410" x2="462" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1410" x2="148" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1410" x2="672" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="635" y1="1410" x2="882" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="785" y1="1410" x2="988" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="935" y1="1410" x2="1092" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1410" x2="1512" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1410" x2="1512" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1410" x2="1618" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1410" x2="358" y2="1575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-zone_sw l-fw" x1="825" y1="750" x2="1045" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-zone_sw l-fw" x1="1045" y1="750" x2="1045" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-untrust_sw l-fw" x1="825" y1="750" x2="935" y2="585" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-untrust_sw l-fw" x1="1045" y1="750" x2="935" y2="585" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-untrust_sw l-edge" x1="825" y1="420" x2="935" y2="585" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-untrust_sw l-edge" x1="1045" y1="420" x2="935" y2="585" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-zone_sw l-fw" x1="825" y1="750" x2="825" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-zone_sw l-fw" x1="1045" y1="750" x2="825" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-zone_sw" x1="1722" y1="1575" x2="825" y2="915" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-edge" x1="825" y1="420" x2="935" y2="255" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-edge" x1="1045" y1="420" x2="935" y2="255" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-internet" x1="935" y1="90" x2="935" y2="255" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<g class="node l-access" data-name="acc-d1" data-layer="access"><circle cx="485" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="485" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-d1</text></g>
-<g class="node l-access" data-name="acc-la" data-layer="access"><circle cx="635" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="635" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-la</text></g>
-<g class="node l-access" data-name="acc-lib" data-layer="access"><circle cx="785" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="785" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-lib</text></g>
-<g class="node l-access" data-name="acc-life" data-layer="access"><circle cx="935" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="935" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-life</text></g>
-<g class="node l-access" data-name="acc-ta" data-layer="access"><circle cx="1085" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="1085" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-ta</text></g>
-<g class="node l-access" data-name="acc-tb" data-layer="access"><circle cx="1235" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="1235" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">acc-tb</text></g>
-<g class="node l-agg" data-name="agg-d1" data-layer="agg"><circle cx="80" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="80" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-d1</text></g>
-<g class="node l-agg" data-name="agg-d2" data-layer="agg"><circle cx="270" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="270" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-d2</text></g>
-<g class="node l-agg" data-name="agg-l1" data-layer="agg"><circle cx="460" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="460" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-l1</text></g>
-<g class="node l-agg" data-name="agg-l2" data-layer="agg"><circle cx="650" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="650" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-l2</text></g>
-<g class="node l-agg" data-name="agg-lib1" data-layer="agg"><circle cx="840" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="840" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-lib1</text></g>
-<g class="node l-agg" data-name="agg-lib2" data-layer="agg"><circle cx="1030" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="1030" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-lib2</text></g>
-<g class="node l-agg" data-name="agg-life1" data-layer="agg"><circle cx="1220" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="1220" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-life1</text></g>
-<g class="node l-agg" data-name="agg-life2" data-layer="agg"><circle cx="1410" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="1410" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-life2</text></g>
-<g class="node l-agg" data-name="agg-t1" data-layer="agg"><circle cx="1600" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="1600" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-t1</text></g>
-<g class="node l-agg" data-name="agg-t2" data-layer="agg"><circle cx="1790" cy="1245" r="15" fill="#2563eb" stroke="#ffffff" stroke-width="2"/><text x="1790" y="1273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">agg-t2</text></g>
-<g class="node l-host l-host-ap" data-name="ap-d1" data-layer="host"><circle cx="148" cy="1575" r="11" fill="#0d9488" stroke="#ffffff" stroke-width="2"/><text x="148" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">ap-d1</text></g>
-<g class="node l-host l-host-ap" data-name="ap-ta" data-layer="host"><circle cx="252" cy="1575" r="11" fill="#0d9488" stroke="#ffffff" stroke-width="2"/><text x="252" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">ap-ta</text></g>
-<g class="node l-core" data-name="core1" data-layer="core"><circle cx="825" cy="1080" r="15" fill="#dc2626" stroke="#ffffff" stroke-width="2"/><text x="825" y="1108" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">core1</text></g>
-<g class="node l-core" data-name="core2" data-layer="core"><circle cx="1045" cy="1080" r="15" fill="#dc2626" stroke="#ffffff" stroke-width="2"/><text x="1045" y="1108" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">core2</text></g>
-<g class="node l-access" data-name="dc-sw" data-layer="access"><circle cx="1385" cy="1410" r="15" fill="#16a34a" stroke="#ffffff" stroke-width="2"/><text x="1385" y="1438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">dc-sw</text></g>
-<g class="node l-zone_sw" data-name="dmz-sw" data-layer="zone_sw"><circle cx="825" cy="915" r="15" fill="#34d399" stroke="#ffffff" stroke-width="2"/><text x="825" y="943" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">dmz-sw</text></g>
-<g class="node l-fw" data-name="fw1" data-layer="fw"><circle cx="825" cy="750" r="15" fill="#9333ea" stroke="#ffffff" stroke-width="2"/><text x="825" y="778" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">fw1</text></g>
-<g class="node l-fw" data-name="fw2" data-layer="fw"><circle cx="1045" cy="750" r="15" fill="#9333ea" stroke="#ffffff" stroke-width="2"/><text x="1045" y="778" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">fw2</text></g>
-<g class="node l-inet_sw" data-name="inet-sw" data-layer="inet_sw"><circle cx="935" cy="255" r="15" fill="#94a3b8" stroke="#ffffff" stroke-width="2"/><text x="935" y="283" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">inet-sw</text></g>
-<g class="node l-internet" data-name="internet" data-layer="internet"><circle cx="935" cy="90" r="15" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="935" y="118" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">internet</text></g>
-<g class="node l-host l-host-pc" data-name="mgmt-pc" data-layer="host"><circle cx="358" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="358" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">mgmt-pc</text></g>
-<g class="node l-host l-host-pc" data-name="pc-d1" data-layer="host"><circle cx="462" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="462" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-d1</text></g>
-<g class="node l-host l-host-pc" data-name="pc-dyn1" data-layer="host"><circle cx="568" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="568" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-dyn1</text></g>
-<g class="node l-host l-host-pc" data-name="pc-dyn2" data-layer="host"><circle cx="672" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="672" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-dyn2</text></g>
-<g class="node l-host l-host-pc" data-name="pc-dyn3" data-layer="host"><circle cx="778" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="778" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-dyn3</text></g>
-<g class="node l-host l-host-pc" data-name="pc-la1" data-layer="host"><circle cx="882" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="882" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-la1</text></g>
-<g class="node l-host l-host-pc" data-name="pc-lib" data-layer="host"><circle cx="988" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="988" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-lib</text></g>
-<g class="node l-host l-host-pc" data-name="pc-life" data-layer="host"><circle cx="1092" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="1092" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-life</text></g>
-<g class="node l-host l-host-pc" data-name="pc-ta1" data-layer="host"><circle cx="1198" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="1198" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-ta1</text></g>
-<g class="node l-host l-host-pc" data-name="pc-ta2" data-layer="host"><circle cx="1302" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="1302" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-ta2</text></g>
-<g class="node l-host l-host-pc" data-name="pc-tb1" data-layer="host"><circle cx="1408" cy="1575" r="11" fill="#64748b" stroke="#ffffff" stroke-width="2"/><text x="1408" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">pc-tb1</text></g>
-<g class="node l-edge" data-name="r1" data-layer="edge"><circle cx="825" cy="420" r="15" fill="#ea580c" stroke="#ffffff" stroke-width="2"/><text x="825" y="448" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">r1</text></g>
-<g class="node l-edge" data-name="r2" data-layer="edge"><circle cx="1045" cy="420" r="15" fill="#ea580c" stroke="#ffffff" stroke-width="2"/><text x="1045" y="448" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">r2</text></g>
-<g class="node l-host l-host-srv" data-name="srv-dc1" data-layer="host"><circle cx="1512" cy="1575" r="11" fill="#0891b2" stroke="#ffffff" stroke-width="2"/><text x="1512" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">srv-dc1</text></g>
-<g class="node l-host l-host-srv" data-name="srv-dc2" data-layer="host"><circle cx="1618" cy="1575" r="11" fill="#0891b2" stroke="#ffffff" stroke-width="2"/><text x="1618" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">srv-dc2</text></g>
-<g class="node l-host l-host-srv" data-name="srv-dmz" data-layer="host"><circle cx="1722" cy="1575" r="11" fill="#0891b2" stroke="#ffffff" stroke-width="2"/><text x="1722" y="1599" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">srv-dmz</text></g>
-<g class="node l-zone_sw" data-name="trust-sw" data-layer="zone_sw"><circle cx="1045" cy="915" r="15" fill="#34d399" stroke="#ffffff" stroke-width="2"/><text x="1045" y="943" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">trust-sw</text></g>
-<g class="node l-untrust_sw" data-name="untrust-sw" data-layer="untrust_sw"><circle cx="935" cy="585" r="15" fill="#a78bfa" stroke="#ffffff" stroke-width="2"/><text x="935" y="613" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">untrust-sw</text></g>
+<div id="view-design">
+<svg id="svg-design" viewBox="0 0 1142 1298" xmlns="http://www.w3.org/2000/svg">
+<text x="0" y="30" font-size="14" font-weight="700" fill="#2563eb" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学区</text><text x="70" y="30" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 5 个网段 · 教学 A 楼汇聚</text>
+<g class="bld"><title>教学楼A — VLAN 101，10.10.0.0/24，网关 10.10.0.1
+10 间教室 × 2 点/层，单栋 80 点</title><rect x="0" y="42" width="150" height="62" rx="7" fill="#fff" stroke="#2563eb" stroke-width="1.3"/><rect x="0" y="42" width="4" height="62" rx="2" fill="#2563eb"/><text x="12" y="63" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学楼A</text><text x="12" y="79" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 101 · 10.10.0.0/24</text><text x="12" y="93" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">4 层 · 单栋 80 点</text></g>
+<g class="bld"><title>教学楼B — VLAN 102，10.11.0.0/24，网关 10.11.0.1
+10 间教室 × 2 点/层，单栋 80 点</title><rect x="162" y="42" width="150" height="62" rx="7" fill="#fff" stroke="#2563eb" stroke-width="1.3"/><rect x="162" y="42" width="4" height="62" rx="2" fill="#2563eb"/><text x="174" y="63" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学楼B</text><text x="174" y="79" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 102 · 10.11.0.0/24</text><text x="174" y="93" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">4 层 · 单栋 80 点</text></g>
+<g class="bld"><title>教学楼C — VLAN 103，10.12.0.0/24，网关 10.12.0.1
+10 间教室 × 2 点/层，单栋 80 点</title><rect x="324" y="42" width="150" height="62" rx="7" fill="#fff" stroke="#2563eb" stroke-width="1.3"/><rect x="324" y="42" width="4" height="62" rx="2" fill="#2563eb"/><text x="336" y="63" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学楼C</text><text x="336" y="79" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 103 · 10.12.0.0/24</text><text x="336" y="93" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">4 层 · 单栋 80 点</text></g>
+<g class="bld"><title>教学楼D — VLAN 104，10.13.0.0/24，网关 10.13.0.1
+10 间教室 × 2 点/层，单栋 80 点</title><rect x="486" y="42" width="150" height="62" rx="7" fill="#fff" stroke="#2563eb" stroke-width="1.3"/><rect x="486" y="42" width="4" height="62" rx="2" fill="#2563eb"/><text x="498" y="63" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学楼D</text><text x="498" y="79" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 104 · 10.13.0.0/24</text><text x="498" y="93" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">4 层 · 单栋 80 点</text></g>
+<g class="bld"><title>教学楼E — VLAN 105，10.14.0.0/24，网关 10.14.0.1
+10 间教室 × 2 点/层，单栋 80 点</title><rect x="648" y="42" width="150" height="62" rx="7" fill="#fff" stroke="#2563eb" stroke-width="1.3"/><rect x="648" y="42" width="4" height="62" rx="2" fill="#2563eb"/><text x="660" y="63" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">教学楼E</text><text x="660" y="79" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 105 · 10.14.0.0/24</text><text x="660" y="93" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">4 层 · 单栋 80 点</text></g>
+<text x="0" y="138" font-size="14" font-weight="700" fill="#7c3aed" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验区</text><text x="70" y="138" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 8 个网段 · 实验 A 楼汇聚</text>
+<g class="bld"><title>实验楼A — VLAN 201，10.20.0.0/24，网关 10.20.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="0" y="150" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="0" y="150" width="4" height="62" rx="2" fill="#7c3aed"/><text x="12" y="171" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼A</text><text x="12" y="187" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 201 · 10.20.0.0/24</text><text x="12" y="201" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼B — VLAN 202，10.21.0.0/24，网关 10.21.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="162" y="150" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="162" y="150" width="4" height="62" rx="2" fill="#7c3aed"/><text x="174" y="171" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼B</text><text x="174" y="187" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 202 · 10.21.0.0/24</text><text x="174" y="201" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼C — VLAN 203，10.22.0.0/24，网关 10.22.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="324" y="150" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="324" y="150" width="4" height="62" rx="2" fill="#7c3aed"/><text x="336" y="171" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼C</text><text x="336" y="187" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 203 · 10.22.0.0/24</text><text x="336" y="201" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼D — VLAN 204，10.23.0.0/24，网关 10.23.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="486" y="150" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="486" y="150" width="4" height="62" rx="2" fill="#7c3aed"/><text x="498" y="171" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼D</text><text x="498" y="187" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 204 · 10.23.0.0/24</text><text x="498" y="201" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼E — VLAN 205，10.24.0.0/24，网关 10.24.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="0" y="224" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="0" y="224" width="4" height="62" rx="2" fill="#7c3aed"/><text x="12" y="245" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼E</text><text x="12" y="261" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 205 · 10.24.0.0/24</text><text x="12" y="275" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼F — VLAN 206，10.25.0.0/24，网关 10.25.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="162" y="224" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="162" y="224" width="4" height="62" rx="2" fill="#7c3aed"/><text x="174" y="245" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼F</text><text x="174" y="261" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 206 · 10.25.0.0/24</text><text x="174" y="275" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼G — VLAN 207，10.26.0.0/24，网关 10.26.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="324" y="224" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="324" y="224" width="4" height="62" rx="2" fill="#7c3aed"/><text x="336" y="245" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼G</text><text x="336" y="261" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 207 · 10.26.0.0/24</text><text x="336" y="275" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<g class="bld"><title>实验楼H — VLAN 208，10.27.0.0/24，网关 10.27.0.1
+16 间实验室 × 4 点/层，单栋 512 点</title><rect x="486" y="224" width="150" height="62" rx="7" fill="#fff" stroke="#7c3aed" stroke-width="1.3"/><rect x="486" y="224" width="4" height="62" rx="2" fill="#7c3aed"/><text x="498" y="245" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">实验楼H</text><text x="498" y="261" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 208 · 10.27.0.0/24</text><text x="498" y="275" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">8 层 · 单栋 512 点</text></g>
+<text x="0" y="320" font-size="14" font-weight="700" fill="#0d9488" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">宿舍区</text><text x="70" y="320" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 28 个网段 · 第 1 宿舍汇聚</text>
+<g class="bld"><title>学生公寓 1 号楼 — VLAN 301，10.32.0.0/24，网关 10.32.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="0" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="0" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="12" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 1 号楼</text><text x="12" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 301 · 10.32.0.0/24</text><text x="12" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 2 号楼 — VLAN 302，10.33.0.0/24，网关 10.33.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="162" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="162" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="174" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 2 号楼</text><text x="174" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 302 · 10.33.0.0/24</text><text x="174" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 3 号楼 — VLAN 303，10.34.0.0/24，网关 10.34.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="324" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="324" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="336" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 3 号楼</text><text x="336" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 303 · 10.34.0.0/24</text><text x="336" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 4 号楼 — VLAN 304，10.35.0.0/24，网关 10.35.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="486" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="486" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="498" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 4 号楼</text><text x="498" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 304 · 10.35.0.0/24</text><text x="498" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 5 号楼 — VLAN 305，10.36.0.0/24，网关 10.36.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="648" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="648" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="660" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 5 号楼</text><text x="660" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 305 · 10.36.0.0/24</text><text x="660" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 6 号楼 — VLAN 306，10.37.0.0/24，网关 10.37.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="810" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="810" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="822" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 6 号楼</text><text x="822" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 306 · 10.37.0.0/24</text><text x="822" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 7 号楼 — VLAN 307，10.38.0.0/24，网关 10.38.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="972" y="332" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="972" y="332" width="4" height="62" rx="2" fill="#0d9488"/><text x="984" y="353" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 7 号楼</text><text x="984" y="369" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 307 · 10.38.0.0/24</text><text x="984" y="383" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 8 号楼 — VLAN 308，10.39.0.0/24，网关 10.39.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="0" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="0" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="12" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 8 号楼</text><text x="12" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 308 · 10.39.0.0/24</text><text x="12" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 9 号楼 — VLAN 309，10.40.0.0/24，网关 10.40.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="162" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="162" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="174" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 9 号楼</text><text x="174" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 309 · 10.40.0.0/24</text><text x="174" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 10 号楼 — VLAN 310，10.41.0.0/24，网关 10.41.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="324" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="324" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="336" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 10 号楼</text><text x="336" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 310 · 10.41.0.0/24</text><text x="336" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 11 号楼 — VLAN 311，10.42.0.0/24，网关 10.42.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="486" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="486" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="498" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 11 号楼</text><text x="498" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 311 · 10.42.0.0/24</text><text x="498" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 12 号楼 — VLAN 312，10.43.0.0/24，网关 10.43.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="648" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="648" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="660" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 12 号楼</text><text x="660" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 312 · 10.43.0.0/24</text><text x="660" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 13 号楼 — VLAN 313，10.44.0.0/24，网关 10.44.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="810" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="810" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="822" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 13 号楼</text><text x="822" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 313 · 10.44.0.0/24</text><text x="822" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 14 号楼 — VLAN 314，10.45.0.0/24，网关 10.45.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="972" y="406" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="972" y="406" width="4" height="62" rx="2" fill="#0d9488"/><text x="984" y="427" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 14 号楼</text><text x="984" y="443" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 314 · 10.45.0.0/24</text><text x="984" y="457" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 15 号楼 — VLAN 315，10.46.0.0/24，网关 10.46.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="0" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="0" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="12" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 15 号楼</text><text x="12" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 315 · 10.46.0.0/24</text><text x="12" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 16 号楼 — VLAN 316，10.47.0.0/24，网关 10.47.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="162" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="162" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="174" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 16 号楼</text><text x="174" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 316 · 10.47.0.0/24</text><text x="174" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 17 号楼 — VLAN 317，10.48.0.0/24，网关 10.48.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="324" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="324" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="336" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 17 号楼</text><text x="336" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 317 · 10.48.0.0/24</text><text x="336" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 18 号楼 — VLAN 318，10.49.0.0/24，网关 10.49.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="486" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="486" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="498" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 18 号楼</text><text x="498" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 318 · 10.49.0.0/24</text><text x="498" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 19 号楼 — VLAN 319，10.96.0.0/24，网关 10.96.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="648" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="648" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="660" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 19 号楼</text><text x="660" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 319 · 10.96.0.0/24</text><text x="660" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 20 号楼 — VLAN 320，10.97.0.0/24，网关 10.97.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="810" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="810" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="822" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 20 号楼</text><text x="822" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 320 · 10.97.0.0/24</text><text x="822" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 21 号楼 — VLAN 321，10.98.0.0/24，网关 10.98.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="972" y="480" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="972" y="480" width="4" height="62" rx="2" fill="#0d9488"/><text x="984" y="501" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 21 号楼</text><text x="984" y="517" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 321 · 10.98.0.0/24</text><text x="984" y="531" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 22 号楼 — VLAN 322，10.99.0.0/24，网关 10.99.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="0" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="0" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="12" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 22 号楼</text><text x="12" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 322 · 10.99.0.0/24</text><text x="12" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 23 号楼 — VLAN 323，10.101.0.0/24，网关 10.101.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="162" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="162" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="174" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 23 号楼</text><text x="174" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 323 · 10.101.0.0/24</text><text x="174" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 24 号楼 — VLAN 324，10.102.0.0/24，网关 10.102.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="324" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="324" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="336" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 24 号楼</text><text x="336" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 324 · 10.102.0.0/24</text><text x="336" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 25 号楼 — VLAN 325，10.103.0.0/24，网关 10.103.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="486" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="486" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="498" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 25 号楼</text><text x="498" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 325 · 10.103.0.0/24</text><text x="498" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 26 号楼 — VLAN 326，10.104.0.0/24，网关 10.104.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="648" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="648" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="660" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 26 号楼</text><text x="660" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 326 · 10.104.0.0/24</text><text x="660" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 27 号楼 — VLAN 327，10.105.0.0/24，网关 10.105.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="810" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="810" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="822" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 27 号楼</text><text x="822" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 327 · 10.105.0.0/24</text><text x="822" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<g class="bld"><title>学生公寓 28 号楼 — VLAN 328，10.106.0.0/24，网关 10.106.0.1
+24 间宿舍 × 2 点/层，单栋 240 点</title><rect x="972" y="554" width="150" height="62" rx="7" fill="#fff" stroke="#0d9488" stroke-width="1.3"/><rect x="972" y="554" width="4" height="62" rx="2" fill="#0d9488"/><text x="984" y="575" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">学生公寓 28 号楼</text><text x="984" y="591" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 328 · 10.106.0.0/24</text><text x="984" y="605" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">6 层 · 单栋 240 点</text></g>
+<text x="0" y="650" font-size="14" font-weight="700" fill="#b45309" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">图书馆</text><text x="70" y="650" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 1 个网段 · 图书馆汇聚</text>
+<g class="bld"><title>图书馆 — VLAN 50，10.55.0.0/24，网关 10.55.0.1
+1–4F 阅览室 + 5F 电子阅览室 200 点</title><rect x="0" y="662" width="150" height="62" rx="7" fill="#fff" stroke="#b45309" stroke-width="1.3"/><rect x="0" y="662" width="4" height="62" rx="2" fill="#b45309"/><text x="12" y="683" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">图书馆</text><text x="12" y="699" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 50 · 10.55.0.0/24</text><text x="12" y="713" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">10 层 · 单栋 328 点</text></g>
+<text x="0" y="758" font-size="14" font-weight="700" fill="#be123c" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">生活区</text><text x="70" y="758" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 3 个网段 · 生活区汇聚</text>
+<g class="bld"><title>食堂1 — VLAN 61，10.64.0.0/24，网关 10.64.0.1
+餐厅 6 点 + 办公室 5 间 × 2 点</title><rect x="0" y="770" width="150" height="62" rx="7" fill="#fff" stroke="#be123c" stroke-width="1.3"/><rect x="0" y="770" width="4" height="62" rx="2" fill="#be123c"/><text x="12" y="791" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">食堂1</text><text x="12" y="807" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 61 · 10.64.0.0/24</text><text x="12" y="821" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">3 层 · 单栋 48 点</text></g>
+<g class="bld"><title>食堂2 — VLAN 62，10.64.0.0/24，网关 10.64.0.1
+餐厅 6 点 + 办公室 5 间 × 2 点</title><rect x="162" y="770" width="150" height="62" rx="7" fill="#fff" stroke="#be123c" stroke-width="1.3"/><rect x="162" y="770" width="4" height="62" rx="2" fill="#be123c"/><text x="174" y="791" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">食堂2</text><text x="174" y="807" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 62 · 10.64.0.0/24</text><text x="174" y="821" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">3 层 · 单栋 48 点</text></g>
+<g class="bld"><title>体育馆 — VLAN 63，10.64.0.0/24，网关 10.64.0.1
+赛事直播 / 监控 / 计分</title><rect x="324" y="770" width="150" height="62" rx="7" fill="#fff" stroke="#be123c" stroke-width="1.3"/><rect x="324" y="770" width="4" height="62" rx="2" fill="#be123c"/><text x="336" y="791" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">体育馆</text><text x="336" y="807" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 63 · 10.64.0.0/24</text><text x="336" y="821" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">1 层 · 单栋 10 点</text></g>
+<text x="0" y="866" font-size="14" font-weight="700" fill="#0891b2" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">数据中心 / 计算机实验中心</text><text x="206" y="866" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 1 个网段 · 直连双核心</text>
+<g class="bld"><title>数据中心服务器 — VLAN 70，10.60.0.0/24，网关 10.60.0.1
+2–3F 计算机实验中心 6 间 × 100 点</title><rect x="0" y="878" width="150" height="62" rx="7" fill="#fff" stroke="#0891b2" stroke-width="1.3"/><rect x="0" y="878" width="4" height="62" rx="2" fill="#0891b2"/><text x="12" y="899" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">数据中心服务器</text><text x="12" y="915" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 70 · 10.60.0.0/24</text><text x="12" y="929" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">2 层 · 单栋 1200 点</text></g>
+<text x="0" y="974" font-size="14" font-weight="700" fill="#475569" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">网络管理</text><text x="70" y="974" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 1 个网段 · 核心 SW1/SW2</text>
+<g class="bld"><title>网络管理 — VLAN 90，10.70.0.0/24，网关 10.70.0.1
+NMS / SSH / SNMP 管理网</title><rect x="0" y="986" width="150" height="62" rx="7" fill="#fff" stroke="#475569" stroke-width="1.3"/><rect x="0" y="986" width="4" height="62" rx="2" fill="#475569"/><text x="12" y="1007" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">网络管理</text><text x="12" y="1023" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 90 · 10.70.0.0/24</text><text x="12" y="1037" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">NMS / SSH / SNMP 管</text></g>
+<text x="0" y="1082" font-size="14" font-weight="700" fill="#9333ea" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">DMZ（出口发布区）</text><text x="150" y="1082" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 1 个网段 · </text>
+<g class="bld"><title>DMZ — VLAN 80，10.80.0.0/24，网关 10.80.0.1
+对外发布服务（Web/邮件/对外 DNS）</title><rect x="0" y="1094" width="150" height="62" rx="7" fill="#fff" stroke="#9333ea" stroke-width="1.3"/><rect x="0" y="1094" width="4" height="62" rx="2" fill="#9333ea"/><text x="12" y="1115" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">DMZ</text><text x="12" y="1131" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 80 · 10.80.0.0/24</text><text x="12" y="1145" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">对外发布服务</text></g>
+<text x="0" y="1190" font-size="14" font-weight="700" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">无线子网</text><text x="70" y="1190" font-size="11" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">共 2 个网段 · </text>
+<g class="bld"><title>无线-教学/图书馆/信息楼 — VLAN 500，10.50.0.0/24，网关 10.50.0.1
+SSID ECUST-EDU（VLAN 500）</title><rect x="0" y="1202" width="150" height="62" rx="7" fill="#fff" stroke="#64748b" stroke-width="1.3"/><rect x="0" y="1202" width="4" height="62" rx="2" fill="#64748b"/><text x="12" y="1223" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">无线-教学/图书馆/信息楼</text><text x="12" y="1239" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 500 · 10.50.0.0/24</text><text x="12" y="1253" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">SSID ECUST-EDU</text></g>
+<g class="bld"><title>无线-宿舍/实验区 — VLAN 510，10.51.0.0/24，网关 10.51.0.1
+SSID ECUST-STU（VLAN 510）</title><rect x="162" y="1202" width="150" height="62" rx="7" fill="#fff" stroke="#64748b" stroke-width="1.3"/><rect x="162" y="1202" width="4" height="62" rx="2" fill="#64748b"/><text x="174" y="1223" font-size="12.5" font-weight="600" fill="#0f172a" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">无线-宿舍/实验区</text><text x="174" y="1239" font-size="9.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">VLAN 510 · 10.51.0.0/24</text><text x="174" y="1253" font-size="9.5" fill="#64748b" font-family="system-ui,-apple-system,'PingFang SC',sans-serif">SSID ECUST-STU</text></g>
 </svg>
 </div>
+<div id="view-sim" style="display:none">
+<svg id="svg-sim" viewBox="0 0 1870 1770" xmlns="http://www.w3.org/2000/svg">
+<line class="link l-core l-agg" x1="825" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="825" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-agg" x1="1045" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core" x1="825" y1="1070" x2="1045" y2="1070" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core" x1="825" y1="1070" x2="1045" y2="1070" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-core" x1="825" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-core" x1="1045" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-access" x1="825" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-access" x1="1045" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1600" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1790" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1600" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1790" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="80" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="270" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="460" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="650" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="840" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1030" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1220" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1410" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="1198" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="1302" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="252" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="568" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="778" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1235" y1="1400" x2="1408" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="462" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="148" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="672" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="635" y1="1400" x2="882" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="785" y1="1400" x2="988" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="935" y1="1400" x2="1092" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1512" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1512" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1618" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="358" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="825" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="1045" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-fw l-untrust_sw" x1="825" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-fw l-untrust_sw" x1="1045" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-untrust_sw" x1="825" y1="410" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-untrust_sw" x1="1045" y1="410" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="825" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="1045" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-host" x1="1722" y1="1565" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-inet_sw" x1="825" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-inet_sw" x1="1045" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-internet l-inet_sw" x1="935" y1="80" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<g class="node l-access" data-layer="access"><title>acc-d1</title><circle cx="485" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="485" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍接入</text></g>
+<g class="node l-access" data-layer="access"><title>acc-la</title><circle cx="635" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="635" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验接入</text></g>
+<g class="node l-access" data-layer="access"><title>acc-lib</title><circle cx="785" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="785" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆接入</text></g>
+<g class="node l-access" data-layer="access"><title>acc-life</title><circle cx="935" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="935" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区接入</text></g>
+<g class="node l-access" data-layer="access"><title>acc-ta</title><circle cx="1085" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="1085" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学A接入</text></g>
+<g class="node l-access" data-layer="access"><title>acc-tb</title><circle cx="1235" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="1235" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学B接入</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-d1</title><circle cx="80" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="80" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍汇聚1</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-d2</title><circle cx="270" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="270" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍汇聚2</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-l1</title><circle cx="460" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="460" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验汇聚1</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-l2</title><circle cx="650" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="650" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验汇聚2</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-lib1</title><circle cx="840" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="840" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆汇聚1</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-lib2</title><circle cx="1030" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1030" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆汇聚2</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-life1</title><circle cx="1220" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1220" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区汇聚1</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-life2</title><circle cx="1410" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1410" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区汇聚2</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-t1</title><circle cx="1600" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1600" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学汇聚1</text></g>
+<g class="node l-agg" data-layer="agg"><title>agg-t2</title><circle cx="1790" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1790" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学汇聚2</text></g>
+<g class="node l-host l-host-ap" data-layer="host"><title>ap-d1</title><circle cx="148" cy="1565" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="148" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍AP</text></g>
+<g class="node l-host l-host-ap" data-layer="host"><title>ap-ta</title><circle cx="252" cy="1565" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="252" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学AP</text></g>
+<g class="node l-core" data-layer="core"><title>core1</title><circle cx="825" cy="1070" r="15" fill="#dc2626" stroke="#fff" stroke-width="2"/><text x="825" y="1098" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">核心1</text></g>
+<g class="node l-core" data-layer="core"><title>core2</title><circle cx="1045" cy="1070" r="15" fill="#dc2626" stroke="#fff" stroke-width="2"/><text x="1045" y="1098" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">核心2</text></g>
+<g class="node l-access" data-layer="access"><title>dc-sw</title><circle cx="1385" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="1385" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心接入</text></g>
+<g class="node l-zone_sw" data-layer="zone_sw"><title>dmz-sw</title><circle cx="825" cy="905" r="15" fill="#34d399" stroke="#fff" stroke-width="2"/><text x="825" y="933" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">DMZ 二层</text></g>
+<g class="node l-fw" data-layer="fw"><title>fw1</title><circle cx="825" cy="740" r="15" fill="#9333ea" stroke="#fff" stroke-width="2"/><text x="825" y="768" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">防火墙1</text></g>
+<g class="node l-fw" data-layer="fw"><title>fw2</title><circle cx="1045" cy="740" r="15" fill="#9333ea" stroke="#fff" stroke-width="2"/><text x="1045" y="768" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">防火墙2</text></g>
+<g class="node l-inet_sw" data-layer="inet_sw"><title>inet-sw</title><circle cx="935" cy="245" r="15" fill="#94a3b8" stroke="#fff" stroke-width="2"/><text x="935" y="273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">外网二层</text></g>
+<g class="node l-internet" data-layer="internet"><title>internet</title><circle cx="935" cy="80" r="15" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="935" y="108" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">外网模拟</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>mgmt-pc</title><circle cx="358" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="358" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">管理PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-d1</title><circle cx="462" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="462" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn1</title><circle cx="568" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="568" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端1</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn2</title><circle cx="672" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="672" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端2</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn3</title><circle cx="778" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="778" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端3</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-la1</title><circle cx="882" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="882" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-lib</title><circle cx="988" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="988" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-life</title><circle cx="1092" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1092" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta1</title><circle cx="1198" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1198" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC1</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta2</title><circle cx="1302" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1302" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC2</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-tb1</title><circle cx="1408" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1408" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC3</text></g>
+<g class="node l-edge" data-layer="edge"><title>r1</title><circle cx="825" cy="410" r="15" fill="#ea580c" stroke="#fff" stroke-width="2"/><text x="825" y="438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">出口路由1</text></g>
+<g class="node l-edge" data-layer="edge"><title>r2</title><circle cx="1045" cy="410" r="15" fill="#ea580c" stroke="#fff" stroke-width="2"/><text x="1045" y="438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">出口路由2</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc1</title><circle cx="1512" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1512" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心1</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc2</title><circle cx="1618" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1618" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心2</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dmz</title><circle cx="1722" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1722" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">DMZ服务器</text></g>
+<g class="node l-zone_sw" data-layer="zone_sw"><title>trust-sw</title><circle cx="1045" cy="905" r="15" fill="#34d399" stroke="#fff" stroke-width="2"/><text x="1045" y="933" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">Trust 二层</text></g>
+<g class="node l-untrust_sw" data-layer="untrust_sw"><title>untrust-sw</title><circle cx="935" cy="575" r="15" fill="#a78bfa" stroke="#fff" stroke-width="2"/><text x="935" y="603" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">Untrust 二层</text></g>
+</svg>
+</div>
+</div>
 <script>
-const svg = document.getElementById('topo');
 const wrap = document.getElementById('wrap');
-const VBW = svg.viewBox.baseVal.width, VBH = svg.viewBox.baseVal.height;
-let scale = 1;
+let view = 'design', scale = 1;
+const SVG = {design: document.getElementById('svg-design'), sim: document.getElementById('svg-sim')};
 
-function apply() {
-  const availW = wrap.clientWidth - 36;
-  const availH = wrap.clientHeight - 36;
-  const base = Math.min(availW / VBW, availH / VBH);
-  svg.style.width  = (VBW * base * scale) + 'px';
-  svg.style.height = (VBH * base * scale) + 'px';
+function apply(){
+  const s = SVG[view];
+  const vb = s.viewBox.baseVal;
+  const availW = wrap.clientWidth - 44, availH = wrap.clientHeight - 44;
+  // 等比缩放到完整可见（不裁切）；scale=1 即"适应窗口"
+  const k = Math.min(availW / vb.width, availH / vb.height) * scale;
+  s.style.width  = (vb.width  * k) + 'px';
+  s.style.height = (vb.height * k) + 'px';
 }
-function setZoom(d) { scale = Math.min(3, Math.max(0.25, scale + d)); apply(); }
-function fit() { scale = 1; apply(); }
-
-function toggle(cb, layer) {
-  const on = cb.checked;
-  const L = layer;
-  svg.querySelectorAll('.l-' + L).forEach(el => el.classList.toggle('hidden-layer', !on));
-  // 链路：仅当两端图层都可见时才显示
-  const visible = new Set();
-  document.querySelectorAll('.tg').forEach(t => {
-    if (t.querySelector('input').checked) visible.add(t.dataset.layer);
+function showView(v, btn){
+  view = v; scale = 1;
+  document.getElementById('view-design').style.display = v === 'design' ? '' : 'none';
+  document.getElementById('view-sim').style.display = v === 'sim' ? '' : 'none';
+  document.getElementById('legend-design').style.display = v === 'design' ? '' : 'none';
+  document.getElementById('legend-sim').style.display = v === 'sim' ? '' : 'none';
+  document.getElementById('ops-sim').style.display = v === 'sim' ? '' : 'none';
+  document.getElementById('sub').textContent = v === 'design'
+    ? '完整设计布局：50 个楼宇/网段，涵盖教学楼 A–E、实验楼 A–H、学生公寓 1–28 号楼、图书馆、食堂与体育馆等'
+    : '仿真运行拓扑：44 个节点、66 条链路，按网络层级排布';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  apply();
+}
+function setZoom(d){ scale = Math.min(3, Math.max(0.3, scale + d)); apply(); }
+function fit(){ scale = 1; apply(); }
+function toggleLayer(cb, L){
+  const s = SVG.sim;
+  s.querySelectorAll('.l-' + L).forEach(el => el.classList.toggle('hidden-layer', !cb.checked));
+  const vis = new Set();
+  document.querySelectorAll('#legend-sim .tg').forEach(t => {
+    if (t.querySelector('input').checked) vis.add(t.dataset.layer);
   });
-  svg.querySelectorAll('.link').forEach(el => {
+  s.querySelectorAll('.link').forEach(el => {
     const ls = [...el.classList].filter(c => c.startsWith('l-') && c !== 'link');
-    const show = ls.every(c => visible.has(c.slice(2)));
-    el.classList.toggle('hidden-layer', !show);
+    el.classList.toggle('hidden-layer', !ls.every(c => vis.has(c.slice(2))));
   });
 }
-function allOn() {
-  document.querySelectorAll('.tg input').forEach(cb => { cb.checked = true; });
-  svg.querySelectorAll('.hidden-layer').forEach(el => el.classList.remove('hidden-layer'));
+function allOn(){
+  document.querySelectorAll('#legend-sim input').forEach(cb => cb.checked = true);
+  SVG.sim.querySelectorAll('.hidden-layer').forEach(el => el.classList.remove('hidden-layer'));
 }
 window.addEventListener('resize', apply);
 window.addEventListener('load', apply);
