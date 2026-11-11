@@ -11,7 +11,7 @@ assert_reachable pc-ta1 10.10.0.12
 case_end
 
 case_begin CONN-02 "$cap" "VLAN101 -> VLAN102 三层互通"
-assert_reachable pc-ta1 10.10.1.11
+assert_reachable pc-ta1 10.11.0.11
 case_end
 
 case_begin CONN-03 "$cap" "教学区 -> 实验区 VLAN201"

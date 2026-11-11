@@ -40,8 +40,8 @@ class TestPlanGeneration(unittest.TestCase):
         """campus-lab/gen.py 已使用的代表楼栋网段不能被改动。"""
         by_building = {r.building: str(r.subnet) for r in self.rows}
         self.assertEqual(by_building["教学楼A"], "10.10.0.0/24")   # VLAN 101
-        # VLAN 102 统一为仿真口径：教学楼 B 与教学楼 A 同在 10.10 号段
-        self.assertEqual(by_building["教学楼B"], "10.10.1.0/24")   # VLAN 102
+        # 教学区按“一栋楼一个 /24、第三段顺延”：A=10.10 B=10.11 C=10.12 D=10.13 E=10.14
+        self.assertEqual(by_building["教学楼B"], "10.11.0.0/24")   # VLAN 102
         self.assertEqual(by_building["实验楼A"], "10.20.0.0/24")   # VLAN 201
         self.assertEqual(by_building["学生公寓 1 号楼"], "10.32.0.0/24")  # VLAN 301
 
