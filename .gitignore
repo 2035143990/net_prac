@@ -81,15 +81,15 @@ env/
 # ============================================================
 
 # Containerlab 运行时状态目录（clab-<labname>/）
-/clab-*/
-**/clab-*/
+# /clab-*/
+# **/clab-*/
 
 # 由 gen.py 生成的拓扑与节点配置
-campus-lab/campus-lab.clab.yml
-campus-lab/configs/
+# campus-lab/campus-lab.clab.yml
+# campus-lab/configs/
 
 # 由 gen-drawio.sh 生成的拓扑图
-campus-lab/campus-lab.clab.drawio
+# campus-lab/campus-lab.clab.drawio
 
 # 自动化测试结果
 campus-lab/tests/results/

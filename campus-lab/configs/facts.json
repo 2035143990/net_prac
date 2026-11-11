@@ -1,0 +1,223 @@
+{
+  "capabilities": {
+    "acl": true,
+    "dhcp": true,
+    "dnat": true,
+    "lag": true,
+    "report": true
+  },
+  "dhcp": {
+    "dns": "10.60.0.10",
+    "pools": [
+      {
+        "end": "10.55.0.200",
+        "gateway": "10.55.0.1",
+        "lease": 28800,
+        "netmask": "255.255.255.0",
+        "start": "10.55.0.100",
+        "subnet": "10.55.0.0/24",
+        "vid": 50
+      },
+      {
+        "end": "10.64.0.200",
+        "gateway": "10.64.0.1",
+        "lease": 28800,
+        "netmask": "255.255.255.0",
+        "start": "10.64.0.100",
+        "subnet": "10.64.0.0/24",
+        "vid": 61
+      },
+      {
+        "end": "10.10.0.200",
+        "gateway": "10.10.0.1",
+        "lease": 14400,
+        "netmask": "255.255.255.0",
+        "start": "10.10.0.100",
+        "subnet": "10.10.0.0/24",
+        "vid": 101
+      },
+      {
+        "end": "10.10.1.200",
+        "gateway": "10.10.1.1",
+        "lease": 14400,
+        "netmask": "255.255.255.0",
+        "start": "10.10.1.100",
+        "subnet": "10.10.1.0/24",
+        "vid": 102
+      },
+      {
+        "end": "10.20.0.200",
+        "gateway": "10.20.0.1",
+        "lease": 28800,
+        "netmask": "255.255.255.0",
+        "start": "10.20.0.100",
+        "subnet": "10.20.0.0/24",
+        "vid": 201
+      },
+      {
+        "end": "10.32.0.200",
+        "gateway": "10.32.0.1",
+        "lease": 43200,
+        "netmask": "255.255.255.0",
+        "start": "10.32.0.100",
+        "subnet": "10.32.0.0/24",
+        "vid": 301
+      },
+      {
+        "end": "10.50.0.200",
+        "gateway": "10.50.0.1",
+        "lease": 14400,
+        "netmask": "255.255.255.0",
+        "start": "10.50.0.100",
+        "subnet": "10.50.0.0/24",
+        "vid": 500
+      },
+      {
+        "end": "10.51.0.200",
+        "gateway": "10.51.0.1",
+        "lease": 43200,
+        "netmask": "255.255.255.0",
+        "start": "10.51.0.100",
+        "subnet": "10.51.0.0/24",
+        "vid": 510
+      }
+    ],
+    "relays": [
+      "agg-t1",
+      "agg-t2",
+      "agg-d1",
+      "agg-d2",
+      "agg-l1",
+      "agg-l2",
+      "agg-lib1",
+      "agg-lib2",
+      "agg-life1",
+      "agg-life2"
+    ],
+    "server": "10.60.0.10"
+  },
+  "generated_at": "2026-11-11T06:28:44Z",
+  "lags": [
+    {
+      "members": [
+        "eth11",
+        "eth14"
+      ],
+      "mode": "802.3ad",
+      "name": "core-lag0",
+      "peers": {
+        "core1": "core2",
+        "core2": "core1"
+      }
+    },
+    {
+      "members": [
+        "eth1",
+        "eth2"
+      ],
+      "mode": "active-backup",
+      "name": "dc-srv-lag0",
+      "peers": {
+        "srv-dc1": "dc-sw"
+      }
+    }
+  ],
+  "links": 66,
+  "mgmt_vlan": 90,
+  "nat": {
+    "publish": [
+      {
+        "private": "10.80.0.10:80",
+        "public": "198.51.100.80:80",
+        "type": "dnat"
+      },
+      {
+        "private": "10.80.0.10:443",
+        "public": "198.51.100.80:443",
+        "type": "dnat"
+      }
+    ]
+  },
+  "nodes": {
+    "bridge": 4,
+    "frr": 14,
+    "fw": 2,
+    "host": 17,
+    "l2": 7,
+    "total": 44
+  },
+  "subnets": {
+    "101": {
+      "gateway": "10.10.0.1",
+      "name": "teaching-a",
+      "region": "teaching",
+      "subnet": "10.10.0.0/24"
+    },
+    "102": {
+      "gateway": "10.10.1.1",
+      "name": "teaching-b",
+      "region": "teaching",
+      "subnet": "10.10.1.0/24"
+    },
+    "201": {
+      "gateway": "10.20.0.1",
+      "name": "lab",
+      "region": "lab",
+      "subnet": "10.20.0.0/24"
+    },
+    "301": {
+      "gateway": "10.32.0.1",
+      "name": "dorm-a",
+      "region": "dorm",
+      "subnet": "10.32.0.0/24"
+    },
+    "50": {
+      "gateway": "10.55.0.1",
+      "name": "library",
+      "region": "library",
+      "subnet": "10.55.0.0/24"
+    },
+    "500": {
+      "gateway": "10.50.0.1",
+      "name": "wireless-edu",
+      "region": "teaching",
+      "subnet": "10.50.0.0/24"
+    },
+    "510": {
+      "gateway": "10.51.0.1",
+      "name": "wireless-dorm",
+      "region": "dorm",
+      "subnet": "10.51.0.0/24"
+    },
+    "61": {
+      "gateway": "10.64.0.1",
+      "name": "living",
+      "region": "living",
+      "subnet": "10.64.0.0/24"
+    },
+    "70": {
+      "gateway": "10.60.0.1",
+      "name": "datacenter",
+      "region": "datacenter",
+      "subnet": "10.60.0.0/24"
+    },
+    "80": {
+      "gateway": "10.80.0.1",
+      "name": "dmz",
+      "region": "dmz",
+      "subnet": "10.80.0.0/24"
+    }
+  },
+  "vlans": [
+    50,
+    61,
+    70,
+    80,
+    101,
+    102,
+    201,
+    301,
+    500,
+    510
+  ]
+}

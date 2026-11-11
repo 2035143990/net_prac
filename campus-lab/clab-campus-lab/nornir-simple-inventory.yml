@@ -1,0 +1,221 @@
+---
+acc-d1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.20
+acc-la:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.4
+acc-lib:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.16
+acc-life:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.17
+acc-ta:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.28
+acc-tb:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.40
+agg-d1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.36
+agg-d2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.18
+agg-l1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.29
+agg-l2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.41
+agg-lib1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.21
+agg-lib2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.11
+agg-life1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.22
+agg-life2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.23
+agg-t1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.42
+agg-t2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.19
+ap-d1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.5
+ap-ta:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.24
+core1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.6
+core2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.30
+dc-sw:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.43
+dmz-sw:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.44
+fw1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.3
+fw2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.25
+inet-sw:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.12
+internet:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.7
+mgmt-pc:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.13
+pc-d1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.26
+pc-dyn1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.31
+pc-dyn2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.8
+pc-dyn3:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.14
+pc-la1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.27
+pc-lib:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.32
+pc-life:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.37
+pc-ta1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.38
+pc-ta2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.39
+pc-tb1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.15
+r1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.9
+r2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.45
+srv-dc1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.2
+srv-dc2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.33
+srv-dmz:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.10
+trust-sw:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.34
+untrust-sw:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.31.100.35

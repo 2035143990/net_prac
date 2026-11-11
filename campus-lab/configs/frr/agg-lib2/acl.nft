@@ -1,0 +1,120 @@
+table inet zone {
+  set dorm_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.32.0.0/13, 10.40.0.0/13, 10.48.0.0/15, 10.51.0.0/24, 10.96.0.0/13, 10.104.0.0/15, 10.106.0.0/16 }
+  }
+  set mgmt_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.70.0.0/24 }
+  }
+  set teaching_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.10.0.0/15, 10.12.0.0/15, 10.14.0.0/16, 10.50.0.0/24 }
+  }
+  set lab_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.20.0.0/14, 10.24.0.0/14 }
+  }
+  set library_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.55.0.0/24 }
+  }
+  set living_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.64.0.0/24 }
+  }
+  set dc_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.60.0.0/24 }
+  }
+  set dmz_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.80.0.0/24 }
+  }
+  set untrust_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.90.0.0/24 }
+  }
+  set internet_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 203.0.113.0/24 }
+  }
+  set dns_hosts {
+    type ipv4_addr
+    flags interval
+    elements = { 10.60.0.10/32 }
+  }
+  set infra_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.0.0.0/16, 10.90.0.0/24, 10.255.0.0/16 }
+  }
+  set user_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.10.0.0/15, 10.12.0.0/15, 10.14.0.0/16, 10.50.0.0/24, 10.20.0.0/14, 10.24.0.0/14, 10.32.0.0/13, 10.40.0.0/13, 10.48.0.0/15, 10.51.0.0/24, 10.96.0.0/13, 10.104.0.0/15, 10.106.0.0/16, 10.55.0.0/24, 10.64.0.0/24 }
+  }
+  chain input {
+    type filter hook input priority 0; policy accept;
+    ct state established,related counter accept comment "zone.established"
+    ip saddr @dorm_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @dorm_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @teaching_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @teaching_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @lab_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @lab_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @library_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @library_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @living_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @living_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @mgmt_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @mgmt_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @user_nets ip daddr @mgmt_nets counter drop comment "iso.in_user2mgmt"
+    ip saddr @user_nets ip daddr @infra_nets counter drop comment "iso.in_user2infra"
+  }
+  chain forward {
+    type filter hook forward priority 0; policy accept;
+    ct state established,related counter accept comment "zone.established"
+    ip saddr @dorm_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @dorm_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @teaching_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @teaching_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @lab_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @lab_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @library_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @library_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @living_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @living_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    ip saddr @mgmt_nets icmp type echo-reply counter accept comment "zone.return_icmp"
+    ip saddr @mgmt_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
+    udp dport { 67, 68 } counter accept comment "iso.dhcp"
+    ip saddr @mgmt_nets ip daddr @untrust_nets counter drop comment "iso.mgmt2untrust"
+    ip saddr @mgmt_nets ip daddr @internet_nets counter drop comment "iso.mgmt2inet"
+    ip saddr @mgmt_nets counter accept comment "iso.mgmt2biz"
+  }
+  chain dorm_filter {
+    ip daddr @dorm_nets counter accept comment "iso.dorm_internal"
+    ip daddr @dns_hosts udp dport 53 counter accept comment "iso.dorm_dns"
+    ip daddr @dns_hosts tcp dport 53 counter accept comment "iso.dorm_dns"
+    ip daddr @internet_nets counter accept comment "iso.dorm2inet"
+    ip daddr @dmz_nets tcp dport { 80, 443 } counter accept comment "iso.dorm2dmz"
+    ip daddr @mgmt_nets counter drop comment "iso.dorm2mgmt"
+    ip daddr @teaching_nets counter drop comment "iso.dorm2teaching"
+    ip daddr @lab_nets counter drop comment "iso.dorm2lab"
+    ip daddr @library_nets counter drop comment "iso.dorm2library"
+    ip daddr @dc_nets counter drop comment "iso.dorm2dc"
+    ip daddr @living_nets counter drop comment "iso.dorm2living"
+    ip daddr @infra_nets counter drop comment "iso.dorm2infra"
+    counter drop comment "iso.dorm_default"
+  }
+}

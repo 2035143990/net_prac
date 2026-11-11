@@ -1,0 +1,2489 @@
+{
+  "name": "campus-lab",
+  "type": "clab",
+  "clab": {
+    "config": {
+      "prefix": "clab",
+      "mgmt": {
+        "network": "campus_mgmt",
+        "bridge": "br-3d24eb622d12",
+        "ipv4-subnet": "172.31.100.0/24",
+        "ipv4-gw": "172.31.100.1",
+        "ipv6-gw": "fe80::a49d:d6ff:fe71:31b0",
+        "external-access": true,
+        "ipam": {
+          "provider": "containerlab"
+        }
+      }
+    }
+  },
+  "ssh-pub-keys": [],
+  "nodes": {
+    "acc-d1": {
+      "index": "0",
+      "shortname": "acc-d1",
+      "longname": "clab-campus-lab-acc-d1",
+      "fqdn": "acc-d1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-d1",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.20",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-d1",
+        "clab-node-longname": "clab-campus-lab-acc-d1",
+        "clab-node-name": "acc-d1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "acc-la": {
+      "index": "1",
+      "shortname": "acc-la",
+      "longname": "clab-campus-lab-acc-la",
+      "fqdn": "acc-la.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-la",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.4",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-la",
+        "clab-node-longname": "clab-campus-lab-acc-la",
+        "clab-node-name": "acc-la",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "acc-lib": {
+      "index": "2",
+      "shortname": "acc-lib",
+      "longname": "clab-campus-lab-acc-lib",
+      "fqdn": "acc-lib.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-lib",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.16",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-lib",
+        "clab-node-longname": "clab-campus-lab-acc-lib",
+        "clab-node-name": "acc-lib",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "acc-life": {
+      "index": "3",
+      "shortname": "acc-life",
+      "longname": "clab-campus-lab-acc-life",
+      "fqdn": "acc-life.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-life",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.17",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-life",
+        "clab-node-longname": "clab-campus-lab-acc-life",
+        "clab-node-name": "acc-life",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "acc-ta": {
+      "index": "4",
+      "shortname": "acc-ta",
+      "longname": "clab-campus-lab-acc-ta",
+      "fqdn": "acc-ta.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-ta",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.28",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-ta",
+        "clab-node-longname": "clab-campus-lab-acc-ta",
+        "clab-node-name": "acc-ta",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "acc-tb": {
+      "index": "5",
+      "shortname": "acc-tb",
+      "longname": "clab-campus-lab-acc-tb",
+      "fqdn": "acc-tb.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-tb",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.40",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/acc-tb",
+        "clab-node-longname": "clab-campus-lab-acc-tb",
+        "clab-node-name": "acc-tb",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-d1": {
+      "index": "6",
+      "shortname": "agg-d1",
+      "longname": "clab-campus-lab-agg-d1",
+      "fqdn": "agg-d1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-d1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.36",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-d1",
+        "clab-node-longname": "clab-campus-lab-agg-d1",
+        "clab-node-name": "agg-d1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-d2": {
+      "index": "7",
+      "shortname": "agg-d2",
+      "longname": "clab-campus-lab-agg-d2",
+      "fqdn": "agg-d2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-d2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.18",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-d2",
+        "clab-node-longname": "clab-campus-lab-agg-d2",
+        "clab-node-name": "agg-d2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-l1": {
+      "index": "8",
+      "shortname": "agg-l1",
+      "longname": "clab-campus-lab-agg-l1",
+      "fqdn": "agg-l1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-l1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.29",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-l1",
+        "clab-node-longname": "clab-campus-lab-agg-l1",
+        "clab-node-name": "agg-l1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-l2": {
+      "index": "9",
+      "shortname": "agg-l2",
+      "longname": "clab-campus-lab-agg-l2",
+      "fqdn": "agg-l2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-l2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.41",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-l2",
+        "clab-node-longname": "clab-campus-lab-agg-l2",
+        "clab-node-name": "agg-l2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-lib1": {
+      "index": "10",
+      "shortname": "agg-lib1",
+      "longname": "clab-campus-lab-agg-lib1",
+      "fqdn": "agg-lib1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-lib1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.21",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-lib1",
+        "clab-node-longname": "clab-campus-lab-agg-lib1",
+        "clab-node-name": "agg-lib1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-lib2": {
+      "index": "11",
+      "shortname": "agg-lib2",
+      "longname": "clab-campus-lab-agg-lib2",
+      "fqdn": "agg-lib2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-lib2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.11",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-lib2",
+        "clab-node-longname": "clab-campus-lab-agg-lib2",
+        "clab-node-name": "agg-lib2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-life1": {
+      "index": "12",
+      "shortname": "agg-life1",
+      "longname": "clab-campus-lab-agg-life1",
+      "fqdn": "agg-life1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-life1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.22",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-life1",
+        "clab-node-longname": "clab-campus-lab-agg-life1",
+        "clab-node-name": "agg-life1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-life2": {
+      "index": "13",
+      "shortname": "agg-life2",
+      "longname": "clab-campus-lab-agg-life2",
+      "fqdn": "agg-life2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-life2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.23",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-life2",
+        "clab-node-longname": "clab-campus-lab-agg-life2",
+        "clab-node-name": "agg-life2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-t1": {
+      "index": "14",
+      "shortname": "agg-t1",
+      "longname": "clab-campus-lab-agg-t1",
+      "fqdn": "agg-t1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-t1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.42",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-t1",
+        "clab-node-longname": "clab-campus-lab-agg-t1",
+        "clab-node-name": "agg-t1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "agg-t2": {
+      "index": "15",
+      "shortname": "agg-t2",
+      "longname": "clab-campus-lab-agg-t2",
+      "fqdn": "agg-t2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-t2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.19",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/agg-t2",
+        "clab-node-longname": "clab-campus-lab-agg-t2",
+        "clab-node-name": "agg-t2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "7"
+      },
+      "port-bindings": [
+      ]
+    },
+    "ap-d1": {
+      "index": "16",
+      "shortname": "ap-d1",
+      "longname": "clab-campus-lab-ap-d1",
+      "fqdn": "ap-d1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/ap-d1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.5",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/ap-d1",
+        "clab-node-longname": "clab-campus-lab-ap-d1",
+        "clab-node-name": "ap-d1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "ap-ta": {
+      "index": "17",
+      "shortname": "ap-ta",
+      "longname": "clab-campus-lab-ap-ta",
+      "fqdn": "ap-ta.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/ap-ta",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.24",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/ap-ta",
+        "clab-node-longname": "clab-campus-lab-ap-ta",
+        "clab-node-name": "ap-ta",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "core1": {
+      "index": "18",
+      "shortname": "core1",
+      "longname": "clab-campus-lab-core1",
+      "fqdn": "core1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/core1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.6",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/core1",
+        "clab-node-longname": "clab-campus-lab-core1",
+        "clab-node-name": "core1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "6"
+      },
+      "port-bindings": [
+      ]
+    },
+    "core2": {
+      "index": "19",
+      "shortname": "core2",
+      "longname": "clab-campus-lab-core2",
+      "fqdn": "core2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/core2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.30",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/core2",
+        "clab-node-longname": "clab-campus-lab-core2",
+        "clab-node-name": "core2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "6"
+      },
+      "port-bindings": [
+      ]
+    },
+    "dc-sw": {
+      "index": "20",
+      "shortname": "dc-sw",
+      "longname": "clab-campus-lab-dc-sw",
+      "fqdn": "dc-sw.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/dc-sw",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.43",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/dc-sw",
+        "clab-node-longname": "clab-campus-lab-dc-sw",
+        "clab-node-name": "dc-sw",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "8"
+      },
+      "port-bindings": [
+      ]
+    },
+    "dmz-sw": {
+      "index": "21",
+      "shortname": "dmz-sw",
+      "longname": "clab-campus-lab-dmz-sw",
+      "fqdn": "dmz-sw.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/dmz-sw",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.44",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/dmz-sw",
+        "clab-node-longname": "clab-campus-lab-dmz-sw",
+        "clab-node-name": "dmz-sw",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "5"
+      },
+      "port-bindings": [
+      ]
+    },
+    "fw1": {
+      "index": "22",
+      "shortname": "fw1",
+      "longname": "clab-campus-lab-fw1",
+      "fqdn": "fw1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/fw1",
+      "kind": "linux",
+      "image": "campus-fw:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.3",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/fw1",
+        "clab-node-longname": "clab-campus-lab-fw1",
+        "clab-node-name": "fw1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "4"
+      },
+      "port-bindings": [
+      ]
+    },
+    "fw2": {
+      "index": "23",
+      "shortname": "fw2",
+      "longname": "clab-campus-lab-fw2",
+      "fqdn": "fw2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/fw2",
+      "kind": "linux",
+      "image": "campus-fw:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.25",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/fw2",
+        "clab-node-longname": "clab-campus-lab-fw2",
+        "clab-node-name": "fw2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "4"
+      },
+      "port-bindings": [
+      ]
+    },
+    "inet-sw": {
+      "index": "24",
+      "shortname": "inet-sw",
+      "longname": "clab-campus-lab-inet-sw",
+      "fqdn": "inet-sw.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/inet-sw",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.12",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/inet-sw",
+        "clab-node-longname": "clab-campus-lab-inet-sw",
+        "clab-node-name": "inet-sw",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "1"
+      },
+      "port-bindings": [
+      ]
+    },
+    "internet": {
+      "index": "25",
+      "shortname": "internet",
+      "longname": "clab-campus-lab-internet",
+      "fqdn": "internet.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/internet",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.7",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/internet",
+        "clab-node-longname": "clab-campus-lab-internet",
+        "clab-node-name": "internet",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "0"
+      },
+      "port-bindings": [
+      ]
+    },
+    "mgmt-pc": {
+      "index": "26",
+      "shortname": "mgmt-pc",
+      "longname": "clab-campus-lab-mgmt-pc",
+      "fqdn": "mgmt-pc.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/mgmt-pc",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.13",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/mgmt-pc",
+        "clab-node-longname": "clab-campus-lab-mgmt-pc",
+        "clab-node-name": "mgmt-pc",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-d1": {
+      "index": "27",
+      "shortname": "pc-d1",
+      "longname": "clab-campus-lab-pc-d1",
+      "fqdn": "pc-d1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-d1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.26",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-d1",
+        "clab-node-longname": "clab-campus-lab-pc-d1",
+        "clab-node-name": "pc-d1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-dyn1": {
+      "index": "28",
+      "shortname": "pc-dyn1",
+      "longname": "clab-campus-lab-pc-dyn1",
+      "fqdn": "pc-dyn1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.31",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn1",
+        "clab-node-longname": "clab-campus-lab-pc-dyn1",
+        "clab-node-name": "pc-dyn1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-dyn2": {
+      "index": "29",
+      "shortname": "pc-dyn2",
+      "longname": "clab-campus-lab-pc-dyn2",
+      "fqdn": "pc-dyn2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn2",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.8",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn2",
+        "clab-node-longname": "clab-campus-lab-pc-dyn2",
+        "clab-node-name": "pc-dyn2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-dyn3": {
+      "index": "30",
+      "shortname": "pc-dyn3",
+      "longname": "clab-campus-lab-pc-dyn3",
+      "fqdn": "pc-dyn3.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn3",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.14",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-dyn3",
+        "clab-node-longname": "clab-campus-lab-pc-dyn3",
+        "clab-node-name": "pc-dyn3",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-la1": {
+      "index": "31",
+      "shortname": "pc-la1",
+      "longname": "clab-campus-lab-pc-la1",
+      "fqdn": "pc-la1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-la1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.27",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-la1",
+        "clab-node-longname": "clab-campus-lab-pc-la1",
+        "clab-node-name": "pc-la1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-lib": {
+      "index": "32",
+      "shortname": "pc-lib",
+      "longname": "clab-campus-lab-pc-lib",
+      "fqdn": "pc-lib.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-lib",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.32",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-lib",
+        "clab-node-longname": "clab-campus-lab-pc-lib",
+        "clab-node-name": "pc-lib",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-life": {
+      "index": "33",
+      "shortname": "pc-life",
+      "longname": "clab-campus-lab-pc-life",
+      "fqdn": "pc-life.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-life",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.37",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-life",
+        "clab-node-longname": "clab-campus-lab-pc-life",
+        "clab-node-name": "pc-life",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-ta1": {
+      "index": "34",
+      "shortname": "pc-ta1",
+      "longname": "clab-campus-lab-pc-ta1",
+      "fqdn": "pc-ta1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-ta1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.38",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-ta1",
+        "clab-node-longname": "clab-campus-lab-pc-ta1",
+        "clab-node-name": "pc-ta1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-ta2": {
+      "index": "35",
+      "shortname": "pc-ta2",
+      "longname": "clab-campus-lab-pc-ta2",
+      "fqdn": "pc-ta2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-ta2",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.39",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-ta2",
+        "clab-node-longname": "clab-campus-lab-pc-ta2",
+        "clab-node-name": "pc-ta2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "pc-tb1": {
+      "index": "36",
+      "shortname": "pc-tb1",
+      "longname": "clab-campus-lab-pc-tb1",
+      "fqdn": "pc-tb1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-tb1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.15",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/pc-tb1",
+        "clab-node-longname": "clab-campus-lab-pc-tb1",
+        "clab-node-name": "pc-tb1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "r1": {
+      "index": "37",
+      "shortname": "r1",
+      "longname": "clab-campus-lab-r1",
+      "fqdn": "r1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/r1",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.9",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/r1",
+        "clab-node-longname": "clab-campus-lab-r1",
+        "clab-node-name": "r1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "2"
+      },
+      "port-bindings": [
+      ]
+    },
+    "r2": {
+      "index": "38",
+      "shortname": "r2",
+      "longname": "clab-campus-lab-r2",
+      "fqdn": "r2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/r2",
+      "kind": "linux",
+      "image": "campus-frr:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.45",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/r2",
+        "clab-node-longname": "clab-campus-lab-r2",
+        "clab-node-name": "r2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "2"
+      },
+      "port-bindings": [
+      ]
+    },
+    "srv-dc1": {
+      "index": "39",
+      "shortname": "srv-dc1",
+      "longname": "clab-campus-lab-srv-dc1",
+      "fqdn": "srv-dc1.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dc1",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.2",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dc1",
+        "clab-node-longname": "clab-campus-lab-srv-dc1",
+        "clab-node-name": "srv-dc1",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "srv-dc2": {
+      "index": "40",
+      "shortname": "srv-dc2",
+      "longname": "clab-campus-lab-srv-dc2",
+      "fqdn": "srv-dc2.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dc2",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.33",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dc2",
+        "clab-node-longname": "clab-campus-lab-srv-dc2",
+        "clab-node-name": "srv-dc2",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "srv-dmz": {
+      "index": "41",
+      "shortname": "srv-dmz",
+      "longname": "clab-campus-lab-srv-dmz",
+      "fqdn": "srv-dmz.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dmz",
+      "kind": "linux",
+      "image": "campus-host:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.10",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/srv-dmz",
+        "clab-node-longname": "clab-campus-lab-srv-dmz",
+        "clab-node-name": "srv-dmz",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "9"
+      },
+      "port-bindings": [
+      ]
+    },
+    "trust-sw": {
+      "index": "42",
+      "shortname": "trust-sw",
+      "longname": "clab-campus-lab-trust-sw",
+      "fqdn": "trust-sw.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/trust-sw",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.34",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/trust-sw",
+        "clab-node-longname": "clab-campus-lab-trust-sw",
+        "clab-node-name": "trust-sw",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "5"
+      },
+      "port-bindings": [
+      ]
+    },
+    "untrust-sw": {
+      "index": "43",
+      "shortname": "untrust-sw",
+      "longname": "clab-campus-lab-untrust-sw",
+      "fqdn": "untrust-sw.campus-lab.io",
+      "group": "",
+      "labdir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/untrust-sw",
+      "kind": "linux",
+      "image": "campus-l2:latest",
+      "mgmt-net": "campus_mgmt",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.31.100.35",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-3d24eb622d12",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/clab-campus-lab/untrust-sw",
+        "clab-node-longname": "clab-campus-lab-untrust-sw",
+        "clab-node-name": "untrust-sw",
+        "clab-node-type": "",
+        "clab-owner": "",
+        "clab-topo-file": "/Users/aotarius/AoTarius/Coding/Others/Network_Application/net_prac/campus-lab/campus-lab.clab.yml",
+        "containerlab": "campus-lab",
+        "graph-level": "3"
+      },
+      "port-bindings": [
+      ]
+    }
+  },
+  "links": [
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:2b:bf:55",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-t1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:8b:38:a7",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth6",
+          "mac": "aa:c1:ab:89:39:4d",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-t2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:a9:6b:d5",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:5b:62:2b",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-t1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:ab:b7:31",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth6",
+          "mac": "aa:c1:ab:57:e8:91",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-t2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:d2:a3:bb",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:e5:9c:fd",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-d1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:84:47:ba",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth7",
+          "mac": "aa:c1:ab:a7:20:b7",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-d2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:c0:97:ae",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:14:e2:a8",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-d1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:b4:51:cf",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth7",
+          "mac": "aa:c1:ab:56:bc:ee",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-d2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:91:6e:b5",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:8b:d0:f6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-l1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:79:d2:ff",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth8",
+          "mac": "aa:c1:ab:72:14:c2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-l2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:0d:c5:4d",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:ec:ed:e4",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-l1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:37:e2:df",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth8",
+          "mac": "aa:c1:ab:b0:8b:ad",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-l2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:17:cb:f2",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:20:3e:0c",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-lib1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:11:8b:4e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth9",
+          "mac": "aa:c1:ab:e2:86:86",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-lib2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:40:46:38",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:66:69:b6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-lib1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:e7:ac:cf",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth9",
+          "mac": "aa:c1:ab:e1:c6:72",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-lib2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:20:09:ca",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:5d:32:32",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-life1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:df:bb:7c",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth10",
+          "mac": "aa:c1:ab:bc:33:0a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-life2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:9c:9d:e9",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:ad:49:f7",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-life1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:82:95:2e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth10",
+          "mac": "aa:c1:ab:e2:d9:b6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "agg-life2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:87:bf:8a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth11",
+          "mac": "aa:c1:ab:3a:c0:97",
+          "peer": "z"
+        },
+        "z": {
+          "node": "core2",
+          "interface": "eth11",
+          "mac": "aa:c1:ab:16:05:be",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth14",
+          "mac": "aa:c1:ab:24:78:77",
+          "peer": "z"
+        },
+        "z": {
+          "node": "core2",
+          "interface": "eth14",
+          "mac": "aa:c1:ab:ce:86:0e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth12",
+          "mac": "aa:c1:ab:0a:ec:00",
+          "peer": "z"
+        },
+        "z": {
+          "node": "trust-sw",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:4b:ee:bd",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth12",
+          "mac": "aa:c1:ab:b1:5a:0a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "trust-sw",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:ba:dc:5b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core1",
+          "interface": "eth13",
+          "mac": "aa:c1:ab:e5:52:f7",
+          "peer": "z"
+        },
+        "z": {
+          "node": "dc-sw",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:84:e7:07",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "core2",
+          "interface": "eth13",
+          "mac": "aa:c1:ab:24:65:5e",
+          "peer": "z"
+        },
+        "z": {
+          "node": "dc-sw",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:7a:68:0a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-t1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:d5:89:91",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-ta",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:42:28:a3",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-t2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:a6:cb:73",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-ta",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:60:8f:0a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-t1",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:a8:8b:88",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-tb",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:6e:45:8b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-t2",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:b2:3b:38",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-tb",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:31:77:46",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-d1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:4d:1f:73",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-d1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:e7:2e:30",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-d2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:6c:55:d2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-d1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:47:04:96",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-l1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:ed:2c:84",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-la",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:7c:55:31",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-l2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:5c:77:57",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-la",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:a6:fb:a3",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-lib1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:db:27:18",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-lib",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:c2:08:f6",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-lib2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:7f:14:4b",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-lib",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:01:84:00",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-life1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:d6:1c:72",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-life",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:de:f2:1b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "agg-life2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:45:06:a2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "acc-life",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:46:0d:b4",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-ta",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:7a:51:cf",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-ta1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:92:b1:68",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-ta",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:82:e4:e0",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-ta2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:62:ee:00",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-ta",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:fb:26:9e",
+          "peer": "z"
+        },
+        "z": {
+          "node": "ap-ta",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:94:ca:21",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-ta",
+          "interface": "eth6",
+          "mac": "aa:c1:ab:4e:77:7a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-dyn1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:23:53:60",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-ta",
+          "interface": "eth7",
+          "mac": "aa:c1:ab:31:c8:7f",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-dyn3",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:ea:1d:3a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-tb",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:ae:5e:26",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-tb1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:92:5d:cc",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-d1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:e6:d0:d2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-d1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:d7:8b:2d",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-d1",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:88:15:74",
+          "peer": "z"
+        },
+        "z": {
+          "node": "ap-d1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:64:55:0a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-d1",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:5e:39:a9",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-dyn2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:04:65:11",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-la",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:c2:d1:e6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-la1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:c9:eb:14",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-lib",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:90:99:74",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-lib",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:ef:56:35",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "acc-life",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:4c:86:29",
+          "peer": "z"
+        },
+        "z": {
+          "node": "pc-life",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:4b:f2:d2",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "dc-sw",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:90:00:30",
+          "peer": "z"
+        },
+        "z": {
+          "node": "srv-dc1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:02:c2:e4",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "dc-sw",
+          "interface": "eth6",
+          "mac": "aa:c1:ab:9c:cf:2b",
+          "peer": "z"
+        },
+        "z": {
+          "node": "srv-dc1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:7d:77:2a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "dc-sw",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:24:54:00",
+          "peer": "z"
+        },
+        "z": {
+          "node": "srv-dc2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:a8:bd:bb",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "dc-sw",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:f1:f8:60",
+          "peer": "z"
+        },
+        "z": {
+          "node": "mgmt-pc",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:e4:14:1d",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:58:4c:74",
+          "peer": "z"
+        },
+        "z": {
+          "node": "trust-sw",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:ca:5a:aa",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:0e:65:d0",
+          "peer": "z"
+        },
+        "z": {
+          "node": "trust-sw",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:0b:50:8a",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:de:6e:6a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "untrust-sw",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:e3:ff:b9",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:95:3e:da",
+          "peer": "z"
+        },
+        "z": {
+          "node": "untrust-sw",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:b1:76:c4",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "r1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:df:8d:82",
+          "peer": "z"
+        },
+        "z": {
+          "node": "untrust-sw",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:bd:da:d0",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "r2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:dd:3c:c1",
+          "peer": "z"
+        },
+        "z": {
+          "node": "untrust-sw",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:5b:7d:f6",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:c3:2f:56",
+          "peer": "z"
+        },
+        "z": {
+          "node": "dmz-sw",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:2b:50:87",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "fw2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:7f:98:6d",
+          "peer": "z"
+        },
+        "z": {
+          "node": "dmz-sw",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:16:7c:2b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "srv-dmz",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:56:6e:f6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "dmz-sw",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:7c:33:2e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "r1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:ff:aa:09",
+          "peer": "z"
+        },
+        "z": {
+          "node": "inet-sw",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:b5:26:b9",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "r2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:34:4f:57",
+          "peer": "z"
+        },
+        "z": {
+          "node": "inet-sw",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:3c:42:d4",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "internet",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:5b:9f:d2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "inet-sw",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:1b:9d:a5",
+          "peer": "a"
+        }
+      }
+    }
+  ]
+}
