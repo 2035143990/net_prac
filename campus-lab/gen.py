@@ -20,7 +20,8 @@ HOST_META = {}
 BRIDGES = []
 FW_NODES = {}
 
-CAPABILITIES = {"dhcp": True, "acl": True, "dnat": True, "lag": True, "report": True}
+CAPABILITIES = {"dhcp": True, "acl": True, "dnat": True, "lag": True,
+                "report": True, "rate": True, "wireless": True}
 
 VLAN_PLAN = {
     50: {"name": "library", "subnet": "10.55.0.0/24", "gateway": "10.55.0.1", "region": "library"},
@@ -33,7 +34,9 @@ VLAN_PLAN = {
     201: {"name": "lab", "subnet": "10.20.0.0/24", "gateway": "10.20.0.1", "region": "lab"},
     301: {"name": "dorm-a", "subnet": "10.32.0.0/24", "gateway": "10.32.0.1", "region": "dorm"},
     500: {"name": "wireless-edu", "subnet": "10.50.0.0/24", "gateway": "10.50.0.1", "region": "teaching"},
-    510: {"name": "wireless-dorm", "subnet": "10.51.0.0/24", "gateway": "10.51.0.1", "region": "dorm"},
+    # 任务书：宿舍区、实验区共用一个无线子网；其他大楼共用另一个。
+    # 510 因此同时服务 dorm 与 lab 两个区域。
+    510: {"name": "wireless-dorm-lab", "subnet": "10.51.0.0/24", "gateway": "10.51.0.1", "region": "dorm"},
 }
 
 DHCP_SERVER = "10.60.0.10"
@@ -64,6 +67,9 @@ ZONES = {
     "dmz_nets": ["10.80.0.0/24"],
     "untrust_nets": ["10.90.0.0/24"],
     "internet_nets": ["203.0.113.0/24"],
+    # 梅陇校区（徐汇）互联网段：经 r2 的 10.91.1.0/30 链路接入，
+    # 园区内网 10.91.0.0/16 由梅陇侧对端提供。
+    "meilong_nets": ["10.91.0.0/16"],
     "dns_hosts": [DHCP_DNS + "/32"],
     # Core/aggregation links, Trust, egress interconnect and loopbacks.
     # Users must not initiate connections to these networks.
@@ -86,13 +92,14 @@ LAGS = {
 
 def add_frr(name, loopback, ifs, trunks=None, static=None, ospf=True,
             default_originate=False, ospf_exclude=None, vrrp=None,
-            bonds=None, acl=False, dhcp_relay=False):
+            bonds=None, acl=False, dhcp_relay=False, vlan_bridges=None):
     FRR_NODES[name] = dict(loopback=loopback, ifs=ifs or {}, trunks=trunks or {},
                            static=static or [], ospf=ospf,
                            default_originate=default_originate,
                            ospf_exclude=ospf_exclude or [],
                            vrrp=vrrp or [], bonds=bonds or {},
-                           acl=acl, dhcp_relay=dhcp_relay)
+                           acl=acl, dhcp_relay=dhcp_relay,
+                           vlan_bridges=vlan_bridges or {})
 
 
 # ---------------- Core ----------------
@@ -154,6 +161,19 @@ add_frr("agg-t2", "10.255.0.12/32",
           ("eth4.102", 2, "10.11.0.1/24", 100)])
 
 # ---------------- Dorm ----------------
+# 宿舍区与实验区共用一个无线子网（VLAN 510，任务书要求）。
+#
+# 实现要点：跨楼的无线子网延伸放在「接入层」而不是「汇聚层」。
+# 汇聚层是三层设备，若在汇聚之间做二层延伸就会形成跨多个网桥的
+# 物理环路（agg-d1 → acc-d1 → agg-d2 → agg-l2 → acc-la → agg-l1 → agg-d1），
+# 广播帧在环里无限循环、ARP 应答成倍回流，同网段终端互相不可达；
+# 而环路跨越多个网桥，单个网桥的生成树协议看不到跨桥的环。
+#
+# 因此改为在两个区域的接入交换机之间架一条区域内光纤互联：
+#   acc-d1:eth6 ↔ acc-la:eth5，两端都把 VLAN 510 加入 trunk。
+# 于是 10.51.0.0/24 的广播域跨越宿舍楼与实验楼，
+# 而网关 10.51.0.1 仍由宿舍汇聚 agg-d1/agg-d2 的 VRRP 虚路由 5 持有。
+# 汇聚层的 VLAN 510 保持为普通 SVI，无需网桥，冗余语义与原来完全一致。
 add_frr("agg-d1", "10.255.0.21/32",
     ifs={"eth1": "10.0.20.2/30", "eth2": "10.0.20.6/30"},
     trunks={"eth3": [("301", "10.32.0.252/24"), ("510", "10.51.0.252/24")]},
@@ -214,18 +234,25 @@ add_frr("r1", "10.255.0.101/32",
             # Floating backup default route via r2 when r1's Internet link fails.
             "0.0.0.0/0 10.90.1.2 200",
             "10.0.0.0/8 10.90.1.253",
-            "198.51.100.0/24 10.90.1.253"],
+            "198.51.100.0/24 10.90.1.253",
+            # 梅陇校区（徐汇）互联实际落在 r2 上；r1 作为同一 VRRP 组的
+            # 另一台出口，需要经 r2 才能到达梅陇，否则由 r1 承载
+            # Untrust 段网关时去梅陇的流量会被丢弃。
+            "10.91.0.0/16 10.90.1.2"],
     ospf=False,
     vrrp=[("eth1", 11, "10.90.1.254/24", 120),
           ("eth2", 12, "203.0.113.254/24", 120)])
 
 add_frr("r2", "10.255.0.102/32",
-    ifs={"eth1": "10.90.1.2/24", "eth2": "203.0.113.2/24"},
+    ifs={"eth1": "10.90.1.2/24", "eth2": "203.0.113.2/24",
+          "eth3": "10.91.1.1/30"},
     static=["0.0.0.0/0 203.0.113.100",
             # Floating backup default route via r1 when r2's Internet link fails.
             "0.0.0.0/0 10.90.1.1 200",
             "10.0.0.0/8 10.90.1.253",
-            "198.51.100.0/24 10.90.1.253"],
+            "198.51.100.0/24 10.90.1.253",
+            # 梅陇校区（徐汇）互联：园区内网经此链路互通。
+            "10.91.0.0/16 10.91.1.2"],
     ospf=False,
     vrrp=[("eth1", 11, "10.90.1.254/24", 100),
           ("eth2", 12, "203.0.113.254/24", 100)])
@@ -243,10 +270,17 @@ ACCESS_NODES = {
                            "eth6": 101, "eth7": 500}},
     "acc-tb":  {"trunks": {"eth1": [102], "eth2": [102]},
                 "access": {"eth3": 102}},
-    "acc-d1":  {"trunks": {"eth1": [301, 510], "eth2": [301, 510]},
+    # acc-d1 是宿舍区（第 1 宿舍）接入交换机。eth6 是通往实验区的
+    # 区域内光纤互联（VLAN 510 trunk），用于把宿舍与实验区共用的
+    # 无线子网在二层上连成同一个广播域。
+    "acc-d1":  {"trunks": {"eth1": [301, 510], "eth2": [301, 510],
+                           "eth6": [510]},
                 "access": {"eth3": 301, "eth4": 510, "eth5": 301}},
-    "acc-la":  {"trunks": {"eth1": [201], "eth2": [201]},
-                "access": {"eth3": 201}},
+    # acc-la 是实验区接入交换机：VLAN 201 为实验楼有线，VLAN 510 为
+    # 实验区无线（与宿舍区共用一个无线子网）。eth5 与宿舍区接入交换机
+    # 互联，承载 VLAN 510。
+    "acc-la":  {"trunks": {"eth1": [201], "eth2": [201], "eth5": [510]},
+                "access": {"eth3": 201, "eth4": 510}},
     "acc-lib": {"trunks": {"eth1": [50], "eth2": [50]},
                 "access": {"eth3": 50}},
     "acc-life":{"trunks": {"eth1": [61], "eth2": [61]},
@@ -266,11 +300,20 @@ HOSTS = {
     "pc-life": ("10.64.0.11/24", "10.64.0.1"),
     "ap-ta":   ("10.50.0.11/24", "10.50.0.1"),
     "ap-d1":   ("10.51.0.11/24", "10.51.0.1"),
+    # 实验区 AP：与宿舍区 AP 同处 VLAN 510（10.51.0.0/24），共用一个无线子网。
+    "ap-la":   ("10.51.0.21/24", "10.51.0.1"),
     "srv-dc1": ("10.60.0.10/24", "10.60.0.1"),
     "srv-dc2": ("10.60.0.11/24", "10.60.0.1"),
     "srv-dmz": ("10.80.0.10/24", "10.80.0.1"),
     "internet":("203.0.113.100/24", "203.0.113.254"),
     "mgmt-pc": ("10.70.0.10/24", "10.70.0.1"),
+    # 梅陇校区互联对端（徐汇校区方向）。r2 通过 10.91.1.0/30 互联，
+    # 梅陇侧园区网段 10.91.0.0/16 经该链路进入校园网。
+    # 本端地址取 10.91.1.2/30（与 r2 的 10.91.1.1/30 同一网段），
+    # 园区网段通过回程路由指回 r2。
+    "meilong": ("10.91.1.2/30", "10.91.1.1"),
+    # 梅陇校区业务主机（模拟徐汇校区侧的一台终端）。
+    "pc-ml1":  ("10.91.0.11/24", "10.91.0.1"),
     "pc-dyn1": ("dhcp", ""),
     "pc-dyn2": ("dhcp", ""),
     "pc-dyn3": ("dhcp", ""),
@@ -284,6 +327,9 @@ HOST_META = {
                 "bond": {"mode": "active-backup", "members": ["eth1", "eth2"],
                          "primary": "eth1"}},
     "srv-dmz": {"mode": "static", "services": ["http", "https"]},
+    # 梅陇校区对端：eth1 是与 r2 的互联口（10.91.1.2/30），
+    # eth2 是梅陇园区业务网段（10.91.0.1/24），模拟对端校园网内部主机。
+    "meilong": {"mode": "static", "extra_ifs": {"eth2": "10.91.0.1/24"}},
 }
 
 # ---------------- Firewalls ----------------
@@ -322,6 +368,10 @@ LINKS = [
     ("agg-l1","eth3","acc-la","eth1"), ("agg-l2","eth3","acc-la","eth2"),
     ("agg-lib1","eth3","acc-lib","eth1"), ("agg-lib2","eth3","acc-lib","eth2"),
     ("agg-life1","eth3","acc-life","eth1"), ("agg-life2","eth3","acc-life","eth2"),
+    # 宿舍区 <-> 实验区 区域内接入层互联：承载 VLAN 510，使宿舍与实验区
+    # 共用同一个无线子网（10.51.0.0/24）。放在接入层而非汇聚层，避免
+    # 跨多个网桥的物理环路。
+    ("acc-d1","eth6","acc-la","eth5"),
     # access <-> hosts
     ("acc-ta","eth3","pc-ta1","eth1"), ("acc-ta","eth4","pc-ta2","eth1"),
     ("acc-ta","eth5","ap-ta","eth1"),
@@ -329,7 +379,7 @@ LINKS = [
     ("acc-tb","eth3","pc-tb1","eth1"),
     ("acc-d1","eth3","pc-d1","eth1"), ("acc-d1","eth4","ap-d1","eth1"),
     ("acc-d1","eth5","pc-dyn2","eth1"),
-    ("acc-la","eth3","pc-la1","eth1"),
+    ("acc-la","eth3","pc-la1","eth1"), ("acc-la","eth4","ap-la","eth1"),
     ("acc-lib","eth3","pc-lib","eth1"),
     ("acc-life","eth3","pc-life","eth1"),
     ("dc-sw","eth3","srv-dc1","eth1"), ("dc-sw","eth6","srv-dc1","eth2"),
@@ -343,6 +393,12 @@ LINKS = [
     ("srv-dmz","eth1","dmz-sw","eth3"),
     ("r1","eth2","inet-sw","eth1"), ("r2","eth2","inet-sw","eth2"),
     ("internet","eth1","inet-sw","eth3"),
+    # 梅陇校区（徐汇）互联：r2 第三条上行。
+    ("r2","eth3","ml-sw","eth1"),
+    ("meilong","eth1","ml-sw","eth2"),
+    # 梅陇校区业务网段接入（模拟对端园区内部主机侧）。
+    ("meilong","eth2","ml-lan-sw","eth1"),
+    ("pc-ml1","eth1","ml-lan-sw","eth2"),
 ]
 
 BRIDGES = {
@@ -350,7 +406,113 @@ BRIDGES = {
     "untrust-sw": ["eth1", "eth2", "eth3", "eth4"],
     "dmz-sw": ["eth1", "eth2", "eth3"],
     "inet-sw": ["eth1", "eth2", "eth3"],
+    # 梅陇校区互联交换机：r2 的 eth3 与梅陇侧对端各占一个口。
+    "ml-sw": ["eth1", "eth2"],
+    # 梅陇校区业务网段交换机：连接梅陇侧园区内部主机（模拟）。
+    "ml-lan-sw": ["eth1", "eth2"],
 }
+
+# ---------------- Link rate ledger ----------------
+# Containerlab 的 link 只能声明 endpoints，没有原生带宽参数，因此速率用
+# Linux tc/netem 在容器内实际施加：每条链路两端各挂一个 tbf qdisc，双向限速。
+# 台账按"链路角色"定义设计速率，与设计方案 4.1 / 4.4 / 7.2 对齐：
+#   10g  网络中心 <-> 各区域汇聚点（主干）
+#   1g   汇聚点 <-> 楼层接入交换机；接入交换机 <-> 房间信息点（教学/实验/图书馆）
+#   100m 宿舍楼层交换机 <-> 房间信息点
+#   100m 汇聚/接入上行的服务器与无线接入侧
+RATE_10G = "10gbit"
+RATE_1G = "1gbit"
+RATE_100M = "100mbit"
+
+# (端点A, 端点B) -> 速率。端点写作 "节点名:接口名"。
+LINK_RATES = {}
+
+
+def _rate(pa, pb, rate):
+    LINK_RATES[pa] = rate
+    LINK_RATES[pb] = rate
+
+
+# 主干：核心 <-> 汇聚（10G 单模）
+for _core, _eth in (("core1", "eth1"), ("core2", "eth1")):
+    _rate(f"{_core}:{_eth}", "agg-t1:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-t2:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-d1:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-d2:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-l1:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-l2:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-lib1:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-lib2:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-life1:eth1", RATE_10G)
+    _rate(f"{_core}:{_eth}", "agg-life2:eth1", RATE_10G)
+
+# 核心间链路聚合（2×10G）
+_rate("core1:eth11", "core2:eth11", RATE_10G)
+_rate("core1:eth14", "core2:eth14", RATE_10G)
+
+# 核心 <-> 信任区 / 数据中心接入（10G）
+_rate("core1:eth12", "trust-sw:eth1", RATE_10G)
+_rate("core2:eth12", "trust-sw:eth2", RATE_10G)
+_rate("core1:eth13", "dc-sw:eth1", RATE_10G)
+_rate("core2:eth13", "dc-sw:eth2", RATE_10G)
+
+# 汇聚 <-> 楼层接入（1G 单模）
+for _agg, _eth, _acc in (
+    ("agg-t1", "eth3", "acc-ta"), ("agg-t2", "eth3", "acc-ta"),
+    ("agg-t1", "eth4", "acc-tb"), ("agg-t2", "eth4", "acc-tb"),
+    ("agg-d1", "eth3", "acc-d1"), ("agg-d2", "eth3", "acc-d1"),
+    ("agg-l1", "eth3", "acc-la"), ("agg-l2", "eth3", "acc-la"),
+    ("agg-lib1", "eth3", "acc-lib"), ("agg-lib2", "eth3", "acc-lib"),
+    ("agg-life1", "eth3", "acc-life"), ("agg-life2", "eth3", "acc-life"),
+):
+    _rate(f"{_agg}:{_eth}", f"{_acc}:eth1", RATE_1G)
+    _rate(f"{_agg}:{_eth}", f"{_acc}:eth2", RATE_1G)
+
+# 接入 <-> 房间信息点。宿舍区到房间 100M，其余区域 1G。
+# acc-d1 是宿舍区（第 1 宿舍）接入交换机，接入端口全部 100M。
+RATE_BY_ACCESS = {
+    "acc-ta": RATE_1G, "acc-tb": RATE_1G, "acc-la": RATE_1G,
+    "acc-lib": RATE_1G, "acc-life": RATE_1G, "dc-sw": RATE_1G,
+    "acc-d1": RATE_100M,
+}
+
+# 接入交换机的下联口（连接房间信息点）速率按所属区域判定。
+# 由 LINKS 中的 access<->host 链路自动推导，无需手工维护端口表。
+def _derive_access_host_rates():
+    for a_node, a_eth, b_node, b_eth in LINKS:
+        if a_node in RATE_BY_ACCESS and b_node in HOSTS:
+            _rate(f"{a_node}:{a_eth}", f"{b_node}:{b_eth}", RATE_BY_ACCESS[a_node])
+        elif b_node in RATE_BY_ACCESS and a_node in HOSTS:
+            _rate(f"{a_node}:{a_eth}", f"{b_node}:{b_eth}", RATE_BY_ACCESS[b_node])
+
+
+_derive_access_host_rates()
+
+# 出口链路：防火墙 / 出口路由器到各交换区（10G）
+_rate("fw1:eth1", "trust-sw:eth3", RATE_10G)
+_rate("fw2:eth1", "trust-sw:eth4", RATE_10G)
+_rate("fw1:eth2", "untrust-sw:eth3", RATE_10G)
+_rate("fw2:eth2", "untrust-sw:eth4", RATE_10G)
+_rate("r1:eth1", "untrust-sw:eth1", RATE_10G)
+_rate("r2:eth1", "untrust-sw:eth2", RATE_10G)
+_rate("fw1:eth3", "dmz-sw:eth1", RATE_10G)
+_rate("fw2:eth3", "dmz-sw:eth2", RATE_10G)
+_rate("r1:eth2", "inet-sw:eth1", RATE_10G)
+_rate("r2:eth2", "inet-sw:eth2", RATE_10G)
+_rate("srv-dmz:eth1", "dmz-sw:eth3", RATE_1G)
+_rate("internet:eth1", "inet-sw:eth3", RATE_1G)
+
+# 梅陇校区互联（10G 单模，与主干同规格）
+_rate("r2:eth3", "ml-sw:eth1", RATE_10G)
+_rate("meilong:eth1", "ml-sw:eth2", RATE_10G)
+
+# 梅陇校区业务网段接入（1G）
+_rate("meilong:eth2", "ml-lan-sw:eth1", RATE_1G)
+_rate("pc-ml1:eth1", "ml-lan-sw:eth2", RATE_1G)
+
+# 宿舍区 <-> 实验区 区域内接入层互联（承载 VLAN 510 无线子网延伸）。
+# 该链路不接入 Internet，属于区域内楼间互联，按 1G 规格建模。
+_rate("acc-d1:eth6", "acc-la:eth5", RATE_1G)
 
 DAEMONS = """zebra=yes
 bgpd=no
@@ -380,6 +542,11 @@ FW_NFT = """table inet fw {
     flags interval
     elements = { 10.70.0.0/24 }
   }
+  set meilong_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.91.0.0/16 }
+  }
   chain prerouting {
     type nat hook prerouting priority -100; policy accept;
     iifname "eth2" ip daddr 198.51.100.80 tcp dport 80 counter dnat to 10.80.0.10:80 comment "nat.dnat80"
@@ -392,6 +559,11 @@ FW_NFT = """table inet fw {
     ct status dnat tcp dport { 80, 443 } counter accept comment "nat.allow"
     iifname "eth1" oifname "eth2" counter accept comment "fw.trust2untrust"
     iifname "eth1" oifname "eth3" counter accept comment "fw.trust2dmz"
+    # 梅陇校区（徐汇）互联：梅陇园区网段经 r2 的 10.91.1.0/30 链路到达
+    # Untrust 侧，需要放行其访问园区内网（Trust 区），方向与普通外网入向
+    # 相反，属于园区间互联信任。
+    iifname "eth2" ip saddr @meilong_nets oifname "eth1" counter accept comment "fw.meilong2trust"
+    iifname "eth2" ip saddr @meilong_nets oifname "eth2" counter accept comment "fw.meilong2internet"
     iifname "eth2" oifname "eth3" counter drop comment "nat.private_direct_drop"
     iifname "eth2" oifname "eth1" counter drop comment "fw.untrust2trust_drop"
     iifname "eth3" oifname "eth1" counter drop comment "fw.dmz2trust_drop"
@@ -410,7 +582,10 @@ def w(path, text):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     # newline="" 关闭平台的换行转换：生成的脚本必须始终是 LF，
     # 否则在 Linux/WSL 下会因为 CRLF 无法解析（set: Illegal option -）。
-    with open(path, "w", newline="") as f:
+    # encoding="utf-8" 必须显式指定：Windows 默认用 GBK 写文件，
+    # facts.json 里的中文会变成非法 UTF-8 字节，WSL 侧 python3 读取时
+    # 直接抛 UnicodeDecodeError，测试前置检查因此判定环境不可用。
+    with open(path, "w", newline="", encoding="utf-8") as f:
         f.write(text)
 
 
@@ -423,7 +598,14 @@ def all_ips(node):
     out.update(node["ifs"])
     for parent, subs in node["trunks"].items():
         for vid, ip in subs:
-            out[f"{parent}.{vid}"] = ip
+            # 空 IP 表示纯二层互联口（广播域延伸），不参与路由。
+            if ip:
+                out[f"{parent}.{vid}"] = ip
+    # VLAN 网桥：只有配了实地址的网桥才参与路由（实验侧的 br510 为纯二层）。
+    # 网关地址落在网桥的 VLAN 子接口上（如 br510.510）。
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        if cfg.get("ip"):
+            out[f"{brname}.{cfg['vid']}"] = cfg["ip"]
     return out
 
 
@@ -520,7 +702,21 @@ def gen_frr(node_name, node):
         lines += [f"interface {ifname}", f" ip address {ip}", "!"]
     for parent, subs in node["trunks"].items():
         for vid, ip in subs:
+            if not ip:
+                # 纯二层互联口：不配 IP、不参与 OSPF，仅用于把某个 VLAN 的
+                # 广播域延伸到另一个区域（如宿舍区 <-> 实验区 共用 VLAN 510）。
+                # 同一 VLAN 的网关由拥有该子网 IP 的一侧持有。
+                lines += [f"interface {parent}.{vid}", "!", ]
+                continue
             lines += [f"interface {parent}.{vid}", f" ip address {ip}", "!"]
+    # VLAN 网桥：把同一 VLAN 的多个物理/子接口并成一个二层域，
+    # 网关地址与 VRRP 虚路由落在网桥的 VLAN 子接口上。
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        svi = f"{brname}.{cfg['vid']}"
+        lines += [f"interface {svi}"]
+        if cfg.get("ip"):
+            lines.append(f" ip address {cfg['ip']}")
+        lines += ["!"]
     if node["ospf"]:
         rid = node["loopback"].split("/")[0]
         lines += ["router ospf", f" ospf router-id {rid}"]
@@ -584,6 +780,56 @@ def gen_prestart(node):
         for vid, ip in subs:
             lines.append(f"ip link add link {parent} name {parent}.{vid} type vlan id {vid} 2>/dev/null || true")
             lines.append(f"ip link set {parent}.{vid} up")
+    # VLAN 网桥：把同一 VLAN 的多个接口并成一个二层广播域。
+    # 例：宿舍区与实验区共用无线子网 VLAN 510 时，br510 同时包含
+    # 本侧接入口（untagged）与区域互联口（tagged），使广播域跨区域连通。
+    #
+    # 之所以要用 vlan_filtering=1（PVST+）而不是关闭过滤：
+    # 宿舍区与实验区之间的二层环路跨越了多个网桥（agg-d1 → acc-d1 →
+    # agg-d2 → agg-l2 → acc-la → agg-l1 → agg-d1），单个网桥的 STP 看不到
+    # 跨桥的环。PVST+ 把 BPDU 按 VLAN 标记，互联口承载的正是带标记的
+    # VLAN 510 帧，因此 BPDU 能穿越互联口在各网桥间传播，STP 才能识别
+    # 并阻塞冗余路径；关闭过滤时 BPDU 不带标记，环路无法被收敛掉，
+    # 会导致广播帧无限循环、ARP 应答成倍回流、同网段终端互相不可达。
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        vid = cfg["vid"]
+        # 桥成员的 VLAN 子接口可能在 trunks 里没声明（例如网关搬到了网桥上，
+        # 该 VLAN 就不再是普通 SVI），这里按需补建，否则成员不存在、入桥失败。
+        for member in cfg["members"]:
+            if "." in member:
+                mparent, mvid = member.split(".", 1)
+                if not any(v == mvid for v, _ip in node["trunks"].get(mparent, [])):
+                    lines.append(f"ip link set {mparent} up 2>/dev/null || true")
+                    lines.append(
+                        f"ip link add link {mparent} name {member} type vlan id {mvid} 2>/dev/null || true"
+                    )
+        lines.append(
+            f"ip link add {brname} type bridge vlan_filtering 1 vlan_default_pvid 0 "
+            f"stp_state 1 priority {cfg.get('priority', 32768)} 2>/dev/null || true"
+        )
+        lines.append(f"ip link set {brname} up")
+        for member in cfg["members"]:
+            # 成员若是 VLAN 子接口（xxx.vid），需先把它从父接口解绑再入桥，
+            # 否则内核不允许同一个接口同时属于 SVI 和网桥。
+            lines.append(f"ip link set {member} nomaster 2>/dev/null || true")
+            lines.append(f"ip link set {member} master {brname} 2>/dev/null || true")
+            lines.append(f"ip link set {member} up 2>/dev/null || true")
+            # 接入口（来自接入交换机）用 untagged + pvid；互联口保持 tagged。
+            if member.endswith(".510") and cfg.get("untagged_members") \
+                    and member in cfg["untagged_members"]:
+                lines.append(f"bridge vlan add dev {member} vid {vid} pvid untagged")
+            else:
+                lines.append(f"bridge vlan add dev {member} vid {vid}")
+        # 网桥自身的管理 SVI：把网关地址放在 br510.<vid> 上。
+        # 网桥的"自身 VLAN"要通过 `bridge vlan add dev <br> vid <n> self` 登记，
+        # 而不是给子接口单独 add —— 后者在 vlan_filtering=1 下不会让子接口
+        # 真正加入桥的转发平面，地址配上去也不通。
+        svi = f"{brname}.{vid}"
+        lines.append(f"ip link add link {brname} name {svi} type vlan id {vid} 2>/dev/null || true")
+        lines.append(f"bridge vlan add dev {brname} vid {vid} self 2>/dev/null || true")
+        lines.append(f"ip link set {svi} up 2>/dev/null || true")
+        if cfg.get("ip"):
+            lines.append(f"ip addr replace {cfg['ip']} dev {svi} 2>/dev/null || true")
     if node["acl"]:
         lines.append("nft delete table inet zone 2>/dev/null || true")
         lines.append("nft -f /configs/acl.nft 2>/dev/null || true")
@@ -641,7 +887,11 @@ def gen_access(node_name, cfg):
     ports = list(cfg["trunks"].keys()) + list(cfg["access"].keys())
     lines = ["#!/bin/sh", "set -e"]
     lines += wait_for_ifaces(ports)
-    lines += ["ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0 2>/dev/null || true",
+    # 开启生成树协议：接入交换机在两台汇聚之间形成双上行，属于物理环路。
+    # 没有 STP 时广播帧会在环里无限循环、ARP 应答成倍回流，同网段终端
+    # 互相不可达（表现为大量 ping 超时与 ARP 表异常）。开启后由 STP
+    # 阻塞冗余路径，保留双上行冗余的同时消除环路。
+    lines += ["ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0 stp_state 1 2>/dev/null || true",
               "ip link set br0 up"]
     for p in ports:
         lines += [f"ip link set {p} up",
@@ -726,6 +976,15 @@ def gen_host(name, ip, gw):
     lines += ["ip link set eth1 up",
               f"ip addr replace {ip} dev eth1",
               f"ip route replace default via {gw}"]
+    if name == "meilong":
+        # 梅陇校区对端：eth1 与 r2 的 10.91.1.0/30 互联，eth2 接梅陇
+        # 园区业务网段 10.91.0.0/16。回校园网的路由经 r2。
+        for ifname, ifip in meta.get("extra_ifs", {}).items():
+            lines.append(f"ip link set {ifname} up")
+            lines.append(f"ip addr replace {ifip} dev {ifname}")
+        # 梅陇侧的业务网段回校园网同样经 r2（r2 有 10.0.0.0/8 的回指）。
+        lines.append("ip route replace 10.0.0.0/8 via 10.91.1.1")
+        lines.append("sysctl -w net.ipv4.ip_forward=1 >/dev/null 2>&1 || true")
     if name == "internet":
         # Published VIP is outside the simulated Internet subnet; force it
         # through the egress VRRP gateway instead of ARPing for it locally.
@@ -765,6 +1024,31 @@ def gen_dhcp_server():
         "log-facility=/var/log/dnsmasq.log",
         "",
     ]
+    # 本地静态域名记录。
+    #
+    # 仿真环境没有真实互联网出口（server=223.5.5.5 只是占位），若只依赖
+    # 上游转发，DNS 查询会一直超时、无线终端「能连网关但打不开网页」。
+    # 这里把园区内的关键服务器写成 host-record，使 DNS 服务在实验内自洽：
+    # 解析请求直接由 dnsmasq 应答，不再依赖不可达的上游。
+    #
+    # local=/campus.local/ 是关键的一行：它声明该域由 dnsmasq 本地负责、
+    # 绝不转发。缺了它，AAAA 查询（busybox nslookup 会同时发 A 与 AAAA）
+    # 会被送到不可达的上游 223.5.5.5，导致 nslookup 一直等到超时并返回非零，
+    # 表现为「A 记录已经答对，客户端却仍然报错」。
+    for name, addr in [
+        ("srv-dc1", "10.60.0.10"),
+        ("srv-dc2", "10.60.0.11"),
+        ("dns.campus.local", "10.60.0.10"),
+        ("srv-dmz", "10.80.0.10"),
+        ("dmz.campus.local", "10.80.0.10"),
+        ("www.campus.local", "10.80.0.10"),
+        ("internet.campus.local", "203.0.113.100"),
+        ("gw.campus.local", "10.51.0.1"),
+    ]:
+        lines.append(f"host-record={name},{addr}")
+    lines.append("local=/campus.local/")
+    lines.append("local=/local/")
+    lines.append("")
     for pool in DHCP_POOLS:
         plan = VLAN_PLAN[pool["vid"]]
         tag = f"v{pool['vid']}"
@@ -784,20 +1068,38 @@ def gen_dhcp_relay(node):
         "no-hosts",
         "log-facility=/var/log/dhcp-relay.log",
     ]
+    # 收集「本地有地址的 VLAN 接口」：SVI（带 IP）与 VLAN 网桥（带 IP）。
+    # 纯二层接口没有 giaddr，不能作为 relay 入口。
+    relay_ifs = []
     for parent, subs in node["trunks"].items():
         for vid, ip in subs:
             if int(vid) not in [pool["vid"] for pool in DHCP_POOLS]:
                 continue
-            local = ip.split("/")[0]
-            lines.append(f"dhcp-relay={local},{DHCP_SERVER}")
+            if not ip:
+                continue
+            relay_ifs.append((f"{parent}.{vid}", ip))
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        if not cfg.get("ip"):
+            continue
+        if cfg["vid"] not in [pool["vid"] for pool in DHCP_POOLS]:
+            continue
+        relay_ifs.append((f"{brname}.{cfg['vid']}", cfg["ip"]))
+    for ifname, ip in relay_ifs:
+        local = ip.split("/")[0]
+        lines.append(f"dhcp-relay={local},{DHCP_SERVER}")
     return "\n".join(lines) + "\n"
 
 
 def gen_start_services(node):
+    # 只有具备本地 IP 的 SVI / 网桥才能承载 relay 流量；纯二层接口跳过。
     svis = []
     for parent, subs in node["trunks"].items():
-        for vid, _ip in subs:
-            svis.append(f"{parent}.{vid}")
+        for vid, ip in subs:
+            if ip:
+                svis.append(f"{parent}.{vid}")
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        if cfg.get("ip"):
+            svis.append(f"{brname}.{cfg['vid']}")
     dev_list = " ".join(svis)
     lines = [
         "#!/bin/sh",
@@ -855,9 +1157,17 @@ def gen_acl(node_name, node):
         ]
     dorm_svis = []
     for parent, subs in node["trunks"].items():
-        for vid, _ip in subs:
+        for vid, ip in subs:
             if int(vid) in (301, 510):
-                dorm_svis.append(f"{parent}.{vid}")
+                # 只有带本地地址的 SVI 才是真正的接入面；纯二层互联口
+                # 只是广播域延伸，源地址校验对它没有意义。
+                if ip:
+                    dorm_svis.append(f"{parent}.{vid}")
+    # VLAN 510 的网关若落在网桥 SVI 上（宿舍/实验区共用无线子网），
+    # 源地址校验要作用在该 SVI 上。
+    for brname, cfg in node.get("vlan_bridges", {}).items():
+        if cfg.get("ip") and cfg["vid"] in (301, 510):
+            dorm_svis.append(f"{brname}.{cfg['vid']}")
 
     # Dual agg/core nodes do not synchronize conntrack state. Explicitly allow
     # ICMP echo-reply and non-SYN TCP return traffic from restricted sources
@@ -966,6 +1276,9 @@ def gen_fw(name, cfg):
     # keepalived instance (see gen_fw_keepalived); do not add it unconditionally.
     lines += ["ip route replace default via 10.90.1.254",
               "ip route replace 10.0.0.0/8 via 10.0.100.253",
+              # 梅陇校区（徐汇）互联：园区网段经出口路由器 r2 到达，
+              # 显式指定明细路由，避免出口设备切换时默认路由指向失效。
+              "ip route replace 10.91.0.0/16 via 10.90.1.254",
               "sysctl -w net.ipv4.ip_forward=1 >/dev/null",
               "sysctl -w net.ipv4.conf.all.rp_filter=0 >/dev/null",
               "nft delete table inet fw 2>/dev/null || true",
@@ -999,6 +1312,72 @@ def gen_fw_keepalived(cfg):
         lines += [f"        {vip}" for vip in vips]
         lines += ["    }", "}", ""]
     return "\n".join(lines)
+
+
+def node_rate_table():
+    """按节点聚合速率台账：{node: {iface: rate}}。"""
+    per_link = {}
+    for key, rate in LINK_RATES.items():
+        node, iface = key.split(":")
+        per_link.setdefault(node, {})[iface] = rate
+    return per_link
+
+
+# tc tbf 需要 burst 与 latency 参数。burst 取速率的 1/100（至少 32kbit），
+# latency 固定 50ms：足以让 ping 大包正常往返，同时对千兆/万兆形成可见瓶颈。
+def _tbf_params(rate):
+    mbit = int(rate.replace("mbit", ""))
+    burst_kbit = max(32, mbit // 100)
+    return f"{rate} burst {burst_kbit}kbit latency 50ms"
+
+
+def gen_rates_script():
+    """生成统一的速率施加脚本 /configs/apply-rates.sh。
+
+    每个节点把自己的限速表写在 /configs/rates/<node>.rates，格式为
+    "接口名 速率" 每行一条；本脚本读取本机表并对每个接口挂 tbf qdisc。
+    限速在接口 up 之后施加，双向生效（每条链路的两个端点各限一次）。
+    """
+    return r"""#!/bin/sh
+# 链路速率施加脚本（由各镜像 ENTRYPOINT 调用）。
+# 台账来源：gen.py 的 LINK_RATES，与设计方案 4.1/4.4/7.2 的速率口径一致。
+# 宿主若禁用 tc，脚本不报错退出，仿真功能不受影响。
+RATES_FILE="$1"
+[ -f "$RATES_FILE" ] || exit 0
+command -v tc >/dev/null 2>&1 || exit 0
+
+while read -r IF RATE; do
+    [ -n "$IF" ] || continue
+    case "$IF" in \#*) continue ;; esac
+    [ -e "/sys/class/net/$IF" ] || continue
+    BURST=$(awk -v r="$RATE" 'BEGIN{
+        n = r; sub(/mbit/, "", n);
+        b = int(n / 100); if (b < 32) b = 32;
+        printf "%dkbit", b }')
+    tc qdisc del dev "$IF" root 2>/dev/null || true
+    tc qdisc add dev "$IF" root tbf rate "$RATE" burst "$BURST" latency 50ms 2>/dev/null || true
+done < "$RATES_FILE"
+exit 0
+"""
+
+
+def gen_rate_file(node_name):
+    """生成单个节点的速率表内容。"""
+    rates = []
+    for key, rate in LINK_RATES.items():
+        node, iface = key.split(":")
+        if node == node_name:
+            rates.append((iface, rate))
+    if not rates:
+        return None
+    # 同一接口可能被多条链路覆盖（bond 成员等），保持首次出现的顺序并去重。
+    seen = {}
+    for iface, rate in rates:
+        seen.setdefault(iface, rate)
+    lines = [f"# {node_name} 链路速率台账（由 gen.py 生成，请勿手工编辑）"]
+    for iface in sorted(seen):
+        lines.append(f"{iface} {seen[iface]}")
+    return "\n".join(lines) + "\n"
 
 
 def gen_facts():
@@ -1048,6 +1427,23 @@ def gen_facts():
              "peers": cfg["peers"]}
             for name, cfg in LAGS.items()
         ],
+        "link_rates": {
+            "note": "Containerlab 无原生带宽参数，速率用 tc/netem 在容器内实际施加；"
+                    "台账由 gen.py 的 LINK_RATES 生成，见 configs/rates/*.rates",
+            "profiles": {
+                RATE_10G: "网络中心 <-> 各区域汇聚点（主干）、核心间聚合、出口链路",
+                RATE_1G: "汇聚 <-> 楼层接入、接入 <-> 房间信息点（教学/实验/图书馆/生活区）",
+                RATE_100M: "宿舍楼层交换机 <-> 房间信息点",
+            },
+            "by_node": {
+                node: {iface: rate for iface, rate in sorted(ifaces.items())}
+                for node, ifaces in sorted(node_rate_table().items())
+            },
+            "counts": {
+                rate: sum(1 for r in LINK_RATES.values() if r == rate)
+                for rate in (RATE_10G, RATE_1G, RATE_100M)
+            },
+        },
         "capabilities": CAPABILITIES,
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
@@ -1071,6 +1467,9 @@ GRAPH_LEVELS = {
     "acc-ta": 8, "acc-tb": 8, "acc-d1": 8,
     "acc-la": 8, "acc-lib": 8, "acc-life": 8, "dc-sw": 8,
     "pc-dyn1": 9, "pc-dyn2": 9, "pc-dyn3": 9, "mgmt-pc": 9,
+    # 梅陇校区互联：放在出口路由（level 2）之下、梅陇对端（level 0）之上，
+    # 使 draw.io 布局里跨校区链路从下往上走，不与 Internet 链路交叉。
+    "ml-sw": 1, "ml-lan-sw": 0,
 }
 for _name in HOSTS:
     GRAPH_LEVELS.setdefault(_name, 9)
@@ -1100,6 +1499,17 @@ for name, node in FRR_NODES.items():
         w(os.path.join(d, "dhcp-relay.conf"), gen_dhcp_relay(node))
         w(os.path.join(d, "start-services.sh"), gen_start_services(node))
 
+# 链路速率台账：每个节点一份 /configs/rates/<node>.rates
+RATE_DIR = os.path.join(CFG, "rates")
+os.makedirs(RATE_DIR, exist_ok=True)
+for _node in set([n for n, _ in FRR_NODES.items()]
+                 + list(ACCESS_NODES) + list(FW_NODES) + list(HOSTS)
+                 + list(BRIDGES)):
+    _content = gen_rate_file(_node)
+    if _content:
+        w(os.path.join(RATE_DIR, f"{_node}.rates"), _content)
+w(os.path.join(CFG, "apply-rates.sh"), gen_rates_script())
+
 for name, cfg in ACCESS_NODES.items():
     d = os.path.join(CFG, "access", name)
     w(os.path.join(d, "setup.sh"), gen_access(name, cfg))
@@ -1109,7 +1519,7 @@ for name, ports in BRIDGES.items():
     # 等待 veth 就绪：setup.sh 由镜像 ENTRYPOINT 在容器启动瞬间调用，
     # 此时 containerlab 可能尚未把接口注入 netns（详见 wait_for_ifaces）。
     lines += wait_for_ifaces(ports)
-    lines += ["ip link add br0 type bridge 2>/dev/null || true",
+    lines += ["ip link add br0 type bridge stp_state 1 2>/dev/null || true",
               "ip link set br0 up"]
     for p in ports:
         lines += [f"ip link set {p} up",
@@ -1151,7 +1561,9 @@ for name in FRR_NODES:
           "        - ./configs/frr/daemons:/etc/frr/daemons",
           f"        - ./configs/frr/{name}/frr.conf:/etc/frr/frr.conf",
           f"        - ./configs/frr/{name}/prestart.sh:/configs/prestart.sh",
-          f"        - ./configs/frr/{name}/keepalived.conf:/configs/keepalived.conf"]
+          f"        - ./configs/frr/{name}/keepalived.conf:/configs/keepalived.conf",
+          "        - ./configs/rates:/configs/rates",
+          "        - ./configs/apply-rates.sh:/configs/apply-rates.sh"]
     if node["acl"]:
         y.append(f"        - ./configs/frr/{name}/acl.nft:/configs/acl.nft")
     if node["dhcp_relay"]:
@@ -1167,7 +1579,9 @@ for name in ACCESS_NODES:
           "      kind: linux",
           "      image: campus-l2:latest",
           "      binds:",
-          f"        - ./configs/access/{name}/setup.sh:/setup.sh"]
+          f"        - ./configs/access/{name}/setup.sh:/setup.sh",
+          "        - ./configs/rates:/configs/rates",
+          "        - ./configs/apply-rates.sh:/configs/apply-rates.sh"]
     y += graph_label_lines(name)
 
 for name in FW_NODES:
@@ -1177,7 +1591,9 @@ for name in FW_NODES:
           "      binds:",
           f"        - ./configs/fw/{name}/setup.sh:/setup.sh",
           f"        - ./configs/fw/{name}/keepalived.conf:/configs/keepalived.conf",
-          "        - ./configs/fw/fw.nft:/configs/fw.nft"]
+          "        - ./configs/fw/fw.nft:/configs/fw.nft",
+          "        - ./configs/rates:/configs/rates",
+          "        - ./configs/apply-rates.sh:/configs/apply-rates.sh"]
     y += graph_label_lines(name)
 
 for name in HOSTS:
@@ -1185,7 +1601,9 @@ for name in HOSTS:
           "      kind: linux",
           "      image: campus-host:latest",
           "      binds:",
-          f"        - ./configs/hosts/{name}/setup.sh:/setup.sh"]
+          f"        - ./configs/hosts/{name}/setup.sh:/setup.sh",
+          "        - ./configs/rates:/configs/rates",
+          "        - ./configs/apply-rates.sh:/configs/apply-rates.sh"]
     meta = HOST_META.get(name, {})
     if meta.get("mode") == "dhcp":
         y.append(f"        - ./configs/hosts/{name}/udhcpc.sh:/configs/udhcpc.sh")
@@ -1198,7 +1616,9 @@ for name in BRIDGES:
           "      kind: linux",
           "      image: campus-l2:latest",
           "      binds:",
-          f"        - ./configs/access/{name}/setup.sh:/setup.sh"]
+          f"        - ./configs/access/{name}/setup.sh:/setup.sh",
+          "        - ./configs/rates:/configs/rates",
+          "        - ./configs/apply-rates.sh:/configs/apply-rates.sh"]
     y += graph_label_lines(name)
 
 y.append("  links:")

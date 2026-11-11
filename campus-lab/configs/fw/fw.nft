@@ -4,6 +4,11 @@ table inet fw {
     flags interval
     elements = { 10.70.0.0/24 }
   }
+  set meilong_nets {
+    type ipv4_addr
+    flags interval
+    elements = { 10.91.0.0/16 }
+  }
   chain prerouting {
     type nat hook prerouting priority -100; policy accept;
     iifname "eth2" ip daddr 198.51.100.80 tcp dport 80 counter dnat to 10.80.0.10:80 comment "nat.dnat80"
@@ -16,6 +21,11 @@ table inet fw {
     ct status dnat tcp dport { 80, 443 } counter accept comment "nat.allow"
     iifname "eth1" oifname "eth2" counter accept comment "fw.trust2untrust"
     iifname "eth1" oifname "eth3" counter accept comment "fw.trust2dmz"
+    # 梅陇校区（徐汇）互联：梅陇园区网段经 r2 的 10.91.1.0/30 链路到达
+    # Untrust 侧，需要放行其访问园区内网（Trust 区），方向与普通外网入向
+    # 相反，属于园区间互联信任。
+    iifname "eth2" ip saddr @meilong_nets oifname "eth1" counter accept comment "fw.meilong2trust"
+    iifname "eth2" ip saddr @meilong_nets oifname "eth2" counter accept comment "fw.meilong2internet"
     iifname "eth2" oifname "eth3" counter drop comment "nat.private_direct_drop"
     iifname "eth2" oifname "eth1" counter drop comment "fw.untrust2trust_drop"
     iifname "eth3" oifname "eth1" counter drop comment "fw.dmz2trust_drop"

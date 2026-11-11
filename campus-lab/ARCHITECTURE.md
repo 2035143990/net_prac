@@ -20,7 +20,7 @@
 ```text
 campus-lab/
 ├─ gen.py              ← 架构核心：设计 → 产物的编译器（约 1100 行）
-├─ campus-lab.clab.yml ← 【生成】Containerlab 拓扑（44 节点 / 66 链路）
+├─ campus-lab.clab.yml ← 【生成】Containerlab 拓扑（49 节点 / 72 链路）
 ├─ configs/            ← 【生成】各节点配置，由 gen.py 写出
 │  ├─ frr/<节点>/      ←   frr.conf / prestart.sh / keepalived.conf / acl.nft
 │  ├─ access/<节点>/   ←   二层交换机 setup.sh（VLAN、bridge、trunk/access）
@@ -32,7 +32,7 @@ campus-lab/
 │  ├─ l2/              ←   Linux bridge 模拟二层交换机
 │  ├─ fw/              ←   nftables + conntrack
 │  └─ host/            ←   终端/服务器
-├─ tests/              ← 【手写】65 条用例 + 预检
+├─ tests/              ← 【手写】85 条用例 + 预检
 ├─ build-images.sh     ← 【手写】构建镜像
 ├─ deploy-lab.sh       ← 【手写】统一部署入口
 └─ topoviewer.sh       ← 【手写】启动 TopoViewer
@@ -49,11 +49,11 @@ campus-lab/
 | 镜像 | 节点数 | 承载 | 关键软件 |
 | --- | --- | --- | --- |
 | `campus-frr` | 14 | 双核心、10 台汇聚、2 台出口路由 | FRRouting、keepalived、nftables、dnsmasq(Relay) |
-| `campus-l2` | 11 | 接入交换机 + 4 台传输二层交换机 | iproute2（bridge + vlan filtering） |
+| `campus-l2` | 13 | 接入交换机 + 6 台传输二层交换机 | iproute2（bridge + vlan filtering） |
 | `campus-fw` | 2 | 边界防火墙 | nftables、conntrack-tools、keepalived |
-| `campus-host` | 17 | 终端、服务器、Internet 模拟 | iproute2、dnsmasq（DHCP/DNS/HTTP） |
+| `campus-host` | 20 | 终端、服务器、Internet 与梅陇校区模拟 | iproute2、dnsmasq（DHCP/DNS/HTTP） |
 
-合计 **44 个容器**。
+合计 **49 个容器**。
 
 ---
 
@@ -62,7 +62,7 @@ campus-lab/
 拓扑是**严格分层**的，`graph-level` 标签决定各层在图上的纵坐标。
 
 ```text
- Level 9   终端 / 服务器        pc-*  ap-*  srv-*  mgmt-pc  pc-dyn*
+ Level 9   终端 / 服务器        pc-*  ap-*  srv-*  mgmt-pc  pc-dyn*  meilong
  Level 8   接入交换机          acc-ta acc-tb acc-d1 acc-la acc-lib acc-life dc-sw
  Level 7   区域汇聚            agg-t1/2  agg-d1/2  agg-l1/2  agg-lib1/2  agg-life1/2
  Level 6   双核心              core1  core2                    ← OSPF Area 0 + bond0 聚合
@@ -72,6 +72,7 @@ campus-lab/
  Level 2   出口路由            r1  r2                         ← 静态路由 + VRRP
  Level 1   Internet 二层       inet-sw
  Level 0   Internet 模拟       internet
+ Level -1  梅陇校区互联        ml-sw  ml-lan-sw               ← r2 第三条上行
 ```
 
 ### 4.1 核心层（Level 6）
@@ -175,7 +176,7 @@ cd /mnt/d/code/net_prac/campus-lab
 bash build-images.sh      # 构建 4 个镜像（首次或改 Dockerfile 后）
 python3 gen.py            # 生成拓扑与全部节点配置
 sh deploy-lab.sh deploy   # 销毁旧环境 → 部署 → 等 120s 收敛 → 预检
-bash tests/run-all.sh     # 65 条用例
+bash tests/run-all.sh     # 85 条用例
 sh topoviewer.sh          # 另开浏览器看拓扑
 ```
 
@@ -193,7 +194,7 @@ campus-lab.clab.yml  configs/     facts.json
   clab deploy      bind mount     测试/报告读取
         │
         ▼
-   44 个容器 ──── 66 条 veth ──── 运行中的校园网
+   49 个容器 ──── 72 条 veth ──── 运行中的校园网
         │
         ▼
    clab graph --srv  →  TopoViewer（浏览器）
@@ -205,4 +206,4 @@ campus-lab.clab.yml  configs/     facts.json
 
 **但 veth 不会自愈**：Containerlab 注入的 veth 链路在 dockerd 重启后不会回来（Containerlab 不会自动重建）。所以 WSL/宿主机重启后必须**重新 `deploy`**，`tests/preflight.sh` 会检测这种状态并明确提示。
 
-**预检先行**：`tests/run-all.sh` 先跑 `tests/preflight.sh`，检查 11 台二层交换机的 bridge、core1 的 11 个 OSPF Full 邻居、4 组 VRRP VIP 的唯一持有者，以及 dockerd 是否在部署后被重启过。不健康就直接以退出码 2 终止，避免 65 条用例产生一堆无意义的失败。
+**预检先行**：`tests/run-all.sh` 先跑 `tests/preflight.sh`，检查 13 台二层交换机的 bridge、core1 的 11 个 OSPF Full 邻居、4 组 VRRP VIP 的唯一持有者，以及 dockerd 是否在部署后被重启过。不健康就直接以退出码 2 终止，避免 85 条用例产生一堆无意义的失败。

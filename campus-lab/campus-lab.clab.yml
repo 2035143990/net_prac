@@ -12,6 +12,8 @@ topology:
         - ./configs/frr/core1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/core1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/core1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/core1/acl.nft:/configs/acl.nft
       labels:
         graph-level: 6
@@ -23,6 +25,8 @@ topology:
         - ./configs/frr/core2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/core2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/core2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/core2/acl.nft:/configs/acl.nft
       labels:
         graph-level: 6
@@ -34,6 +38,8 @@ topology:
         - ./configs/frr/agg-t1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-t1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-t1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-t1/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-t1/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-t1/start-services.sh:/configs/start-services.sh
@@ -47,6 +53,8 @@ topology:
         - ./configs/frr/agg-t2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-t2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-t2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-t2/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-t2/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-t2/start-services.sh:/configs/start-services.sh
@@ -60,6 +68,8 @@ topology:
         - ./configs/frr/agg-d1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-d1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-d1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-d1/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-d1/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-d1/start-services.sh:/configs/start-services.sh
@@ -73,6 +83,8 @@ topology:
         - ./configs/frr/agg-d2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-d2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-d2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-d2/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-d2/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-d2/start-services.sh:/configs/start-services.sh
@@ -86,6 +98,8 @@ topology:
         - ./configs/frr/agg-l1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-l1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-l1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-l1/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-l1/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-l1/start-services.sh:/configs/start-services.sh
@@ -99,6 +113,8 @@ topology:
         - ./configs/frr/agg-l2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-l2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-l2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-l2/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-l2/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-l2/start-services.sh:/configs/start-services.sh
@@ -112,6 +128,8 @@ topology:
         - ./configs/frr/agg-lib1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-lib1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-lib1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-lib1/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-lib1/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-lib1/start-services.sh:/configs/start-services.sh
@@ -125,6 +143,8 @@ topology:
         - ./configs/frr/agg-lib2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-lib2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-lib2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-lib2/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-lib2/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-lib2/start-services.sh:/configs/start-services.sh
@@ -138,6 +158,8 @@ topology:
         - ./configs/frr/agg-life1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-life1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-life1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-life1/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-life1/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-life1/start-services.sh:/configs/start-services.sh
@@ -151,6 +173,8 @@ topology:
         - ./configs/frr/agg-life2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/agg-life2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/agg-life2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/frr/agg-life2/acl.nft:/configs/acl.nft
         - ./configs/frr/agg-life2/dhcp-relay.conf:/configs/dhcp-relay.conf
         - ./configs/frr/agg-life2/start-services.sh:/configs/start-services.sh
@@ -164,6 +188,8 @@ topology:
         - ./configs/frr/r1/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/r1/prestart.sh:/configs/prestart.sh
         - ./configs/frr/r1/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 2
     r2:
@@ -174,6 +200,8 @@ topology:
         - ./configs/frr/r2/frr.conf:/etc/frr/frr.conf
         - ./configs/frr/r2/prestart.sh:/configs/prestart.sh
         - ./configs/frr/r2/keepalived.conf:/configs/keepalived.conf
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 2
     acc-ta:
@@ -181,6 +209,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-ta/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     acc-tb:
@@ -188,6 +218,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-tb/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     acc-d1:
@@ -195,6 +227,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-d1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     acc-la:
@@ -202,6 +236,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-la/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     acc-lib:
@@ -209,6 +245,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-lib/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     acc-life:
@@ -216,6 +254,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-life/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     dc-sw:
@@ -223,6 +263,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/dc-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 8
     fw1:
@@ -232,6 +274,8 @@ topology:
         - ./configs/fw/fw1/setup.sh:/setup.sh
         - ./configs/fw/fw1/keepalived.conf:/configs/keepalived.conf
         - ./configs/fw/fw.nft:/configs/fw.nft
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 4
     fw2:
@@ -241,6 +285,8 @@ topology:
         - ./configs/fw/fw2/setup.sh:/setup.sh
         - ./configs/fw/fw2/keepalived.conf:/configs/keepalived.conf
         - ./configs/fw/fw.nft:/configs/fw.nft
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 4
     pc-ta1:
@@ -248,6 +294,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-ta1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-ta2:
@@ -255,6 +303,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-ta2/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-tb1:
@@ -262,6 +312,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-tb1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-d1:
@@ -269,6 +321,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-d1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-la1:
@@ -276,6 +330,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-la1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-lib:
@@ -283,6 +339,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-lib/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-life:
@@ -290,6 +348,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-life/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     ap-ta:
@@ -297,6 +357,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/ap-ta/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     ap-d1:
@@ -304,6 +366,17 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/ap-d1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
+      labels:
+        graph-level: 9
+    ap-la:
+      kind: linux
+      image: campus-host:latest
+      binds:
+        - ./configs/hosts/ap-la/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     srv-dc1:
@@ -311,6 +384,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/srv-dc1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/hosts/srv-dc1/dnsmasq.conf:/configs/dnsmasq.conf
       labels:
         graph-level: 9
@@ -319,6 +394,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/srv-dc2/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     srv-dmz:
@@ -326,6 +403,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/srv-dmz/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     internet:
@@ -333,6 +412,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/internet/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 0
     mgmt-pc:
@@ -340,6 +421,26 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/mgmt-pc/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
+      labels:
+        graph-level: 9
+    meilong:
+      kind: linux
+      image: campus-host:latest
+      binds:
+        - ./configs/hosts/meilong/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
+      labels:
+        graph-level: 9
+    pc-ml1:
+      kind: linux
+      image: campus-host:latest
+      binds:
+        - ./configs/hosts/pc-ml1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 9
     pc-dyn1:
@@ -347,6 +448,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-dyn1/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/hosts/pc-dyn1/udhcpc.sh:/configs/udhcpc.sh
       labels:
         graph-level: 9
@@ -355,6 +458,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-dyn2/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/hosts/pc-dyn2/udhcpc.sh:/configs/udhcpc.sh
       labels:
         graph-level: 9
@@ -363,6 +468,8 @@ topology:
       image: campus-host:latest
       binds:
         - ./configs/hosts/pc-dyn3/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
         - ./configs/hosts/pc-dyn3/udhcpc.sh:/configs/udhcpc.sh
       labels:
         graph-level: 9
@@ -371,6 +478,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/trust-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 5
     untrust-sw:
@@ -378,6 +487,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/untrust-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 3
     dmz-sw:
@@ -385,6 +496,8 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/dmz-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 5
     inet-sw:
@@ -392,8 +505,28 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/inet-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
       labels:
         graph-level: 1
+    ml-sw:
+      kind: linux
+      image: campus-l2:latest
+      binds:
+        - ./configs/access/ml-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
+      labels:
+        graph-level: 1
+    ml-lan-sw:
+      kind: linux
+      image: campus-l2:latest
+      binds:
+        - ./configs/access/ml-lan-sw/setup.sh:/setup.sh
+        - ./configs/rates:/configs/rates
+        - ./configs/apply-rates.sh:/configs/apply-rates.sh
+      labels:
+        graph-level: 0
   links:
     - endpoints: ["core1:eth1", "agg-t1:eth1"]
     - endpoints: ["core1:eth6", "agg-t2:eth1"]
@@ -433,6 +566,7 @@ topology:
     - endpoints: ["agg-lib2:eth3", "acc-lib:eth2"]
     - endpoints: ["agg-life1:eth3", "acc-life:eth1"]
     - endpoints: ["agg-life2:eth3", "acc-life:eth2"]
+    - endpoints: ["acc-d1:eth6", "acc-la:eth5"]
     - endpoints: ["acc-ta:eth3", "pc-ta1:eth1"]
     - endpoints: ["acc-ta:eth4", "pc-ta2:eth1"]
     - endpoints: ["acc-ta:eth5", "ap-ta:eth1"]
@@ -443,6 +577,7 @@ topology:
     - endpoints: ["acc-d1:eth4", "ap-d1:eth1"]
     - endpoints: ["acc-d1:eth5", "pc-dyn2:eth1"]
     - endpoints: ["acc-la:eth3", "pc-la1:eth1"]
+    - endpoints: ["acc-la:eth4", "ap-la:eth1"]
     - endpoints: ["acc-lib:eth3", "pc-lib:eth1"]
     - endpoints: ["acc-life:eth3", "pc-life:eth1"]
     - endpoints: ["dc-sw:eth3", "srv-dc1:eth1"]
@@ -461,3 +596,7 @@ topology:
     - endpoints: ["r1:eth2", "inet-sw:eth1"]
     - endpoints: ["r2:eth2", "inet-sw:eth2"]
     - endpoints: ["internet:eth1", "inet-sw:eth3"]
+    - endpoints: ["r2:eth3", "ml-sw:eth1"]
+    - endpoints: ["meilong:eth1", "ml-sw:eth2"]
+    - endpoints: ["meilong:eth2", "ml-lan-sw:eth1"]
+    - endpoints: ["pc-ml1:eth1", "ml-lan-sw:eth2"]

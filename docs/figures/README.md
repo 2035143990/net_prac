@@ -5,7 +5,7 @@
 | 图号 | 文件 | 插入章节 | 内容 | 来源 |
 | --- | --- | --- | --- | --- |
 | 图 4-1 | `fig-4-1-campus-topology.svg` | 4.1 网络拓扑结构 | 校园网总体拓扑（核心/汇聚/接入/出口/DMZ） | 手绘示意 |
-| 图 4-2 | `fig-4-2-simulation-topology.svg` | 4.1 网络拓扑结构 | Containerlab 44 节点/66 链路分层与规模 | 手绘示意 |
+| 图 4-2 | `fig-4-2-simulation-topology.svg` | 4.1 网络拓扑结构 | Containerlab 49 节点/72 链路分层与规模 | 手绘示意 |
 | 图 7-1 | `fig-7-1-teaching-vlan.svg` | 7.1.3 网络配置拓扑结构 | 教学区 VLAN/Trunk/VRRP | 手绘示意 |
 | 图 7-2 | `fig-7-2-dhcp-relay.svg` | 7.2.3 网络配置拓扑结构 | DHCP Relay 报文流程与地址池 | 手绘示意 |
 | 图 7-3 | `fig-7-3-firewall-nat.svg` | 7.3.3 防火墙配置 | Trust/Untrust/DMZ、SNAT、DNAT | 手绘示意 |

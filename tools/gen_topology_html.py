@@ -8,7 +8,7 @@
    图书馆、食堂 1–2、体育馆、信息大楼（计算机实验中心/数据中心）、
    无线与功能网段，并用中文标注楼层、信息点与 VLAN。
 2. **仿真运行拓扑**：从 containerlab 导出的 topology-data.json 读取
-   实际部署的 44 个容器与 66 条链路，按网络层级排布。
+   实际部署的 49 个容器与 72 条链路，按网络层级排布。
 
 数据来源：
 - 楼宇清单与网段：tools/c_address_plan.py（与设计方案 5.1/5.2 同源）
@@ -94,6 +94,10 @@ LAYERS = [
     ("core", "核心", "#dc2626", lambda n: n.startswith("core")),
     ("agg", "汇聚", "#2563eb", lambda n: n.startswith("agg")),
     ("access", "接入", "#16a34a", lambda n: n.startswith("acc") or n == "dc-sw"),
+    # 梅陇校区互联：r2 第三条上行 -> ml-sw -> meilong -> ml-lan-sw -> pc-ml1。
+    # 单独成层，避免被兜底规则吞进「终端/服务器」层而看不出跨校区链路。
+    ("campus_sw", "梅陇互联二层", "#b45309", lambda n: n in ("ml-sw", "ml-lan-sw")),
+    ("campus", "梅陇校区", "#92400e", lambda n: n in ("meilong", "pc-ml1")),
     ("host", "终端/服务器", "#0891b2", lambda n: True),
 ]
 NODE_CN = {
@@ -112,12 +116,15 @@ NODE_CN = {
     "pc-ta1": "教学PC1", "pc-ta2": "教学PC2", "pc-tb1": "教学PC3",
     "pc-d1": "宿舍PC", "pc-la1": "实验PC", "pc-lib": "图书馆PC", "pc-life": "生活区PC",
     "pc-dyn1": "动态终端1", "pc-dyn2": "动态终端2", "pc-dyn3": "动态终端3",
-    "ap-ta": "教学AP", "ap-d1": "宿舍AP", "mgmt-pc": "管理PC",
+    "ap-ta": "教学AP", "ap-d1": "宿舍AP", "ap-la": "实验AP", "mgmt-pc": "管理PC",
     "srv-dc1": "数据中心1", "srv-dc2": "数据中心2", "srv-dmz": "DMZ服务器",
+    "ml-sw": "梅陇互联交换机", "ml-lan-sw": "梅陇业务交换机",
+    "meilong": "梅陇校区网关", "pc-ml1": "梅陇校区PC",
 }
 HOST_COLORS = {"srv": "#0891b2", "pc": "#64748b", "ap": "#0d9488", "misc": "#94a3b8"}
 GAP = {"internet": 220, "inet_sw": 220, "edge": 220, "untrust_sw": 220, "fw": 220,
-       "zone_sw": 220, "core": 220, "agg": 190, "access": 150, "host": 105}
+       "zone_sw": 220, "core": 220, "agg": 190, "access": 150,
+       "campus_sw": 200, "campus": 200, "host": 105}
 
 
 def layer_of(name: str) -> str:

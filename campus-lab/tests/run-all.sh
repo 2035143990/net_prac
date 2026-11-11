@@ -62,7 +62,7 @@ if [ -f tests/preflight.sh ]; then
   fi
 fi
 
-DEFAULT_SUITES="connectivity routing security dhcp iso nat lag failover"
+DEFAULT_SUITES="connectivity routing security dhcp iso nat lag failover wireless rate"
 SUITES=${*:-$DEFAULT_SUITES}
 OVERALL=0
 for suite in $SUITES; do

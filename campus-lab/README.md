@@ -2,7 +2,9 @@
 
 基于《奉贤校区校园网设计方案》构建的可运行校园网拓扑：双核心、分区域双汇聚、VLAN 接入、OSPF 动态路由、VRRP 网关冗余、DHCP 集中地址服务与区域 Relay、宿舍区访问控制、Trust/Untrust/DMZ 三区防火墙、源 NAT 与 DMZ 目的 NAT、核心与服务器链路聚合。
 
-拓扑共 **44 个容器、66 条链路**，部署后可直接进行层二/层三转发、跨区域访问、地址自动配置、Internet 访问、DMZ 发布和故障切换实验。节点数、链路数、VLAN 与地址池以 `configs/facts.json` 为准，本文数字由 `gen.py` 生成口径同步。
+拓扑共 **49 个容器、72 条链路**，部署后可直接进行层二/层三转发、跨区域访问、地址自动配置、Internet 访问、DMZ 发布和故障切换实验。节点数、链路数、VLAN 与地址池以 `configs/facts.json` 为准，本文数字由 `gen.py` 生成口径同步。
+
+相对基础版，本工程还额外落实了任务书的三项要求：**主干 10Gb / 到楼层 1Gb / 宿舍到房间 100Mb 的链路速率**（容器内 `tc`/`tbf` 实际限速并可被用例断言）、**宿舍区与实验区共用同一个无线子网**（VLAN 510，跨楼栋二层延伸）、**经网络中心核心连接梅陇校区**（`r2` 第三条上行，10.91.1.0/30 互联）。
 
 > 📖 想理解项目怎么组织、拓扑怎么分层、看图怎么做，见 [`ARCHITECTURE.md`](ARCHITECTURE.md)。
 >
@@ -34,11 +36,13 @@ campus-lab/
 │  │                       # 汇聚节点另有 acl.nft、dhcp-relay.conf、start-services.sh
 │  ├─ access/              # 7 台接入/汇聚二层交换机的 VLAN 脚本
 │  ├─ fw/                  # fw1/fw2 启动脚本、nftables 规则、VRRP
-│  ├─ hosts/               # 17 台终端/服务器的地址、DHCP 客户端、dnsmasq 配置
+│  ├─ hosts/               # 20 台终端/服务器的地址、DHCP 客户端、dnsmasq 配置
+│  ├─ rates/               # 速率台账（每节点一份 .rates），由 apply-rates.sh 施加 tc 限速
+│  ├─ apply-rates.sh       # tc/tbf 限速脚本，由镜像 ENTRYPOINT 在启动时调用
 │  └─ facts.json           # 生成期事实快照，测试与报告读取
 ├─ tests/
 │  ├─ lib.sh               # 断言、编号、JSONL 结果库
-│  ├─ cases.tsv            # 65 条用例清单
+│  ├─ cases.tsv            # 85 条用例清单
 │  ├─ preflight.sh         # 拓扑就绪预检（二层/OSPF/VRRP），接入 run-all.sh
 │  ├─ run-all.sh           # 统一 runner，退出码 0/1/2
 │  ├─ connectivity.sh      # CONN-01~10
@@ -48,7 +52,9 @@ campus-lab/
 │  ├─ iso.sh               # ISO-01~13
 │  ├─ nat.sh               # NAT-01~07
 │  ├─ lag.sh               # LAG-01~07
-│  └─ failover.sh          # FAIL-01~06
+│  ├─ failover.sh          # FAIL-01~06
+│  ├─ wireless.sh          # WIRELESS-01~11（无线子网 + 梅陇校区互联）
+│  └─ rate.sh              # RATE-01~09（链路速率）
 ├─ ../docs/course-report-draft.md
 ├─ ../tools/report_check.py
 ├─ ARCHITECTURE.md         # 架构说明：代码组织 + 拓扑分层 + TopoViewer 用法
@@ -67,11 +73,12 @@ campus-lab/
 | 实验区汇聚 | `agg-l1` `agg-l2` | 上联双核心，下联 `acc-la`，VRRP 网关，DHCP Relay，区域 ACL |
 | 图书馆汇聚 | `agg-lib1` `agg-lib2` | 上联双核心，下联 `acc-lib`，VRRP 网关，DHCP Relay |
 | 生活区汇聚 | `agg-life1` `agg-life2` | 上联双核心，下联 `acc-life`，VRRP 网关，DHCP Relay |
-| 接入/二层 | `acc-ta` `acc-tb` `acc-d1` `acc-la` `acc-lib` `acc-life` `dc-sw` | Linux VLAN-filtering bridge，Trunk + Access 端口 |
+| 接入/二层 | `acc-ta` `acc-tb` `acc-d1` `acc-la` `acc-lib` `acc-life` `dc-sw` | Linux VLAN-filtering bridge，Trunk + Access 端口；`acc-d1:eth6 ↔ acc-la:eth5` 为 VLAN 510 跨楼栋 Trunk |
 | 边界防火墙 | `fw1` `fw2` | nftables 三区策略、SNAT、DMZ DNAT、VRRP 双机热备 |
-| 出口路由 | `r1` `r2` | 连接 Untrust 与模拟 Internet，静态路由 + VRRP |
-| 传输二层 | `trust-sw` `untrust-sw` `dmz-sw` `inet-sw` | Trust / Untrust / DMZ / Internet 汇聚二层转发 |
-| 终端 | `pc-*` `ap-*` `srv-*` `mgmt-pc` `internet` | 17 台 Alpine 终端/服务器，3 台动态终端 |
+| 出口路由 | `r1` `r2` | 连接 Untrust 与模拟 Internet，静态路由 + VRRP；`r2` 第三条上行接梅陇校区 |
+| 传输二层 | `trust-sw` `untrust-sw` `dmz-sw` `inet-sw` `ml-sw` `ml-lan-sw` | Trust / Untrust / DMZ / Internet 汇聚二层转发；`ml-sw` 承载梅陇互联，`ml-lan-sw` 承载梅陇业务网段 |
+| 终端 | `pc-*` `ap-*` `srv-*` `mgmt-pc` `internet` `meilong` | 20 台 Alpine 终端/服务器，3 台动态终端；`meilong` 为梅陇校区对端网关 |
+| 无线 AP | `ap-ta` `ap-d1` `ap-la` | VLAN 500（教学等大楼）与 VLAN 510（宿舍 + 实验区共用） |
 
 路由：核心、汇聚之间运行 OSPF（Area 0），核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由，并配置经对端出口路由器的浮动默认路由（管理距离 200），作为主 Internet 链路故障时的备份路径。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
 
@@ -88,7 +95,7 @@ campus-lab/
 | 500 | 教学区无线 | 10.50.0.0/24 | 10.50.0.1 | `ap-ta` 10.50.0.11 / `pc-dyn3` 动态 |
 | 201 | 实验区 | 10.20.0.0/24 | 10.20.0.1 | `pc-la1` 10.20.0.11 |
 | 301 | 宿舍区有线 | 10.32.0.0/24 | 10.32.0.1 | `pc-d1` 10.32.0.11 / `pc-dyn2` 动态 |
-| 510 | 宿舍区无线 | 10.51.0.0/24 | 10.51.0.1 | `ap-d1` 10.51.0.11 |
+| 510 | 宿舍区 + 实验区共用无线 | 10.51.0.0/24 | 10.51.0.1 | `ap-d1` 10.51.0.11 / `ap-la` 10.51.0.21 |
 | 50 | 图书馆 | 10.55.0.0/24 | 10.55.0.1 | `pc-lib` 10.55.0.11 |
 | 61 | 生活区 | 10.64.0.0/24 | 10.64.0.1 | `pc-life` 10.64.0.11 |
 | 70 | 数据中心 | 10.60.0.0/24 | 10.60.0.1 | `srv-dc1` 10.60.0.10 / `srv-dc2` 10.60.0.11 |
@@ -111,6 +118,8 @@ campus-lab/
 | Untrust | 10.90.1.0/24 | 出口路由 VIP .254，防火墙 VIP .253，r1 .1，r2 .2 |
 | Internet | 203.0.113.0/24 | `internet` .100，r1/r2 VRRP .254 |
 | 对外发布 VIP | 198.51.100.80/32 | Untrust 侧 VRRP 附加虚拟地址（主防火墙持有），TCP 80/443 DNAT 到 10.80.0.10 |
+| 梅陇互联 | 10.91.1.0/30 | `r2:eth3` 10.91.1.1，`meilong:eth1` 10.91.1.2 |
+| 梅陇业务网段 | 10.91.0.0/16 | `meilong:eth2` 10.91.0.1，`pc-ml1` 10.91.0.11；`r2` 静态路由 `10.91.0.0/16 via 10.91.1.2` |
 | 管理网 | 172.31.100.0/24 | 由 Containerlab 自动分配，仅带外管理；校园管理 VLAN 90 为 10.70.0.0/24 |
 
 VRRP 采用 keepalived 实现，主节点优先级 120、备节点 100，主节点故障后备节点自动接管 VIP；主节点恢复后重新抢占。
@@ -132,7 +141,7 @@ DHCP 服务器为 `srv-dc1`（10.60.0.10），dnsmasq 同时提供 DNS；10 台�
 
 ### 4.1 前置条件
 
-- Docker Desktop（macOS）已运行，建议分配至少 **4 GB 内存、4 CPU**；44 个节点启动阶段峰值较高；
+- Docker Desktop（macOS）已运行，建议分配至少 **4 GB 内存、4 CPU**；49 个节点启动阶段峰值较高；
 - 项目目录位于 Docker Desktop 的共享路径下（默认的 `/Users/...` 即可）；
 - 首次构建时需要能访问 `ghcr.io`、Docker Hub（`alpine:3.24`）和 `mirrors.aliyun.com`；
 - 本机有 `python3`（仅使用标准库，无需 pip 安装依赖）；
@@ -157,9 +166,9 @@ DHCP 服务器为 `srv-dc1`（10.60.0.10），dnsmasq 同时提供 DNS；10 台�
    预期输出：
 
    ```text
-   generated 14 frr, 7 l2, 17 hosts, 2 fw, 4 bridges
-   total nodes: 44
-   links: 66
+   generated 14 frr, 7 l2, 20 hosts, 2 fw, 6 bridges
+   total nodes: 49
+   links: 72
    ```
 
 3. **部署**：
@@ -257,11 +266,14 @@ bash tests/run-all.sh
 ### 4.4 部署后确认
 
 ```sh
-docker ps --filter name=clab-campus-lab- --format '{{.Names}}' | wc -l   # 应为 44
+docker ps --filter name=clab-campus-lab- --format '{{.Names}}' | wc -l   # 应为 49
 docker exec clab-campus-lab-core1 vtysh -c 'show ip ospf neighbor'        # 应为 11 条 Full
 docker exec clab-campus-lab-core1 cat /proc/net/bonding/bond0             # 两个成员均 up
 docker exec clab-campus-lab-srv-dc1 pgrep -a dnsmasq                      # DHCP/DNS 进程
 docker exec clab-campus-lab-agg-d1 pgrep -a dnsmasq                       # Relay 进程
+docker exec clab-campus-lab-core1 tc qdisc show dev eth1                  # 应含 tbf rate 10Gbit
+docker exec clab-campus-lab-acc-d1 tc qdisc show dev eth3                 # 应含 tbf rate 100Mbit
+docker exec clab-campus-lab-r2 ip route get 10.91.0.11                    # 应经 10.91.1.2
 ```
 
 ### 4.5 用 TopoViewer 查看拓扑（推荐）
@@ -292,6 +304,8 @@ sh gen-drawio.sh
 ```
 
 `drawio-postprocess.py` 现在对接口标签删除数、链路样式替换数、节点坐标缩放数分别校验；任一类为 0 时非零退出，避免上游格式变化后静默失效。
+
+产物 `campus-lab.clab.drawio` 已随仓库提交，内容与当前生成器一致（49 个节点、72 条链路，含梅陇校区互联 `meilong`/`pc-ml1`/`ml-sw`/`ml-lan-sw` 与实验区 AP `ap-la`）。修改 `gen.py` 后需重新执行本脚本并提交更新后的文件。
 
 ### 4.7 销毁与文件清理
 
@@ -333,6 +347,8 @@ sh tests/iso.sh
 sh tests/nat.sh
 sh tests/lag.sh
 sh tests/failover.sh
+sh tests/wireless.sh
+sh tests/rate.sh
 ```
 
 ### 5.1 用例与结果
@@ -347,6 +363,8 @@ sh tests/failover.sh
 | NAT | NAT-01~07 | 公网地址 80/443、未发布端口、私网直达、DNAT/SNAT/丢弃计数 |
 | LAG | LAG-01~07 | bond 模式、成员状态、单逻辑地址、OSPF 单邻居、服务器聚合、成员故障 |
 | FAIL | FAIL-01~06 | core VRRP 切换、上联故障恢复、fw1 切换、邻居恢复 |
+| WIRELESS | WIRELESS-01~11 | 无线子网归属与互通（VLAN 500/510）、实验区无线、DNS 解析、梅陇校区双向互联与回程路由 |
+| RATE | RATE-01~09 | 速率台账存在性、主干 10G、到楼层 1G、宿舍到房间 100M、梅陇互联 10G、限速后业务可用、档位集合 |
 
 结果写入 `tests/results/<run-id>/`：
 
@@ -360,7 +378,7 @@ sh tests/failover.sh
 
 `run-all.sh` 在执行任何用例前会先运行 `tests/preflight.sh`，校验实验环境是否真正处于"已就绪"状态：
 
-- 12 台二层设备的 `br0` 存在，且已接入至少一个端口（二层广播域成立）；
+- 13 台二层设备的 `br0` 存在，且已接入至少一个端口（二层广播域成立）；
 - `core1` 的 OSPF Full 邻居为 11；
 - 四组 VRRP VIP（核心 `10.0.100.253`、教学区汇聚 `10.10.0.1`、宿舍区汇聚 `10.32.0.1`、防火墙 `10.0.100.254`）各自**恰好有 1 个**持有者。
 
@@ -370,11 +388,11 @@ sh tests/failover.sh
 
 ### 5.2 能力开关与 SKIP
 
-`configs/facts.json` 的 `capabilities` 为 `dhcp/acl/dnat/lag/report`。能力为 `false` 时对应套件 SKIP；能力为 `true` 但断言失败必须 FAIL，不得跳过。
+`configs/facts.json` 的 `capabilities` 为 `dhcp/acl/dnat/lag/rate/wireless/report`。能力为 `false` 时对应套件 SKIP；能力为 `true` 但断言失败必须 FAIL，不得跳过。
 
 ### 5.3 实测状态（2026-11-11）
 
-全量运行 run-id `20261111T122017Z` 结果为 **65/65 通过、0 失败、0 跳过**（Windows / WSL2 / Docker Engine 29.1.3 / Containerlab 0.83.0）：
+全量运行 run-id `20261111T140838Z` 结果为 **85/85 通过、0 失败、0 跳过**（Windows / WSL2 / Docker Engine / Containerlab）：
 
 | 套件 | 通过/总数 | 失败项 |
 | --- | --- | --- |
@@ -386,11 +404,13 @@ sh tests/failover.sh
 | NAT | 7/7 | — |
 | LAG | 7/7 | — |
 | FAIL | 6/6 | — |
-| **合计** | **65/65** | |
+| WIRELESS | 11/11 | — |
+| RATE | 9/9 | — |
+| **合计** | **85/85** | |
 
-历史轮次：首轮 `20261108T115247Z` 为 61/64（3 项失败均已定位修复）；迁移到 WSL 后 `20261109T135137Z` 为 29/64、`20261109T141507Z` 为 62/64，`20261109T150150Z` ~ `20261109T155017Z` 均为 65/65；`20261110T031032Z` 为 37/65（宿主机重启后 `exec` 未重跑导致二层广播域失效与 VRRP 双主，已通过镜像 ENTRYPOINT 自愈机制修复，并新增拓扑预检拦截此类状态）；`20261111T062929Z` 为 64/64（按设计方案补全教学区、实验区、宿舍区地址范围，并新增生活区出向隔离与数据中心禁止主动出校 ACL）。
+历史轮次：首轮 `20261108T115247Z` 为 61/64（3 项失败均已定位修复）；迁移到 WSL 后 `20261109T135137Z` 为 29/64、`20261109T141507Z` 为 62/64，`20261109T150150Z` ~ `20261109T155017Z` 均为 65/65；`20261110T031032Z` 为 37/65（宿主机重启后 `exec` 未重跑导致二层广播域失效与 VRRP 双主，已通过镜像 ENTRYPOINT 自愈机制修复，并新增拓扑预检拦截此类状态）；`20261111T122017Z` 为 65/65；`20261111T133133Z` 为 83/85（补齐三项缺口后的首轮，WIRELESS-04、WIRELESS-10 失败）；`20261111T135011Z`、`20261111T135749Z`、干净重建部署的 `20261111T140838Z`、修复跨平台编码后的 `20261111T143222Z` 与完整复现链轮次 `20261111T145644Z` 均为 **85/85**。
 
-本轮修复了三类问题：一是部署后 OSPF 尚未收敛就执行测试导致的 CONN/ROUTE/DHCP 假失败，现由 `tests/run-all.sh` 在套件执行前等待 `core1/core2` 的 OSPF Full 邻居达到 11，再执行拓扑预检；二是「教学区 -> 宿舍区」阻断规则原先只挂在 `dorm_filter` 链（仅 `saddr ∈ @dorm_nets` 时才跳转），教学区出向流量根本进不去，现已在 forward 基础链增加 `ip saddr @teaching_nets ip daddr @dorm_nets counter drop`；三是 WSL2 实例被 Windows 回收导致 dockerd 重启、veth 链路丢失，预检现会比对部署时记录的 dockerd MainPID 并给出准确提示。
+补齐三项缺口时定位并修复的问题：一是 VLAN 510 最初在汇聚层跨楼栋桥接，广播域跨过 `agg-d1 → acc-d1 → agg-d2 → agg-l2 → acc-la → agg-l1 → agg-d1` 整圈，Linux 桥 BPDU 不带 VLAN 标记导致 PVST 无法识别该环，改为在接入层做单条 Trunk（`acc-d1:eth6 ↔ acc-la:eth5`）；二是防火墙的 `10.0.0.0/8` 聚合路由覆盖了梅陇网段 `10.91.0.0/16` 造成转发环路，补充明细路由 `10.91.0.0/16 via 10.90.1.254`；三是数据中心 dnsmasq 只配了不可达的上游，补上园区内 `host-record` 并以 `local=/campus.local/` 声明该域绝不转发，否则 AAAA 查询会被送往上游导致解析命令返回非零；四是 `gen.py` 写出文件未指定 `encoding`，在 Windows 上按 GBK 落盘使 `configs/facts.json` 成为非法 UTF-8，WSL 内 Python 读取时报 `UnicodeDecodeError`，测试前置检查因此判定「环境不可用」而直接退出，现已显式指定 `encoding="utf-8"`。
 
 详细证据见 `../docs/verification-report.md`。
 

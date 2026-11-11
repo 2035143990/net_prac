@@ -17,7 +17,7 @@
   </style>
   <rect width="1000" height="870" fill="#f8fafc"/>
   <text x="500" y="36" text-anchor="middle" class="title">Containerlab 仿真拓扑与节点规模</text>
-  <text x="500" y="62" text-anchor="middle" class="sub">44 个容器 · 66 条链路 · 8 个测试套件 · 65 条用例</text>
+  <text x="500" y="62" text-anchor="middle" class="sub">49 个容器 · 72 条链路 · 10 个测试套件 · 85 条用例</text>
 
   <rect x="400" y="88" width="200" height="46" class="box internet"/>
   <text x="500" y="116" text-anchor="middle">internet（1）</text>
@@ -51,8 +51,8 @@
   <text x="500" y="652" text-anchor="middle" class="label">acc-ta · acc-tb · acc-d1 · acc-la · acc-lib · acc-life · dc-sw</text>
 
   <rect x="100" y="690" width="800" height="60" class="box host"/>
-  <text x="500" y="712" text-anchor="middle">终端/服务器（17）</text>
-  <text x="500" y="734" text-anchor="middle" class="label">pc-ta1/ta2/tb1 · pc-d1 · pc-la1 · pc-lib · pc-life · ap-ta/ap-d1 · srv-dc1/dc2 · srv-dmz · internet · mgmt-pc · pc-dyn1/2/3</text>
+  <text x="500" y="712" text-anchor="middle">终端/服务器（20）</text>
+  <text x="500" y="734" text-anchor="middle" class="label">pc-ta1/ta2/tb1 · pc-d1 · pc-la1 · pc-lib · pc-life · ap-ta/ap-d1/ap-la · srv-dc1/dc2 · srv-dmz · internet · mgmt-pc · meilong · pc-ml1 · pc-dyn1/2/3</text>
 
   <g class="line">
     <path d="M500,134 L500,154"/>
@@ -66,11 +66,11 @@
   </g>
 
   <rect x="760" y="90" width="210" height="120" fill="#fff" stroke="#94a3b8" stroke-dasharray="5 4" rx="8"/>
-  <text x="865" y="115" text-anchor="middle" class="label">4 台传输二层桥</text>
+  <text x="865" y="115" text-anchor="middle" class="label">6 台传输二层桥</text>
   <text x="865" y="138" text-anchor="middle" class="label">trust-sw / untrust-sw</text>
   <text x="865" y="161" text-anchor="middle" class="label">dmz-sw / inet-sw</text>
-  <text x="865" y="184" text-anchor="middle" class="label">已计入总数 44</text>
+  <text x="865" y="184" text-anchor="middle" class="label">ml-sw / ml-lan-sw（梅陇）</text>
 
-  <text x="500" y="786" text-anchor="middle" class="count">14 FRR + 7 L2 + 17 Host + 2 FW + 4 Bridge = 44 节点</text>
-  <text x="500" y="806" text-anchor="middle" class="label">图中括号数字为仿真节点数量；链路共 66 条，含 3 台动态终端、1 台管理终端和 1 条服务器聚合第二链路</text>
+  <text x="500" y="786" text-anchor="middle" class="count">14 FRR + 7 L2 + 20 Host + 2 FW + 6 Bridge = 49 节点</text>
+  <text x="500" y="806" text-anchor="middle" class="label">图中括号数字为仿真节点数量；链路共 72 条，含 3 台动态终端、1 台管理终端、1 台实验区 AP 与梅陇校区互联链路</text>
 </svg>

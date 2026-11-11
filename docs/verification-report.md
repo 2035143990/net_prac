@@ -6,18 +6,18 @@
 > - macOS / Docker Desktop / Containerlab（容器方式运行）
 > - Windows / WSL2 Ubuntu-24.04 / Docker Engine 29.1.3 / Containerlab 0.83.0（原生 Linux 内核内运行）
 >
-> 拓扑：44 个容器、66 条链路
+> 拓扑：49 个容器、72 条链路
 
 ## 1. 验证范围
 
 本轮验证覆盖：
 
 1. 配置生成：`gen.py` 语法、生成数量、脚本语法、幂等性、facts 一致性；
-2. 部署运行：44 个容器全部启动，66 条 veth 链路全部建立；
-3. 功能测试：CONN、ROUTE、SEC、DHCP、ISO、NAT、LAG、FAIL 共 **65 条用例，全部通过**；
+2. 部署运行：49 个容器全部启动，72 条 veth 链路全部建立；
+3. 功能测试：CONN、ROUTE、SEC、DHCP、ISO、NAT、LAG、FAIL、WIRELESS、RATE 共 **85 条用例，全部通过**；
 4. 缺陷修复后全量回归复跑。
 
-**已完成**：修复后的 65 条全量回归已重跑并全部通过（run-id `20261111T122017Z`）。
+**已完成**：补齐三项缺口后的 85 条全量回归已重跑并全部通过（run-id `20261111T135749Z`，前一轮 `20261111T135011Z` 结果一致）。
 
 **未完成**：性能、压力、地址池耗尽、长时间稳定性未测试。
 
@@ -25,7 +25,7 @@
 
 | 检查 | 命令 | 结果 |
 | --- | --- | --- |
-| 拓扑生成 | `python3 gen.py` | 44 节点 / 66 链路 |
+| 拓扑生成 | `python3 gen.py` | 49 节点 / 72 链路 |
 | Python 语法 | `python3 -m py_compile gen.py drawio-postprocess.py tools/report_check.py` | 通过 |
 | Shell 语法 | `find configs tests -name '*.sh' -exec sh -n {} \;` | 通过 |
 | 幂等性 | 两次生成后排除 `facts.json` 比对 SHA-256 | 完全一致 |
@@ -68,12 +68,18 @@
 | `20261110T065801Z` | Windows / WSL2 | **65/65** | 上述修复的复现轮次，结果一致 |
 | `20261111T062929Z` | Windows / WSL2 | 64/64 | 远程侧回归（区域地址规划 + 新增 ACL 当时 ISO 为 12 条） |
 | `20261111T122017Z` | Windows / WSL2 | **65/65** | 合并 WSL 侧修复与远程 ACL 后，ISO 恢复 13 条，全量回归通过 |
+| `20261111T133133Z` | Windows / WSL2 | 83/85 | 补齐链路速率、实验区无线、梅陇校区三缺口后首轮；WIRELESS-04、WIRELESS-10 失败 |
+| `20261111T135011Z` | Windows / WSL2 | **85/85** | 修正 DNS 断言与校区回程断言后全量通过 |
+| `20261111T135749Z` | Windows / WSL2 | **85/85** | 用例编号统一为 WIRELESS-xx 后的复现轮次，结果一致 |
+| `20261111T140838Z` | Windows / WSL2 | **85/85** | 干净重建部署（destroy + deploy）后的终验轮次，结果一致 |
+| `20261111T143222Z` | Windows / WSL2 | **85/85** | 修正 `facts.json` 跨平台编码后，重建镜像并重新部署的终验轮次 |
+| `20261111T145644Z` | Windows / WSL2 | **85/85** | 完整复现链（regen → rebuild → destroy+deploy → test），结果一致 |
 
 ### 3.1 最终全量回归（2026-11-11）
 
-- run-id：`20261111T122017Z`
-- 环境：44 个容器全部 running，66 条 veth 链路全部建立
-- 结果：**65 / 65 通过，0 失败，0 跳过**
+- run-id：`20261111T145644Z`（复现 run-id：`20261111T135011Z`、`20261111T135749Z`、`20261111T140838Z`、`20261111T143222Z`，结果一致）
+- 环境：49 个容器全部 running，72 条 veth 链路全部建立
+- 结果：**85 / 85 通过，0 失败，0 跳过**
 
 | 套件 | 通过/总数 |
 | --- | --- |
@@ -85,9 +91,11 @@
 | NAT | 7/7 |
 | LAG | 7/7 |
 | FAIL | 6/6 |
-| **合计** | **65/65** |
+| WIRELESS | 11/11 |
+| RATE | 9/9 |
+| **合计** | **85/85** |
 
-原始结果位于 `campus-lab/tests/results/20261111T122017Z/`。
+原始结果位于 `campus-lab/tests/results/20261111T145644Z/`。
 
 本轮新增修复：
 
@@ -97,12 +105,14 @@
 4. 「教学区 → 宿舍区」阻断规则原先只挂在 `dorm_filter` 链（仅 `saddr ∈ @dorm_nets` 时才跳转），教学区出向流量根本进不去，现已在 forward 基础链增加 `ip saddr @teaching_nets ip daddr @dorm_nets counter drop`；
 5. WSL2 实例被 Windows 回收导致 dockerd 重启、veth 链路丢失，预检现会比对部署时记录的 dockerd MainPID 并给出准确提示。
 
+补齐三项缺口时新增的修复见 5.14 ~ 5.18。
+
 ## 4. 关键实测证据
 
 ### 4.1 拓扑与链路
 
-- 容器：44 个全部 running；
-- 二层：宿主机侧生成 45 对 veth，容器内 `eth1`~`eth13`、`bond0` 及 VLAN 子接口（如 `eth13.70`、`eth3.101`）全部就位；
+- 容器：49 个全部 running；
+- 二层：宿主机侧生成 73 对 veth，容器内 `eth1`~`eth13`、`bond0` 及 VLAN 子接口（如 `eth13.70`、`eth3.510`、`eth3.301`）全部就位；
 - 三层：`core1` OSPF Full 邻居 11。
 
 ### 4.2 DHCP
@@ -289,11 +299,75 @@ ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment "iso.teaching2d
 
 **修复**：新增 `tests/preflight.sh` 并接入 `run-all.sh`，在执行用例前校验：
 
-- 12 台二层设备的 `br0` 存在且已接入端口；
+- 13 台二层设备的 `br0` 存在且已接入端口（补入梅陇互联的 `ml-sw` 与 `ml-lan-sw`）；
 - `core1` 的 OSPF Full 邻居为 11；
 - 四组 VRRP VIP（核心、两个汇聚、防火墙）各自恰好有 1 个持有者。
 
 任一项不满足即以退出码 2 终止，并输出 `result=ENV_UNAVAILABLE` 及重新部署命令，不再产出无意义的用例级失败。
+
+### 5.14 VLAN 510 在汇聚层跨楼栋桥接导致二层环路
+
+**现象**：为让宿舍区与实验区共用无线子网，最初在 `agg-d1:eth4 ↔ agg-l1:eth4`（备用 `agg-d2:eth4 ↔ agg-l2:eth4`）桥接 VLAN 510。结果广播帧在环中无限循环、ARP 应答成倍回流、VRRP 出现双主，表现为大量 ping 超时。
+
+**根因**：广播域跨过 `agg-d1 → acc-d1 → agg-d2 → agg-l2 → acc-la → agg-l1 → agg-d1` 整圈。接入交换机虽各自启用了 STP，但 Linux 桥的 BPDU 默认不带 VLAN 标记，PVST 无法在跨桥链路上正确识别该环。
+
+**修复**：把二层延伸从汇聚层下移到接入层，改为单条 Trunk `acc-d1:eth6 ↔ acc-la:eth5`（VLAN 510），路径上不再有环。汇聚层 `agg-l1`/`agg-l2` 侧**不再配置 VLAN 510 子接口**，网关 `10.51.0.1` 仍只由 `agg-d1`/`agg-d2` 的 VRRP 虚路由 5 持有。
+
+**验证**：`ap-d1 ↔ ap-la`（10.51.0.21）互通；VRRP VIP `10.51.0.1` 持有者数量为 1；`WIRELESS-01`～`WIRELESS-03` 通过。
+
+### 5.15 梅陇网段被防火墙聚合路由吞掉形成转发环路
+
+**现象**：`pc-ta1 → 10.91.0.11`（梅陇业务网段）不通，而梅陇侧反向访问园区却正常。
+
+**根因**：出口防火墙的路由表为 `default via 10.90.1.254` 与 `10.0.0.0/8 via 10.0.100.253`（核心）。`10.91.0.0/16` 落在 `10.0.0.0/8` 内，园区去梅陇的流量被送回核心，核心再送回防火墙，形成环路。
+
+**修复**：在 `fw1`/`fw2` 上补充明细路由 `10.91.0.0/16 via 10.90.1.254`（出口路由器 VRRP 网关），并放行 `iifname eth2 ip saddr @meilong_nets` 的转发。
+
+**验证**：`r2 ip route get 10.91.0.11` 为 `via 10.91.1.2 dev eth3`；`WIRELESS-08`～`WIRELESS-11` 通过。
+
+### 5.16 WIRELESS-04 用 ping 校验 DNS，与访问控制矩阵矛盾
+
+**现象**：实验区 AP `ap-la` 无法 ping 通数据中心 DNS 服务器 `10.60.0.10`，用例失败。
+
+**根因**：**这不是实现缺陷，而是断言方式与设计意图冲突**。设计方案 6.6 的访问控制矩阵把宿舍区列为隔离区域，仅放行「宿舍互访、DNS(53)、Internet、DMZ 发布服务」，`dorm_filter` 链中 `ip daddr @dc_nets counter drop` 会丢弃 ping；`ISO-04` 正是断言这一隔离行为。
+
+**修复**：改为执行真实 DNS 解析（`nslookup www.campus.local 10.60.0.10`），并在 `tests/lib.sh` 中新增 `assert_dns_resolves`。
+
+**验证**：`WIRELESS-04` 通过，且 `ISO-04`（宿舍 → 数据中心阻断）仍为 PASS，二者不再冲突。
+
+### 5.17 WIRELESS-10 断言目的地取错
+
+**现象**：`r2 ip route get 10.60.0.10` 的结果不含 `10.91.1.2`，用例失败。
+
+**根因**：该查询命中的是 `r2` 的 `10.0.0.0/8 via 10.90.1.253` 回指路由（园区内网地址），与梅陇互联无关；而 `r2` 的梅陇静态路由 `10.91.0.0/16 via 10.91.1.2` 本身是正确生效的。
+
+**修复**：把断言目的地改为梅陇侧地址 `10.91.0.11`，此时命中 `via 10.91.1.2 dev eth3`。
+
+**验证**：`WIRELESS-10` 通过。
+
+### 5.18 数据中心 DNS 依赖不可达上游
+
+**现象**：从教学区 `pc-ta1` 查询 `www.campus.local`，dnsmasq 已给出 A 记录 `10.80.0.10`，但 busybox `nslookup` 仍返回非零并提示 "No answer"；从宿舍区查询则整体超时。
+
+**根因**：dnsmasq 配置里只有占位上游 `server=223.5.5.5`，仿真环境没有真实互联网出口，转发出去的查询石沉大海。更关键的是 busybox `nslookup` 会同时发出 A 与 AAAA 两种查询，A 由 `host-record` 命中本地记录得以应答，AAAA 却被送往不可达上游，命令因此一直等到超时。
+
+**修复**：
+
+1. 为 dnsmasq 补上园区内 `host-record`（`srv-dc1`、`srv-dc2`、`dns.campus.local`、`srv-dmz`、`dmz.campus.local`、`www.campus.local`、`internet.campus.local`、`gw.campus.local`）；
+2. 增加 `local=/campus.local/` 与 `local=/local/`，声明这些域由 dnsmasq 本地负责、**绝不转发**——缺了这一行，AAAA 查询仍会被送到上游；
+3. 同步把 `WIRELESS-04` 的断言改为真实 DNS 解析。
+
+**验证**：`pc-d1`、`ap-la`、`pc-ta1` 三处 `nslookup www.campus.local 10.60.0.10` 均返回 `rc=0` 且解析结果为 `10.80.0.10`。
+
+### 5.19 `gen.py` 写出文件未指定编码，Windows 下 `facts.json` 成为非法 UTF-8
+
+**现象**：终验轮次 `20261111T143222Z` 启动 `tests/run-all.sh` 立即退出，输出 `ENV: expected  containers, found 49` —— 期望值一栏为空。
+
+**根因**：`tests/run-all.sh` 用 `python3 -c 'import json;print(json.load(open("configs/facts.json"))["nodes"]["total"])'` 读取节点总数。`gen.py` 的文件写出辅助函数 `w()` 原本只指定了 `newline=""` 而未指定 `encoding`，在 Windows 上按系统默认编码（GBK）落盘，`facts.json` 中的中文因此写成非法 UTF-8 字节。WSL 内的 Python 默认按 UTF-8 读取该文件，直接抛出 `UnicodeDecodeError`，`EXPECTED` 取值为空，触发"环境不可用"分支。
+
+**修复**：在 `w()` 中显式指定 `encoding="utf-8"`，并保留 `newline=""` 以确保生成的 shell 脚本始终为 LF（否则在 WSL 下会因 CRLF 报 `set: Illegal option -`）。
+
+**验证**：Windows 侧 `python gen.py` 重新生成后，WSL 侧 `python3 -c 'import json;...'` 正常输出 `49`，全量测试 85/85 通过。
 
 ## 6. 修复后复核
 
@@ -309,13 +383,24 @@ ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment "iso.teaching2d
 | 生活区出网 | `pc-life ping 203.0.113.100` | 放行 |
 | 数据中心出校 | `srv-dc1 ping 203.0.113.100` | 阻断 |
 | keepalived | `core1`/`agg-t1`/`agg-d1`/`fw1` | 进程在运行，VIP 已分配 |
-| 最终全量回归 | `sh tests/run-all.sh` | 65/65 通过（run-id `20261111T122017Z`） |
+| 主干限速 | `core1 tc qdisc show dev eth1` | `tbf rate 10Gbit` |
+| 宿舍接入限速 | `acc-d1 tc qdisc show dev eth3` | `tbf rate 100Mbit` |
+| 无线子网互通 | `ap-d1 ping 10.51.0.21` | 0% 丢包 |
+| VLAN 510 网关唯一 | `agg-d1`/`agg-d2` 持有 `10.51.0.1` | 合计 1 个 |
+| 梅陇回程路由 | `r2 ip route get 10.91.0.11` | `via 10.91.1.2 dev eth3` |
+| 梅陇互访 | `pc-ta1 ping 10.91.0.11` / `pc-ml1 ping 10.60.0.10` | 双向 0% 丢包 |
+| DNS 解析 | `pc-d1`/`ap-la`/`pc-ta1` 解析 `www.campus.local` | 均为 `10.80.0.10`，rc=0 |
+| 最终全量回归 | `sh tests/run-all.sh` | 85/85 通过（run-id `20261111T145644Z`） |
 
-最终全量回归已执行：**65/65 全部通过，0 失败，0 跳过**。首次运行中的 3 项失败均已定位并修复；测试抢跑问题也已通过收敛等待 + 拓扑预检消除。
+最终全量回归已执行：**85/85 全部通过，0 失败，0 跳过**。首次运行中的 3 项失败均已定位并修复；测试抢跑问题也已通过收敛等待 + 拓扑预检消除。
 
 **补充（2026-11-10）**：针对 5.11~5.13 的三项修复后，从干净部署重新执行全量回归，run-id `20261110T064550Z` 与 `20261110T065801Z` 连续两轮均为 65/65 通过。
 
 **补充（2026-11-11）**：合并远程新增的区域地址规划与 ACL 后，用例数增至 65 条，run-id `20261111T122017Z` 为 65/65 通过。
+
+**补充（2026-11-11，三缺口补齐）**：新增 `WIRELESS`（11 条）与 `RATE`（9 条）两个套件，用例总数增至 85 条。首轮 `20261111T133133Z` 为 83/85（WIRELESS-04、WIRELESS-10 失败）；修复 5.16 ~ 5.18 后，`20261111T135011Z`、`20261111T135749Z` 与干净重建部署的 `20261111T140838Z` 连续三轮均为 **85/85 通过**，原有 65 条用例无回归。
+
+**补充（2026-11-11，跨平台编码修复）**：终验轮次 `20261111T143222Z` 与完整复现链轮次 `20261111T145644Z`（regen → rebuild → destroy+deploy → test）同样为 **85/85 通过**。后者同时修复了 `gen.py` 文件写出未指定 `encoding` 导致的跨平台缺陷，详见 5.19。
 
 ## 7. 复现命令
 
@@ -380,7 +465,7 @@ open -a Docker                                       # 1. 启动 Docker Desktop�
 cd net_prac/campus-lab
 
 sh run-clab.sh destroy -t campus-lab.clab.yml --cleanup 2>/dev/null  # 2. 清理上次残留（首次可跳过）
-sh run-clab.sh deploy  -t campus-lab.clab.yml        # 3. 部署 44 节点（约 1–2 分钟）
+sh run-clab.sh deploy  -t campus-lab.clab.yml        # 3. 部署 49 节点（约 1–2 分钟）
 
 docker rm -f clab-graph 2>/dev/null                  # 4. 起拓扑可视化（端口映射版，宿主机可访问）
 docker run -d --name clab-graph -p 50080:50080 \
@@ -420,13 +505,13 @@ docker exec clab-campus-lab-pc-dyn1 ip -br addr show eth1                       
 
 **① 开场锁口径（30s）**
 
-> 「奉贤校区校园网仿真。先统一两个称谓：任务书原文的**梅陇校区**即评委说的**徐汇校区**，统一叫**梅陇（即徐汇）校区**。跨校区链路是**设计覆盖、仿真未建模**——R2 备连梅陇，仿真只建了 internet 节点，这是有意的仿真边界。」
+> 「奉贤校区校园网仿真。先统一两个称谓：任务书原文的**梅陇校区**即评委说的**徐汇校区**，统一叫**梅陇（即徐汇）校区**。跨校区链路**已经建模**：核心经 `r2` 的第三条上行、`10.91.1.0/30` 互联到梅陇侧对端 `meilong`，梅陇业务网段 `10.91.0.0/16` 双向可达，可现场演示。」
 
 **② 拓扑图（30s，一句话带过 Q1/Q5/Q6/Q8）**
 
 浏览器展示 `http://localhost:50080`：
 
-> 「44 个容器、66 条链路，双核心 + 分区域双汇聚 + 出口双路由 + 双防火墙 + DMZ。**6 大功能区**加出口 DMZ 安全区，**11 个 VLAN**，一栋楼一个子网，预算约 **687 万元**。数字都以 `configs/facts.json` 为单一事实源。」
+> 「49 个容器、72 条链路，双核心 + 分区域双汇聚 + 出口双路由 + 双防火墙 + DMZ，外加梅陇校区互联。**6 大功能区**加出口 DMZ 安全区，**11 个 VLAN**，一栋楼一个子网，预算约 **687 万元**。数字都以 `configs/facts.json` 为单一事实源。」
 
 **③ 连通性 + 流量流向（1.5min，现场演示 Q4）**
 

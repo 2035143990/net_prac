@@ -42,7 +42,7 @@
     <button class="tab" onclick="showView('sim',this)">仿真运行拓扑</button>
   </div>
   <span id="legend-design"><span class="lg"><i style="background:#2563eb"></i>教学区<span class="cnt">5</span></span><span class="lg"><i style="background:#7c3aed"></i>实验区<span class="cnt">8</span></span><span class="lg"><i style="background:#0d9488"></i>宿舍区<span class="cnt">28</span></span><span class="lg"><i style="background:#b45309"></i>图书馆<span class="cnt">1</span></span><span class="lg"><i style="background:#be123c"></i>生活区<span class="cnt">3</span></span><span class="lg"><i style="background:#0891b2"></i>数据中心 / 计算机实验中心<span class="cnt">1</span></span><span class="lg"><i style="background:#475569"></i>网络管理<span class="cnt">1</span></span><span class="lg"><i style="background:#9333ea"></i>DMZ（出口发布区）<span class="cnt">1</span></span><span class="lg"><i style="background:#64748b"></i>无线子网<span class="cnt">2</span></span></span>
-  <span id="legend-sim" style="display:none"><label class="tg" data-layer="internet"><input type="checkbox" checked onchange="toggleLayer(this,'internet')"><i style="background:#64748b"></i>外网<span class="cnt">1</span></label><label class="tg" data-layer="inet_sw"><input type="checkbox" checked onchange="toggleLayer(this,'inet_sw')"><i style="background:#94a3b8"></i>外网汇聚<span class="cnt">1</span></label><label class="tg" data-layer="edge"><input type="checkbox" checked onchange="toggleLayer(this,'edge')"><i style="background:#ea580c"></i>出口路由<span class="cnt">2</span></label><label class="tg" data-layer="untrust_sw"><input type="checkbox" checked onchange="toggleLayer(this,'untrust_sw')"><i style="background:#a78bfa"></i>Untrust 二层<span class="cnt">1</span></label><label class="tg" data-layer="fw"><input type="checkbox" checked onchange="toggleLayer(this,'fw')"><i style="background:#9333ea"></i>防火墙<span class="cnt">2</span></label><label class="tg" data-layer="zone_sw"><input type="checkbox" checked onchange="toggleLayer(this,'zone_sw')"><i style="background:#34d399"></i>Trust / DMZ 二层<span class="cnt">2</span></label><label class="tg" data-layer="core"><input type="checkbox" checked onchange="toggleLayer(this,'core')"><i style="background:#dc2626"></i>核心<span class="cnt">2</span></label><label class="tg" data-layer="agg"><input type="checkbox" checked onchange="toggleLayer(this,'agg')"><i style="background:#2563eb"></i>汇聚<span class="cnt">10</span></label><label class="tg" data-layer="access"><input type="checkbox" checked onchange="toggleLayer(this,'access')"><i style="background:#16a34a"></i>接入<span class="cnt">7</span></label><label class="tg" data-layer="host"><input type="checkbox" checked onchange="toggleLayer(this,'host')"><i style="background:#0891b2"></i>终端/服务器<span class="cnt">16</span></label></span>
+  <span id="legend-sim" style="display:none"><label class="tg" data-layer="internet"><input type="checkbox" checked onchange="toggleLayer(this,'internet')"><i style="background:#64748b"></i>外网<span class="cnt">1</span></label><label class="tg" data-layer="inet_sw"><input type="checkbox" checked onchange="toggleLayer(this,'inet_sw')"><i style="background:#94a3b8"></i>外网汇聚<span class="cnt">1</span></label><label class="tg" data-layer="edge"><input type="checkbox" checked onchange="toggleLayer(this,'edge')"><i style="background:#ea580c"></i>出口路由<span class="cnt">2</span></label><label class="tg" data-layer="untrust_sw"><input type="checkbox" checked onchange="toggleLayer(this,'untrust_sw')"><i style="background:#a78bfa"></i>Untrust 二层<span class="cnt">1</span></label><label class="tg" data-layer="fw"><input type="checkbox" checked onchange="toggleLayer(this,'fw')"><i style="background:#9333ea"></i>防火墙<span class="cnt">2</span></label><label class="tg" data-layer="zone_sw"><input type="checkbox" checked onchange="toggleLayer(this,'zone_sw')"><i style="background:#34d399"></i>Trust / DMZ 二层<span class="cnt">2</span></label><label class="tg" data-layer="core"><input type="checkbox" checked onchange="toggleLayer(this,'core')"><i style="background:#dc2626"></i>核心<span class="cnt">2</span></label><label class="tg" data-layer="agg"><input type="checkbox" checked onchange="toggleLayer(this,'agg')"><i style="background:#2563eb"></i>汇聚<span class="cnt">10</span></label><label class="tg" data-layer="access"><input type="checkbox" checked onchange="toggleLayer(this,'access')"><i style="background:#16a34a"></i>接入<span class="cnt">7</span></label><label class="tg" data-layer="campus_sw"><input type="checkbox" checked onchange="toggleLayer(this,'campus_sw')"><i style="background:#b45309"></i>梅陇互联二层<span class="cnt">2</span></label><label class="tg" data-layer="campus"><input type="checkbox" checked onchange="toggleLayer(this,'campus')"><i style="background:#92400e"></i>梅陇校区<span class="cnt">2</span></label><label class="tg" data-layer="host"><input type="checkbox" checked onchange="toggleLayer(this,'host')"><i style="background:#0891b2"></i>终端/服务器<span class="cnt">17</span></label></span>
   <span class="spacer"></span>
   <span id="ops-sim" style="display:none">
     <button class="act" onclick="setZoom(-0.15)">−</button>
@@ -166,73 +166,79 @@ SSID ECUST-STU（VLAN 510）</title><rect x="162" y="1202" width="150" height="6
 </svg>
 </div>
 <div id="view-sim" style="display:none">
-<svg id="svg-sim" viewBox="0 0 1870 1770" xmlns="http://www.w3.org/2000/svg">
-<line class="link l-core l-agg" x1="825" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="825" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-agg" x1="1045" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<svg id="svg-sim" viewBox="0 0 1870 2100" xmlns="http://www.w3.org/2000/svg">
+<line class="link l-agg l-core" x1="825" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="1600" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="1790" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="80" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="270" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="460" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="650" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="840" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="1030" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="825" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="1220" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-core" x1="1045" y1="1070" x2="1410" y2="1235" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
 <line class="link l-core" x1="825" y1="1070" x2="1045" y2="1070" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
 <line class="link l-core" x1="825" y1="1070" x2="1045" y2="1070" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-zone_sw" x1="825" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-core l-zone_sw" x1="1045" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-core" x1="825" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-core" x1="1045" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1600" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1790" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1600" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1790" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="80" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="270" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="460" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="650" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="840" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1030" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1220" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-access l-agg" x1="1410" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1400" x2="1198" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1400" x2="1302" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1400" x2="252" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1400" x2="568" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1085" y1="1400" x2="778" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1235" y1="1400" x2="1408" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1400" x2="462" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1400" x2="148" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="485" y1="1400" x2="672" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="635" y1="1400" x2="882" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="785" y1="1400" x2="988" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="935" y1="1400" x2="1092" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1400" x2="1512" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1400" x2="1512" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1400" x2="1618" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-access" x1="1385" y1="1400" x2="358" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-zone_sw" x1="825" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-zone_sw" x1="1045" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-untrust_sw" x1="825" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-untrust_sw" x1="1045" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-core" x1="825" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-core" x1="1045" y1="1070" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-access" x1="825" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-core l-access" x1="1045" y1="1070" x2="1385" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1600" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1790" y1="1235" x2="1085" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1600" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1790" y1="1235" x2="1235" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="80" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="270" y1="1235" x2="485" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="460" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="650" y1="1235" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="840" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1030" y1="1235" x2="785" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1220" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-agg l-access" x1="1410" y1="1235" x2="935" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-access" x1="485" y1="1400" x2="635" y2="1400" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="1250" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="1355" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="305" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="620" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1085" y1="1400" x2="830" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1235" y1="1400" x2="1460" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="515" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="95" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="485" y1="1400" x2="725" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="635" y1="1400" x2="935" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="635" y1="1400" x2="200" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="785" y1="1400" x2="1040" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="935" y1="1400" x2="1145" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1565" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1565" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="1670" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-host l-access" x1="1385" y1="1400" x2="410" y2="1895" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="825" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="1045" y1="740" x2="1045" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-untrust_sw l-fw" x1="825" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-untrust_sw l-fw" x1="1045" y1="740" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
 <line class="link l-untrust_sw l-edge" x1="825" y1="410" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
 <line class="link l-untrust_sw l-edge" x1="1045" y1="410" x2="935" y2="575" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-zone_sw" x1="825" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-fw l-zone_sw" x1="1045" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-host l-zone_sw" x1="1722" y1="1565" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-edge" x1="825" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-edge" x1="1045" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
-<line class="link l-inet_sw l-internet" x1="935" y1="80" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="825" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-fw" x1="1045" y1="740" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-zone_sw l-host" x1="1775" y1="1895" x2="825" y2="905" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-inet_sw" x1="825" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-edge l-inet_sw" x1="1045" y1="410" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-internet l-inet_sw" x1="935" y1="80" x2="935" y2="245" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-campus_sw l-edge" x1="1045" y1="410" x2="1035" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-campus l-campus_sw" x1="835" y1="1730" x2="1035" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-campus l-campus_sw" x1="835" y1="1730" x2="835" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
+<line class="link l-campus l-campus_sw" x1="1035" y1="1730" x2="835" y2="1565" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75"/>
 <g class="node l-access" data-layer="access"><title>acc-d1</title><circle cx="485" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="485" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍接入</text></g>
 <g class="node l-access" data-layer="access"><title>acc-la</title><circle cx="635" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="635" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验接入</text></g>
 <g class="node l-access" data-layer="access"><title>acc-lib</title><circle cx="785" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="785" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆接入</text></g>
@@ -249,8 +255,9 @@ SSID ECUST-STU（VLAN 510）</title><rect x="162" y="1202" width="150" height="6
 <g class="node l-agg" data-layer="agg"><title>agg-life2</title><circle cx="1410" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1410" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区汇聚2</text></g>
 <g class="node l-agg" data-layer="agg"><title>agg-t1</title><circle cx="1600" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1600" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学汇聚1</text></g>
 <g class="node l-agg" data-layer="agg"><title>agg-t2</title><circle cx="1790" cy="1235" r="15" fill="#2563eb" stroke="#fff" stroke-width="2"/><text x="1790" y="1263" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学汇聚2</text></g>
-<g class="node l-host l-host-ap" data-layer="host"><title>ap-d1</title><circle cx="148" cy="1565" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="148" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍AP</text></g>
-<g class="node l-host l-host-ap" data-layer="host"><title>ap-ta</title><circle cx="252" cy="1565" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="252" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学AP</text></g>
+<g class="node l-host l-host-ap" data-layer="host"><title>ap-d1</title><circle cx="95" cy="1895" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="95" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍AP</text></g>
+<g class="node l-host l-host-ap" data-layer="host"><title>ap-la</title><circle cx="200" cy="1895" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="200" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验AP</text></g>
+<g class="node l-host l-host-ap" data-layer="host"><title>ap-ta</title><circle cx="305" cy="1895" r="11" fill="#0d9488" stroke="#fff" stroke-width="2"/><text x="305" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学AP</text></g>
 <g class="node l-core" data-layer="core"><title>core1</title><circle cx="825" cy="1070" r="15" fill="#dc2626" stroke="#fff" stroke-width="2"/><text x="825" y="1098" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">核心1</text></g>
 <g class="node l-core" data-layer="core"><title>core2</title><circle cx="1045" cy="1070" r="15" fill="#dc2626" stroke="#fff" stroke-width="2"/><text x="1045" y="1098" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">核心2</text></g>
 <g class="node l-access" data-layer="access"><title>dc-sw</title><circle cx="1385" cy="1400" r="15" fill="#16a34a" stroke="#fff" stroke-width="2"/><text x="1385" y="1428" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心接入</text></g>
@@ -259,22 +266,26 @@ SSID ECUST-STU（VLAN 510）</title><rect x="162" y="1202" width="150" height="6
 <g class="node l-fw" data-layer="fw"><title>fw2</title><circle cx="1045" cy="740" r="15" fill="#9333ea" stroke="#fff" stroke-width="2"/><text x="1045" y="768" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">防火墙2</text></g>
 <g class="node l-inet_sw" data-layer="inet_sw"><title>inet-sw</title><circle cx="935" cy="245" r="15" fill="#94a3b8" stroke="#fff" stroke-width="2"/><text x="935" y="273" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">外网二层</text></g>
 <g class="node l-internet" data-layer="internet"><title>internet</title><circle cx="935" cy="80" r="15" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="935" y="108" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">外网模拟</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>mgmt-pc</title><circle cx="358" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="358" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">管理PC</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-d1</title><circle cx="462" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="462" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍PC</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn1</title><circle cx="568" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="568" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端1</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn2</title><circle cx="672" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="672" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端2</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn3</title><circle cx="778" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="778" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端3</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-la1</title><circle cx="882" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="882" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验PC</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-lib</title><circle cx="988" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="988" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆PC</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-life</title><circle cx="1092" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1092" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区PC</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta1</title><circle cx="1198" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1198" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC1</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta2</title><circle cx="1302" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1302" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC2</text></g>
-<g class="node l-host l-host-pc" data-layer="host"><title>pc-tb1</title><circle cx="1408" cy="1565" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1408" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC3</text></g>
+<g class="node l-campus" data-layer="campus"><title>meilong</title><circle cx="835" cy="1730" r="15" fill="#92400e" stroke="#fff" stroke-width="2"/><text x="835" y="1758" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">梅陇校区网关</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>mgmt-pc</title><circle cx="410" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="410" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">管理PC</text></g>
+<g class="node l-campus_sw" data-layer="campus_sw"><title>ml-lan-sw</title><circle cx="835" cy="1565" r="15" fill="#b45309" stroke="#fff" stroke-width="2"/><text x="835" y="1593" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">梅陇业务交换机</text></g>
+<g class="node l-campus_sw" data-layer="campus_sw"><title>ml-sw</title><circle cx="1035" cy="1565" r="15" fill="#b45309" stroke="#fff" stroke-width="2"/><text x="1035" y="1593" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">梅陇互联交换机</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-d1</title><circle cx="515" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="515" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">宿舍PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn1</title><circle cx="620" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="620" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端1</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn2</title><circle cx="725" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="725" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端2</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-dyn3</title><circle cx="830" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="830" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">动态终端3</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-la1</title><circle cx="935" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="935" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">实验PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-lib</title><circle cx="1040" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1040" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">图书馆PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-life</title><circle cx="1145" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1145" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">生活区PC</text></g>
+<g class="node l-campus" data-layer="campus"><title>pc-ml1</title><circle cx="1035" cy="1730" r="15" fill="#92400e" stroke="#fff" stroke-width="2"/><text x="1035" y="1758" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">梅陇校区PC</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta1</title><circle cx="1250" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1250" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC1</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-ta2</title><circle cx="1355" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1355" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC2</text></g>
+<g class="node l-host l-host-pc" data-layer="host"><title>pc-tb1</title><circle cx="1460" cy="1895" r="11" fill="#64748b" stroke="#fff" stroke-width="2"/><text x="1460" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">教学PC3</text></g>
 <g class="node l-edge" data-layer="edge"><title>r1</title><circle cx="825" cy="410" r="15" fill="#ea580c" stroke="#fff" stroke-width="2"/><text x="825" y="438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">出口路由1</text></g>
 <g class="node l-edge" data-layer="edge"><title>r2</title><circle cx="1045" cy="410" r="15" fill="#ea580c" stroke="#fff" stroke-width="2"/><text x="1045" y="438" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">出口路由2</text></g>
-<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc1</title><circle cx="1512" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1512" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心1</text></g>
-<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc2</title><circle cx="1618" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1618" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心2</text></g>
-<g class="node l-host l-host-srv" data-layer="host"><title>srv-dmz</title><circle cx="1722" cy="1565" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1722" y="1589" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">DMZ服务器</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc1</title><circle cx="1565" cy="1895" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1565" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心1</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dc2</title><circle cx="1670" cy="1895" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1670" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">数据中心2</text></g>
+<g class="node l-host l-host-srv" data-layer="host"><title>srv-dmz</title><circle cx="1775" cy="1895" r="11" fill="#0891b2" stroke="#fff" stroke-width="2"/><text x="1775" y="1919" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">DMZ服务器</text></g>
 <g class="node l-zone_sw" data-layer="zone_sw"><title>trust-sw</title><circle cx="1045" cy="905" r="15" fill="#34d399" stroke="#fff" stroke-width="2"/><text x="1045" y="933" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">Trust 二层</text></g>
 <g class="node l-untrust_sw" data-layer="untrust_sw"><title>untrust-sw</title><circle cx="935" cy="575" r="15" fill="#a78bfa" stroke="#fff" stroke-width="2"/><text x="935" y="603" text-anchor="middle" font-size="10.5" fill="#334155" font-family="ui-monospace,Menlo,monospace">Untrust 二层</text></g>
 </svg>
@@ -303,7 +314,7 @@ function showView(v, btn){
   document.getElementById('ops-sim').style.display = v === 'sim' ? '' : 'none';
   document.getElementById('sub').textContent = v === 'design'
     ? '完整设计布局：50 个楼宇/网段，涵盖教学楼 A–E、实验楼 A–H、学生公寓 1–28 号楼、图书馆、食堂与体育馆等'
-    : '仿真运行拓扑：44 个节点、66 条链路，按网络层级排布';
+    : '仿真运行拓扑：49 个节点、72 条链路，按网络层级排布';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   btn.classList.add('on');
   apply();

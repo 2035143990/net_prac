@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FACTS_PATH = ROOT / "campus-lab" / "configs" / "facts.json"
 REPORT_PATH = ROOT / "docs" / "course-report-draft.md"
 REQUIRED_SECTIONS = [str(i) for i in range(1, 9)]
-REQUIRED_CASES = ["DHCP", "ISO", "NAT", "LAG", "FAIL"]
+REQUIRED_CASES = ["DHCP", "ISO", "NAT", "LAG", "FAIL", "WIRELESS", "RATE"]
 REQUIRED_LABELS = ["摘要", "关键词", "参考文献"]
 
 sys.path.insert(0, str(ROOT / "tools"))

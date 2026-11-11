@@ -35,7 +35,7 @@ if [ -f "$PIDFILE" ]; then
 fi
 
 # 1) 二层交换机：br0 必须存在且已接入端口
-for n in acc-ta acc-tb acc-d1 acc-la acc-lib acc-life dc-sw trust-sw untrust-sw dmz-sw inet-sw; do
+for n in acc-ta acc-tb acc-d1 acc-la acc-lib acc-life dc-sw trust-sw untrust-sw dmz-sw inet-sw ml-sw ml-lan-sw; do
   if ! docker exec "$P$n" true 2>/dev/null; then
     bad "$n 容器不存在或未运行"
     continue

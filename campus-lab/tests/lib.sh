@@ -184,6 +184,28 @@ assert_counter_positive() {
   fi
 }
 
+# DNS 解析断言。
+#
+# 注意：不能用 ping 代替 DNS 校验。设计方案 6.6 的访问控制矩阵把宿舍区
+# 定为隔离区域，只放行「宿舍互访、DNS(53)、Internet、DMZ 发布服务」，
+# 因此 ping 数据中心的 DNS 服务器会被 iso.dorm2dc 规则丢弃（ISO-04 正是
+# 断言这一点）。要验证 DNS 可用，必须真的发起一次域名解析。
+assert_dns_resolves() {
+  CASE_NODE=$1
+  CASE_CMD="nslookup $2 $3"
+  CASE_EXPECTED="resolve $2 via $3 -> $4"
+  OUT=$(docker exec "${P}${CASE_NODE}" nslookup "$2" "$3" 2>&1)
+  RC=$?
+  printf '%s\n' "$OUT" >> "$RAW_DIR/${CASE_ID}.log" 2>/dev/null || true
+  CASE_ACTUAL="rc=$RC out=$(printf '%s' "$OUT" | tr '\n' ' ')"
+  # busybox nslookup 的成功输出形如 "Address: 10.80.0.10"。
+  if [ "$RC" -eq 0 ] && printf '%s' "$OUT" | grep -qE "Address: +$4([^0-9.]|$)"; then
+    case_ok
+  else
+    case_fail
+  fi
+}
+
 skip_case() {
   CASE_STATUS="SKIP"
   CASE_EXPECTED=$1

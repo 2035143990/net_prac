@@ -4,7 +4,9 @@
     "dhcp": true,
     "dnat": true,
     "lag": true,
-    "report": true
+    "rate": true,
+    "report": true,
+    "wireless": true
   },
   "dhcp": {
     "dns": "10.60.0.10",
@@ -96,7 +98,7 @@
     ],
     "server": "10.60.0.10"
   },
-  "generated_at": "2026-11-11T12:27:39Z",
+  "generated_at": "2026-11-11T14:55:31Z",
   "lags": [
     {
       "members": [
@@ -122,7 +124,236 @@
       }
     }
   ],
-  "links": 66,
+  "link_rates": {
+    "by_node": {
+      "acc-d1": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "100mbit",
+        "eth4": "100mbit",
+        "eth5": "100mbit",
+        "eth6": "1gbit"
+      },
+      "acc-la": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "1gbit",
+        "eth4": "1gbit",
+        "eth5": "1gbit"
+      },
+      "acc-lib": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "1gbit"
+      },
+      "acc-life": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "1gbit"
+      },
+      "acc-ta": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "1gbit",
+        "eth4": "1gbit",
+        "eth5": "1gbit",
+        "eth6": "1gbit",
+        "eth7": "1gbit"
+      },
+      "acc-tb": {
+        "eth1": "1gbit",
+        "eth2": "1gbit",
+        "eth3": "1gbit"
+      },
+      "agg-d1": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-d2": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-l1": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-l2": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-lib1": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-lib2": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-life1": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-life2": {
+        "eth1": "10gbit",
+        "eth3": "1gbit"
+      },
+      "agg-t1": {
+        "eth1": "10gbit",
+        "eth3": "1gbit",
+        "eth4": "1gbit"
+      },
+      "agg-t2": {
+        "eth1": "10gbit",
+        "eth3": "1gbit",
+        "eth4": "1gbit"
+      },
+      "ap-d1": {
+        "eth1": "100mbit"
+      },
+      "ap-la": {
+        "eth1": "1gbit"
+      },
+      "ap-ta": {
+        "eth1": "1gbit"
+      },
+      "core1": {
+        "eth1": "10gbit",
+        "eth11": "10gbit",
+        "eth12": "10gbit",
+        "eth13": "10gbit",
+        "eth14": "10gbit"
+      },
+      "core2": {
+        "eth1": "10gbit",
+        "eth11": "10gbit",
+        "eth12": "10gbit",
+        "eth13": "10gbit",
+        "eth14": "10gbit"
+      },
+      "dc-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "1gbit",
+        "eth4": "1gbit",
+        "eth5": "1gbit",
+        "eth6": "1gbit"
+      },
+      "dmz-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "1gbit"
+      },
+      "fw1": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "10gbit"
+      },
+      "fw2": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "10gbit"
+      },
+      "inet-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "1gbit"
+      },
+      "internet": {
+        "eth1": "1gbit"
+      },
+      "meilong": {
+        "eth1": "10gbit",
+        "eth2": "1gbit"
+      },
+      "mgmt-pc": {
+        "eth1": "1gbit"
+      },
+      "ml-lan-sw": {
+        "eth1": "1gbit",
+        "eth2": "1gbit"
+      },
+      "ml-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit"
+      },
+      "pc-d1": {
+        "eth1": "100mbit"
+      },
+      "pc-dyn1": {
+        "eth1": "1gbit"
+      },
+      "pc-dyn2": {
+        "eth1": "100mbit"
+      },
+      "pc-dyn3": {
+        "eth1": "1gbit"
+      },
+      "pc-la1": {
+        "eth1": "1gbit"
+      },
+      "pc-lib": {
+        "eth1": "1gbit"
+      },
+      "pc-life": {
+        "eth1": "1gbit"
+      },
+      "pc-ml1": {
+        "eth1": "1gbit"
+      },
+      "pc-ta1": {
+        "eth1": "1gbit"
+      },
+      "pc-ta2": {
+        "eth1": "1gbit"
+      },
+      "pc-tb1": {
+        "eth1": "1gbit"
+      },
+      "r1": {
+        "eth1": "10gbit",
+        "eth2": "10gbit"
+      },
+      "r2": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "10gbit"
+      },
+      "srv-dc1": {
+        "eth1": "1gbit",
+        "eth2": "1gbit"
+      },
+      "srv-dc2": {
+        "eth1": "1gbit"
+      },
+      "srv-dmz": {
+        "eth1": "1gbit"
+      },
+      "trust-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "10gbit",
+        "eth4": "10gbit"
+      },
+      "untrust-sw": {
+        "eth1": "10gbit",
+        "eth2": "10gbit",
+        "eth3": "10gbit",
+        "eth4": "10gbit"
+      }
+    },
+    "counts": {
+      "100mbit": 6,
+      "10gbit": 48,
+      "1gbit": 62
+    },
+    "note": "Containerlab 无原生带宽参数，速率用 tc/netem 在容器内实际施加；台账由 gen.py 的 LINK_RATES 生成，见 configs/rates/*.rates",
+    "profiles": {
+      "100mbit": "宿舍楼层交换机 <-> 房间信息点",
+      "10gbit": "网络中心 <-> 各区域汇聚点（主干）、核心间聚合、出口链路",
+      "1gbit": "汇聚 <-> 楼层接入、接入 <-> 房间信息点（教学/实验/图书馆/生活区）"
+    }
+  },
+  "links": 72,
   "mgmt_vlan": 90,
   "nat": {
     "publish": [
@@ -139,12 +370,12 @@
     ]
   },
   "nodes": {
-    "bridge": 4,
+    "bridge": 6,
     "frr": 14,
     "fw": 2,
-    "host": 17,
+    "host": 20,
     "l2": 7,
-    "total": 44
+    "total": 49
   },
   "subnets": {
     "101": {
@@ -185,7 +416,7 @@
     },
     "510": {
       "gateway": "10.51.0.1",
-      "name": "wireless-dorm",
+      "name": "wireless-dorm-lab",
       "region": "dorm",
       "subnet": "10.51.0.0/24"
     },
