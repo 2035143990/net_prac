@@ -30,6 +30,27 @@ if [ "${EXPECTED:-0}" -le 0 ] || [ "${ACTUAL:-0}" -lt "${EXPECTED:-0}" ]; then
   exit 2
 fi
 
+# containerlab 在容器启动后即返回，但 FRR/keepalived/DHCP 仍需要时间收敛。
+# 若不等待，OSPF/跨区域路由/DHCP 用例会因抢跑而出现假失败。
+CONVERGE_TIMEOUT=${CONVERGE_TIMEOUT:-120}
+printf 'WAIT: OSPF convergence on core1/core2 (timeout %ss)\n' "$CONVERGE_TIMEOUT"
+waited=0
+while :; do
+  n1=$(docker exec "${P}core1" vtysh -c 'show ip ospf neighbor' 2>/dev/null | grep -c Full)
+  n2=$(docker exec "${P}core2" vtysh -c 'show ip ospf neighbor' 2>/dev/null | grep -c Full)
+  n1=${n1:-0}; n2=${n2:-0}
+  if [ "$n1" -ge 11 ] && [ "$n2" -ge 11 ]; then
+    echo "WAIT: converged (core1=$n1 core2=$n2 neighbors)"
+    break
+  fi
+  if [ "$waited" -ge "$CONVERGE_TIMEOUT" ]; then
+    echo "WARN: OSPF not fully converged after ${CONVERGE_TIMEOUT}s (core1=$n1 core2=$n2); continuing" >&2
+    break
+  fi
+  sleep 2
+  waited=$((waited + 2))
+done
+
 DEFAULT_SUITES="connectivity routing security dhcp iso nat lag failover"
 SUITES=${*:-$DEFAULT_SUITES}
 OVERALL=0

@@ -48,10 +48,16 @@ DHCP_POOLS = [
 ]
 
 ZONES = {
-    "dorm_nets": ["10.32.0.0/24", "10.51.0.0/24"],
+    # 设计方案 5.1：10.32-10.49 与 10.96-10.106 为宿舍楼，10.51 为宿舍无线。
+    "dorm_nets": ["10.32.0.0/13", "10.40.0.0/13", "10.48.0.0/15",
+                  "10.51.0.0/24", "10.96.0.0/13", "10.104.0.0/15",
+                  "10.106.0.0/16"],
     "mgmt_nets": ["10.70.0.0/24"],
-    "teaching_nets": ["10.10.0.0/16", "10.50.0.0/24"],
-    "lab_nets": ["10.20.0.0/13"],
+    # 设计方案 5.1：教学区 10.10-10.14，10.50 为教学/图书馆无线。
+    "teaching_nets": ["10.10.0.0/15", "10.12.0.0/15",
+                      "10.14.0.0/16", "10.50.0.0/24"],
+    # 设计方案 5.1：实验区 10.20-10.27。
+    "lab_nets": ["10.20.0.0/14", "10.24.0.0/14"],
     "library_nets": ["10.55.0.0/24"],
     "living_nets": ["10.64.0.0/24"],
     "dc_nets": ["10.60.0.0/24"],
@@ -62,11 +68,12 @@ ZONES = {
     # Core/aggregation links, Trust, egress interconnect and loopbacks.
     # Users must not initiate connections to these networks.
     "infra_nets": ["10.0.0.0/16", "10.90.0.0/24", "10.255.0.0/16"],
-    # All user-facing business networks.
-    "user_nets": ["10.10.0.0/16", "10.50.0.0/24", "10.20.0.0/13",
-                  "10.32.0.0/24", "10.51.0.0/24", "10.55.0.0/24",
-                  "10.64.0.0/24"],
 }
+# All user-facing business networks. Keep in sync with the zone sets above so
+# the "users must not reach infrastructure" rules cover every building block.
+ZONES["user_nets"] = (ZONES["teaching_nets"] + ZONES["lab_nets"]
+                      + ZONES["dorm_nets"] + ZONES["library_nets"]
+                      + ZONES["living_nets"])
 
 NAT_PUBLISH = {"address": "198.51.100.80", "ports": [80, 443], "target": "10.80.0.10"}
 LAGS = {
@@ -874,6 +881,16 @@ def gen_acl(node_name, node):
             "    ip saddr @user_nets ip daddr @infra_nets counter drop comment \"iso.user2infra\"",
             "    ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment \"iso.teaching2dorm\"",
             "    ip saddr @lab_nets ip daddr @dorm_nets counter drop comment \"iso.lab2dorm\"",
+            # 设计方案 6.6：生活区只能访问外网/DMZ。
+            "    ip saddr @living_nets ip daddr @dc_nets counter drop comment \"iso.living2dc\"",
+            "    ip saddr @living_nets ip daddr @teaching_nets counter drop comment \"iso.living2teaching\"",
+            "    ip saddr @living_nets ip daddr @lab_nets counter drop comment \"iso.living2lab\"",
+            "    ip saddr @living_nets ip daddr @dorm_nets counter drop comment \"iso.living2dorm\"",
+            "    ip saddr @living_nets ip daddr @library_nets counter drop comment \"iso.living2library\"",
+            "    ip saddr @living_nets ip daddr @mgmt_nets counter drop comment \"iso.living2mgmt\"",
+            # 设计方案 6.6：数据中心不得主动出校。
+            "    ip saddr @dc_nets ip daddr @untrust_nets counter drop comment \"iso.dc2untrust\"",
+            "    ip saddr @dc_nets ip daddr @internet_nets counter drop comment \"iso.dc2inet\"",
         ]
     lines += [
         "  }",

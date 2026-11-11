@@ -63,7 +63,7 @@ campus-lab/
 
 路由：核心、汇聚之间运行 OSPF（Area 0），核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由，并配置经对端出口路由器的浮动默认路由（管理距离 200），作为主 Internet 链路故障时的备份路径。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
 
-安全：`fw1/fw2` 上 Trust 可访问 Untrust/DMZ；Untrust 仅可通过发布地址 `198.51.100.80` 的 DNAT 访问 DMZ 的 TCP 80/443；Untrust→Trust、DMZ→Trust 默认丢弃；Trust→Untrust 出方向做源 NAT。宿舍区 10.32.0.0/24 与 10.51.0.0/24 在 `agg-d1/agg-d2` 上通过 nftables 阻断到管理网、教学区（含有线/无线）、实验区、图书馆、数据中心、生活区及校内/出口互联和环回网段的访问，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务；`core1/core2` 另外阻断所有用户区域到管理网、校内/出口互联和环回网段的访问，并阻断教学/实验区到宿舍区的访问；管理网 10.70.0.0/24 不允许主动访问 Untrust，且仅运维可达。ACL 首条规则为 `ct state established,related accept`；由于双汇聚/双核心节点之间未部署 conntrack 状态同步，ACL 还显式放行受限区域发出的 ICMP echo-reply 以及 TCP 非纯 SYN 报文（含 ACK、SYN-ACK），避免非对称路径误伤回程流量。
+安全：`fw1/fw2` 上 Trust 可访问 Untrust/DMZ；Untrust 仅可通过发布地址 `198.51.100.80` 的 DNAT 访问 DMZ 的 TCP 80/443；Untrust→Trust、DMZ→Trust 默认丢弃；Trust→Untrust 出方向做源 NAT。宿舍区（10.32–10.49、10.96–10.106，含无线 10.51.0.0/24）在 `agg-d1/agg-d2` 上通过 nftables 阻断到管理网、教学区（含有线/无线）、实验区、图书馆、数据中心、生活区及校内/出口互联和环回网段的访问，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务；`core1/core2` 另外阻断所有用户区域到管理网、校内/出口互联和环回网段的访问，并阻断教学/实验区到宿舍区、生活区到教学/实验/宿舍/图书馆/数据中心/管理网，以及数据中心主动访问 Untrust/Internet 的流量；管理网 10.70.0.0/24 不允许主动访问 Untrust，且仅运维可达。ACL 首条规则为 `ct state established,related accept`；由于双汇聚/双核心节点之间未部署 conntrack 状态同步，ACL 还显式放行受限区域发出的 ICMP echo-reply 以及 TCP 非纯 SYN 报文（含 ACK、SYN-ACK），避免非对称路径误伤回程流量。
 
 ## 3. VLAN 与地址规划
 
@@ -239,22 +239,23 @@ sh tests/failover.sh
 
 `configs/facts.json` 的 `capabilities` 为 `dhcp/acl/dnat/lag/report`。能力为 `false` 时对应套件 SKIP；能力为 `true` 但断言失败必须 FAIL，不得跳过。
 
-### 5.3 实测状态（2026-11-08）
+### 5.3 实测状态（2026-11-11）
 
-首次全量运行 run-id `20261108T115247Z` 结果为 **61/64 通过、3 失败**：
+最终全量运行 run-id `20261111T062929Z` 结果为 **64/64 通过、0 失败、0 跳过**：
 
-| 套件 | 通过/总数 | 失败项 |
-| --- | --- | --- |
-| CONN | 10/10 | — |
-| ROUTE | 8/8 | — |
-| SEC | 6/6 | — |
-| DHCP | 8/8 | — |
-| ISO | 11/12 | ISO-09 |
-| NAT | 7/7 | — |
-| LAG | 7/7 | — |
-| FAIL | 4/6 | FAIL-04、FAIL-06 |
+| 套件 | 通过/总数 |
+| --- | --- |
+| CONN | 10/10 |
+| ROUTE | 8/8 |
+| SEC | 6/6 |
+| DHCP | 8/8 |
+| ISO | 12/12 |
+| NAT | 7/7 |
+| LAG | 7/7 |
+| FAIL | 6/6 |
+| **合计** | **64/64** |
 
-3 项失败均已定位并修复：DHCP 脚本执行权限、Relay 早于路由收敛、核心 ACL 加载不完整、管理回程不对称、OSPF 恢复等待窗口。修复后完成关键路径复核，但**未重跑 64 条全量回归**。详细证据见 `../docs/verification-report.md`。答辩前应重新执行 `sh tests/run-all.sh` 并用新 run-id 替换本节数据。
+本轮修复了两类问题：一是部署后 OSPF 尚未收敛就执行测试导致的 CONN/ROUTE/DHCP 假失败，现在由 `tests/run-all.sh` 在套件执行前等待 `core1/core2` 的 OSPF Full 邻居达到 11；二是按设计方案补全教学区、实验区、宿舍区地址范围，并新增生活区出向隔离与数据中心禁止主动出校 ACL。详细证据见 `../docs/verification-report.md`。
 
 ## 6. 注意事项
 
