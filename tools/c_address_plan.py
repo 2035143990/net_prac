@@ -57,6 +57,14 @@ BUILDING_GROUPS = [
     ("学生公寓", "宿舍区", 301, 32, 28),  # 301-328 -> 10.32.0.0/24 起，跳过无线/图书馆占用的段
 ]
 
+# 与仿真工程（campus-lab/gen.py）保持一致的显式覆盖。
+# 教学区在仿真中为 10.10.0.0/24（教学楼 A）与 10.10.1.0/24（教学楼 B），
+# 即 10.10 号段内顺延；C 组按“统一为仿真口径”确认采用此分配。
+# 键：楼栋名；值：子网第三段之后的完整后缀。
+SUBNET_OVERRIDES = {
+    "教学楼B": "10.10.1.0/24",   # 与 gen.py VLAN 102 一致
+}
+
 # 宿舍 19-28 号楼顺延到 10.60~10.69，避开无线 10.50/10.51 与图书馆 10.55。
 # 之所以命名为 DORM_TAIL，是为了让冲突检查能逐条报告，而不是静默避让。
 DORM_OCTET_OVERRIDES = {19: 96, 20: 97, 21: 98, 22: 99, 23: 101,
@@ -103,7 +111,10 @@ def building_rows() -> list[Row]:
             else:
                 name = f"{label}{chr(ord('A') + i)}"
                 octet = octet_base + i
-            subnet = ipaddress.ip_network(f"10.{octet}.0.0/24")
+            if name in SUBNET_OVERRIDES:
+                subnet = ipaddress.ip_network(SUBNET_OVERRIDES[name])
+            else:
+                subnet = ipaddress.ip_network(f"10.{octet}.0.0/24")
             rows.append(Row(name, region, vlan_base + i, subnet, str(subnet[1])))
     return rows
 
