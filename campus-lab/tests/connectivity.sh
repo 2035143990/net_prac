@@ -18,8 +18,10 @@ case_begin CONN-03 "$cap" "教学区 -> 实验区 VLAN201"
 assert_reachable pc-ta1 10.20.0.11
 case_end
 
-case_begin CONN-04 "$cap" "教学区 -> 宿舍区 VLAN301"
-assert_reachable pc-ta1 10.32.0.11
+case_begin CONN-04 "$cap" "教学/实验区 -> 宿舍区 ACL 阻断"
+# 设计方案 6.6 访问控制矩阵：教学区、实验区 -> 宿舍区 = ✗
+assert_unreachable pc-ta1 10.32.0.11
+assert_unreachable pc-la1 10.32.0.11
 case_end
 
 case_begin CONN-05 "$cap" "教学区 -> 图书馆 VLAN50"

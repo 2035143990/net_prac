@@ -61,9 +61,9 @@ campus-lab/
 | 传输二层 | `trust-sw` `untrust-sw` `dmz-sw` `inet-sw` | Trust / Untrust / DMZ / Internet 汇聚二层转发 |
 | 终端 | `pc-*` `ap-*` `srv-*` `mgmt-pc` `internet` | 17 台 Alpine 终端/服务器，3 台动态终端 |
 
-路由：核心、汇聚之间运行 OSPF（Area 0），核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
+路由：核心、汇聚之间运行 OSPF（Area 0），核心向 OSPF 注入默认路由；`r1/r2` 使用静态路由，并配置经对端出口路由器的浮动默认路由（管理距离 200），作为主 Internet 链路故障时的备份路径。核心间聚合后只有一条逻辑邻居，`core1/core2` 的 OSPF Full 邻居数为 **11**。
 
-安全：`fw1/fw2` 上 Trust 可访问 Untrust/DMZ；Untrust 仅可通过 `198.51.100.80` 的 DNAT 访问 DMZ TCP 80/443；Untrust→Trust、DMZ→Trust 默认丢弃；Trust→Untrust 出方向做源 NAT。宿舍区在区域汇聚被限制访问管理网、教学区、实验区与数据中心，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务。
+安全：`fw1/fw2` 上 Trust 可访问 Untrust/DMZ；Untrust 仅可通过发布地址 `198.51.100.80` 的 DNAT 访问 DMZ 的 TCP 80/443；Untrust→Trust、DMZ→Trust 默认丢弃；Trust→Untrust 出方向做源 NAT。宿舍区 10.32.0.0/24 与 10.51.0.0/24 在 `agg-d1/agg-d2` 上通过 nftables 阻断到管理网、教学区（含有线/无线）、实验区、图书馆、数据中心、生活区及校内/出口互联和环回网段的访问，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务；`core1/core2` 另外阻断所有用户区域到管理网、校内/出口互联和环回网段的访问，并阻断教学/实验区到宿舍区的访问；管理网 10.70.0.0/24 不允许主动访问 Untrust，且仅运维可达。ACL 首条规则为 `ct state established,related accept`；由于双汇聚/双核心节点之间未部署 conntrack 状态同步，ACL 还显式放行受限区域发出的 ICMP echo-reply 以及 TCP 非纯 SYN 报文（含 ACK、SYN-ACK），避免非对称路径误伤回程流量。
 
 ## 3. VLAN 与地址规划
 
@@ -98,8 +98,8 @@ campus-lab/
 | Trust | 10.0.100.0/24 | 核心 VIP .253，防火墙 VIP .254，fw1 .11，fw2 .12 |
 | Untrust | 10.90.1.0/24 | 出口路由 VIP .254，防火墙 VIP .253，r1 .1，r2 .2 |
 | Internet | 203.0.113.0/24 | `internet` .100，r1/r2 VRRP .254 |
-| DMZ 发布 | 198.51.100.80/32 | fw1/fw2 `eth2`，TCP 80/443 DNAT 到 10.80.0.10 |
-| 管理网 | 172.31.100.0/24 | 由 Containerlab 自动分配，仅带外管理 |
+| 对外发布 VIP | 198.51.100.80/32 | Untrust 侧 VRRP 附加虚拟地址（主防火墙持有），TCP 80/443 DNAT 到 10.80.0.10 |
+| 管理网 | 172.31.100.0/24 | 由 Containerlab 自动分配，仅带外管理；校园管理 VLAN 90 为 10.70.0.0/24 |
 
 VRRP 采用 keepalived 实现，主节点优先级 120、备节点 100，主节点故障后备节点自动接管 VIP；主节点恢复后重新抢占。
 
@@ -218,7 +218,7 @@ sh tests/failover.sh
 
 | 套件 | 用例 | 内容 |
 | --- | --- | --- |
-| CONN | CONN-01~10 | 同 VLAN、跨 VLAN、跨区域、无线、NAT、DMZ |
+| CONN | CONN-01~10 | 同 VLAN、跨 VLAN、跨区域（教学/实验→宿舍 ACL 阻断）、无线、NAT、DMZ |
 | ROUTE | ROUTE-01~08 | OSPF 邻居（11）、OSPF 路由、默认路由、VRRP VIP |
 | SEC | SEC-01~06 | Internet→DMZ 放行、Internet→内网阻断、私网直达阻断、计数器 |
 | DHCP | DHCP-01~08 | 三台动态终端取址、网关、DNS、租期、Relay、租约文件 |

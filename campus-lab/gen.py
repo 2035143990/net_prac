@@ -52,10 +52,20 @@ ZONES = {
     "mgmt_nets": ["10.70.0.0/24"],
     "teaching_nets": ["10.10.0.0/16", "10.50.0.0/24"],
     "lab_nets": ["10.20.0.0/13"],
+    "library_nets": ["10.55.0.0/24"],
+    "living_nets": ["10.64.0.0/24"],
     "dc_nets": ["10.60.0.0/24"],
     "dmz_nets": ["10.80.0.0/24"],
+    "untrust_nets": ["10.90.0.0/24"],
     "internet_nets": ["203.0.113.0/24"],
     "dns_hosts": [DHCP_DNS + "/32"],
+    # Core/aggregation links, Trust, egress interconnect and loopbacks.
+    # Users must not initiate connections to these networks.
+    "infra_nets": ["10.0.0.0/16", "10.90.0.0/24", "10.255.0.0/16"],
+    # All user-facing business networks.
+    "user_nets": ["10.10.0.0/16", "10.50.0.0/24", "10.20.0.0/13",
+                  "10.32.0.0/24", "10.51.0.0/24", "10.55.0.0/24",
+                  "10.64.0.0/24"],
 }
 
 NAT_PUBLISH = {"address": "198.51.100.80", "ports": [80, 443], "target": "10.80.0.10"}
@@ -193,7 +203,10 @@ add_frr("agg-life2", "10.255.0.52/32",
 # ---------------- Edge routers ----------------
 add_frr("r1", "10.255.0.101/32",
     ifs={"eth1": "10.90.1.1/24", "eth2": "203.0.113.1/24"},
-    static=["0.0.0.0/0 203.0.113.100", "10.0.0.0/8 10.90.1.253",
+    static=["0.0.0.0/0 203.0.113.100",
+            # Floating backup default route via r2 when r1's Internet link fails.
+            "0.0.0.0/0 10.90.1.2 200",
+            "10.0.0.0/8 10.90.1.253",
             "198.51.100.0/24 10.90.1.253"],
     ospf=False,
     vrrp=[("eth1", 11, "10.90.1.254/24", 120),
@@ -201,7 +214,10 @@ add_frr("r1", "10.255.0.101/32",
 
 add_frr("r2", "10.255.0.102/32",
     ifs={"eth1": "10.90.1.2/24", "eth2": "203.0.113.2/24"},
-    static=["0.0.0.0/0 203.0.113.100", "10.0.0.0/8 10.90.1.253",
+    static=["0.0.0.0/0 203.0.113.100",
+            # Floating backup default route via r1 when r2's Internet link fails.
+            "0.0.0.0/0 10.90.1.1 200",
+            "10.0.0.0/8 10.90.1.253",
             "198.51.100.0/24 10.90.1.253"],
     ospf=False,
     vrrp=[("eth1", 11, "10.90.1.254/24", 100),
@@ -672,6 +688,10 @@ def gen_host(name, ip, gw):
     lines += ["ip link set eth1 up",
               f"ip addr replace {ip} dev eth1",
               f"ip route replace default via {gw}"]
+    if name == "internet":
+        # Published VIP is outside the simulated Internet subnet; force it
+        # through the egress VRRP gateway instead of ARPing for it locally.
+        lines.append("ip route replace 198.51.100.80/32 via 203.0.113.254")
     if name == "srv-dmz":
         lines += [
             "mkdir -p /www", "echo 'DMZ server OK' > /www/index.html",
@@ -800,10 +820,43 @@ def gen_acl(node_name, node):
         for vid, _ip in subs:
             if int(vid) in (301, 510):
                 dorm_svis.append(f"{parent}.{vid}")
-    lines = ["table inet zone {"] + sets + ["  chain forward {",
-             "    type filter hook forward priority 0; policy accept;",
-             "    ct state established,related counter accept comment \"zone.established\"",
-             "    udp dport { 67, 68 } counter accept comment \"iso.dhcp\""]
+
+    # Dual agg/core nodes do not synchronize conntrack state. Explicitly allow
+    # ICMP echo-reply and non-SYN TCP return traffic from restricted sources
+    # before the isolation drops, otherwise asymmetric paths break replies.
+    restricted_srcs = ["@dorm_nets", "@teaching_nets", "@lab_nets",
+                       "@library_nets", "@living_nets", "@mgmt_nets"]
+    return_rules = []
+    for src in restricted_srcs:
+        return_rules.append(
+            f"    ip saddr {src} icmp type echo-reply counter accept comment \"zone.return_icmp\""
+        )
+        return_rules.append(
+            f"    ip saddr {src} tcp flags & (syn|ack) != syn counter accept comment \"zone.return_tcp\""
+        )
+
+    lines = ["table inet zone {"] + sets + ["  chain input {",
+             "    type filter hook input priority 0; policy accept;",
+             "    ct state established,related counter accept comment \"zone.established\""]
+    lines += return_rules
+    # Protect node-local management/interconnect/loopback addresses.
+    lines += [
+        "    ip saddr @user_nets ip daddr @mgmt_nets counter drop comment \"iso.in_user2mgmt\"",
+        "    ip saddr @user_nets ip daddr @infra_nets counter drop comment \"iso.in_user2infra\"",
+    ]
+    if dorm_svis:
+        for dst in ("teaching_nets", "lab_nets", "library_nets",
+                    "dc_nets", "living_nets"):
+            lines.append(
+                f"    ip saddr @dorm_nets ip daddr @{dst} counter drop comment \"iso.in_dorm2{dst[:-5]}\""
+            )
+    lines += ["  }", "  chain forward {",
+              "    type filter hook forward priority 0; policy accept;",
+              "    ct state established,related counter accept comment \"zone.established\""]
+    lines += return_rules
+    lines += [
+        "    udp dport { 67, 68 } counter accept comment \"iso.dhcp\"",
+    ]
     if dorm_svis:
         names = ", ".join(f'"{name}"' for name in dorm_svis)
         lines.append(
@@ -811,11 +864,17 @@ def gen_acl(node_name, node):
         )
         lines.append("    ip saddr @dorm_nets jump dorm_filter")
     lines += [
+        "    ip saddr @mgmt_nets ip daddr @untrust_nets counter drop comment \"iso.mgmt2untrust\"",
         "    ip saddr @mgmt_nets ip daddr @internet_nets counter drop comment \"iso.mgmt2inet\"",
         "    ip saddr @mgmt_nets counter accept comment \"iso.mgmt2biz\"",
     ]
     if node_name in ("core1", "core2"):
-        lines.append("    ip daddr @mgmt_nets ip saddr != @mgmt_nets counter drop comment \"iso.mgmt_guard\"")
+        lines += [
+            "    ip daddr @mgmt_nets ip saddr != @mgmt_nets counter drop comment \"iso.mgmt_guard\"",
+            "    ip saddr @user_nets ip daddr @infra_nets counter drop comment \"iso.user2infra\"",
+            "    ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment \"iso.teaching2dorm\"",
+            "    ip saddr @lab_nets ip daddr @dorm_nets counter drop comment \"iso.lab2dorm\"",
+        ]
     lines += [
         "  }",
         "  chain dorm_filter {",
@@ -827,7 +886,10 @@ def gen_acl(node_name, node):
         "    ip daddr @mgmt_nets counter drop comment \"iso.dorm2mgmt\"",
         "    ip daddr @teaching_nets counter drop comment \"iso.dorm2teaching\"",
         "    ip daddr @lab_nets counter drop comment \"iso.dorm2lab\"",
+        "    ip daddr @library_nets counter drop comment \"iso.dorm2library\"",
         "    ip daddr @dc_nets counter drop comment \"iso.dorm2dc\"",
+        "    ip daddr @living_nets counter drop comment \"iso.dorm2living\"",
+        "    ip daddr @infra_nets counter drop comment \"iso.dorm2infra\"",
         "    counter drop comment \"iso.dorm_default\"",
         "  }",
         "}",
@@ -841,7 +903,8 @@ def gen_fw(name, cfg):
              "ip link set eth1 up", "ip link set eth2 up", "ip link set eth3 up"]
     for ifname, ip in cfg["ips"].items():
         lines.append(f"ip addr replace {ip} dev {ifname}")
-    lines.append("ip addr add 198.51.100.80/32 dev eth2 2>/dev/null || true")
+    # 198.51.100.80/32 is owned by the active firewall via the VI_UNTRUST
+    # keepalived instance (see gen_fw_keepalived); do not add it unconditionally.
     lines += ["ip route replace default via 10.90.1.254",
               "ip route replace 10.0.0.0/8 via 10.0.100.253",
               "sysctl -w net.ipv4.ip_forward=1 >/dev/null",
@@ -855,20 +918,20 @@ def gen_fw(name, cfg):
 
 def gen_fw_keepalived(cfg):
     lines = []
-    instances = [("VI_TRUST", "eth1", 20, "10.0.100.254/24"),
-                 ("VI_UNTRUST", "eth2", 21, "10.90.1.253/24"),
-                 ("VI_DMZ", "eth3", 22, "10.80.0.1/24")]
-    for name, ifname, vrid, vip in instances:
+    instances = [("VI_TRUST", "eth1", 20, ["10.0.100.254/24"]),
+                 ("VI_UNTRUST", "eth2", 21,
+                  ["10.90.1.253/24", "198.51.100.80/32"]),
+                 ("VI_DMZ", "eth3", 22, ["10.80.0.1/24"])]
+    for name, ifname, vrid, vips in instances:
         lines += [f"vrrp_instance {name} {{",
                   f"    state {cfg['state']}",
                   f"    interface {ifname}",
                   f"    virtual_router_id {vrid}",
                   f"    priority {cfg['prio']}",
                   "    advert_int 1",
-                  "    virtual_ipaddress {",
-                  f"        {vip}",
-                  "    }",
-                  "}", ""]
+                  "    virtual_ipaddress {"]
+        lines += [f"        {vip}" for vip in vips]
+        lines += ["    }", "}", ""]
     return "\n".join(lines)
 
 
