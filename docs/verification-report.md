@@ -187,3 +187,111 @@ sh gen-drawio.sh
 ```
 
 并将新的 `run-id`、`summary.txt`、关键 `raw/*.log` 与拓扑图归档。
+
+## 8. 现场演示流程
+
+本节给出答辩现场的可执行演示流程：先按 8.1 准备环境，再按 8.2 的顺序串讲。总时长约 7 分钟。口径稿见 `demo-qa-checklist.md`，本节只列命令与口播要点。
+
+### 8.1 环境准备
+
+前置：Docker Desktop 已安装并分配至少 4 GB 内存 / 4 CPU。首次构建过四个本地镜像（`sh build-images.sh`）且 `gen.py` 已生成拓扑与配置。
+
+一键准备脚本（在 `campus-lab/` 目录下执行）：
+
+```sh
+open -a Docker                                       # 1. 启动 Docker Desktop，等菜单栏图标变绿
+cd net_prac/campus-lab
+
+sh run-clab.sh destroy -t campus-lab.clab.yml --cleanup 2>/dev/null  # 2. 清理上次残留（首次可跳过）
+sh run-clab.sh deploy  -t campus-lab.clab.yml        # 3. 部署 44 节点（约 1–2 分钟）
+
+docker rm -f clab-graph 2>/dev/null                  # 4. 起拓扑可视化（端口映射版，宿主机可访问）
+docker run -d --name clab-graph -p 50080:50080 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$PWD":"$PWD" -w "$PWD" \
+  ghcr.io/srl-labs/clab \
+  containerlab graph -t campus-lab.clab.yml
+
+sleep 25                                             # 5. 等 OSPF/VRRP/DHCP 收敛
+```
+
+收敛确认（应分别得到 44、11、业务 IP）：
+
+```sh
+docker ps --filter name=clab-campus-lab- --format '{{.Names}}' | wc -l          # 应为 44
+docker exec clab-campus-lab-core1 vtysh -c 'show ip ospf neighbor' | grep -c Full # 应为 11
+docker exec clab-campus-lab-pc-dyn1 ip -br addr show eth1                        # 应有 10.10.0.x
+```
+
+浏览器打开 `http://localhost:50080` 确认拓扑图可访问。
+
+> 注意：必须用 `run-clab.sh` 部署（带 `--pid=host`），否则 veth 链路无法挂进容器命名空间，业务接口不会出现。`/etc/hosts` 写入失败的报错是非阻塞的，可忽略。
+
+### 8.2 演示顺序
+
+按以下 7 步串讲，分三档节奏：重点展开（现场跑命令）、一句话带过（报数字）、主动声明边界（防追问）。
+
+| 步 | 对应 Q | 节奏 | 时长 |
+| --- | --- | --- | --- |
+| ① 开场锁口径 | — | 口播 | 30s |
+| ② 拓扑图 | Q1/Q5 | 一句话 | 30s |
+| ③ 连通性 + 流向 | Q4 | 现场演示 | 1.5min |
+| ④ 防火墙 NAT | Q9 | 现场演示 | 1min |
+| ⑤ 双机切换 | Q10 | 现场演示 | 1.5min |
+| ⑥ 自动化校验 | Q13 | 现场演示 | 1min |
+| ⑦ 边界声明 | Q2/Q7/Q11 | 主动声明 | 1min |
+
+**① 开场锁口径（30s）**
+
+> 「奉贤校区校园网仿真。先统一两个称谓：任务书原文的**梅陇校区**即评委说的**徐汇校区**，统一叫**梅陇（即徐汇）校区**。跨校区链路是**设计覆盖、仿真未建模**——R2 备连梅陇，仿真只建了 internet 节点，这是有意的仿真边界。」
+
+**② 拓扑图（30s，一句话带过 Q1/Q5/Q6/Q8）**
+
+浏览器展示 `http://localhost:50080`：
+
+> 「44 个容器、66 条链路，双核心 + 分区域双汇聚 + 出口双路由 + 双防火墙 + DMZ。**6 大功能区**加出口 DMZ 安全区，**11 个 VLAN**，一栋楼一个子网，预算约 **687 万元**。数字都以 `configs/facts.json` 为单一事实源。」
+
+**③ 连通性 + 流量流向（1.5min，现场演示 Q4）**
+
+```sh
+docker exec clab-campus-lab-pc-dyn1 traceroute -n -w 1 -q 1 -m 8 203.0.113.100
+```
+
+> 「CONN-09，教学区动态终端访问 Internet。traceroute 5 跳：**接入 → 汇聚 VRRP 网关 → 核心 → 防火墙 → 出口路由 → Internet**。该通的 100% 通，该断的必须断——宿舍到管理网、教学区是阻断的，不通才是正确结果。首次全量 61/64，3 条已修复并复核关键路径，全量回归答辩前补跑。」
+
+**④ 防火墙 NAT（1min，现场演示 Q9）**
+
+```sh
+docker exec clab-campus-lab-fw1 conntrack -L | grep 203.0.113.100 | head -3
+```
+
+> 「fw1/fw2 双机，nftables 三区策略。conntrack 看到 SNAT 把源地址从 `10.10.0.133` 改写成 `10.90.1.11`，对应 eth1→eth2 的 masquerade。DMZ 这边 DNAT `198.51.100.80:80/443 → 10.80.0.10` 对外发布 Web。」
+
+**⑤ 双机切换（1.5min，现场演示 Q10）**
+
+```sh
+docker exec clab-campus-lab-pc-dyn1 ping -c 30 -i 0.5 203.0.113.100 &  # 持续 ping，后台
+docker stop clab-campus-lab-core1                                       # 停主核心，观察 ping 不中断
+docker start clab-campus-lab-core1                                     # 恢复，core1 重新抢占
+```
+
+> 「停 core1，业务不中断——core2 通过 VRRP 接管 VIP。恢复后 core1 重新抢占。防火墙、出口、核心 bond0 都是双机/双链路。**如实交代**：DHCP/DNS 所在 srv-dc1 是单实例，srv-dc2 已建模未承载，这是设计与仿真的已知差距。」
+
+**⑥ 自动化校验（1min，现场演示 Q13）**
+
+```sh
+cd net_prac && python3 tools/report_check.py
+```
+
+> 「`facts.json` 是单一事实源，`report_check.py` 逐键比对报告数字，输出 `report check OK`。8 个套件 64 条用例，退出码 0/1/2 区分通过/失败/环境不可用。」
+
+**⑦ 边界主动声明（1min，不要等被问 Q2/Q7/Q11）**
+
+> 「三个边界主动交代：**跨校区**仿真只覆盖奉贤校内，梅陇侧由 R2 承载，设计文档有完整出口方案；**FTP** 本期未部署，DMZ 已具备承载能力，属预留项；**无线**仿真验证 VLAN、地址池、认证策略，射频覆盖需真实环境勘测。」
+
+### 8.3 演示后清理
+
+```sh
+docker stop clab-graph && docker rm clab-graph
+sh run-clab.sh destroy -t campus-lab.clab.yml --cleanup
+```
