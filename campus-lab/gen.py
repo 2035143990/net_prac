@@ -408,7 +408,9 @@ FW_NFT = """table inet fw {
 
 def w(path, text):
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as f:
+    # newline="" 关闭平台的换行转换：生成的脚本必须始终是 LF，
+    # 否则在 Linux/WSL 下会因为 CRLF 无法解析（set: Illegal option -）。
+    with open(path, "w", newline="") as f:
         f.write(text)
 
 
@@ -585,6 +587,14 @@ def gen_prestart(node):
     if node["acl"]:
         lines.append("nft delete table inet zone 2>/dev/null || true")
         lines.append("nft -f /configs/acl.nft 2>/dev/null || true")
+    if node["vrrp"]:
+        # 只准备 keepalived 配置文件，真正的启动由 images/frr/start.sh 负责。
+        # 放在两处启动会拉起两个实例，两边都把同一个 VIP 装到内核上，
+        # 形成 VRRP 双主、ARP 冲突、流量黑洞。
+        # 配置文件先复制到容器本地文件系统：它来自 /mnt/d 的 bind mount，
+        # 权限为 0777（可执行），keepalived 会拒绝加载可执行文件。
+        lines.append("cp /configs/keepalived.conf /etc/keepalived.conf 2>/dev/null || true")
+        lines.append("chmod 0644 /etc/keepalived.conf 2>/dev/null || true")
     lines.append("exit 0")
     return "\n".join(lines) + "\n"
 
@@ -610,11 +620,29 @@ def gen_keepalived(node_name, node):
     return "\n".join(lines)
 
 
+def wait_for_ifaces(ports):
+    """生成等待 veth 接口就绪的 shell 前置片段。
+
+    containerlab 的 exec 是在容器启动后才执行的，接口一般已经创建好；
+    但改成 ENTRYPOINT 后，配置脚本在容器起来的瞬间就运行，此时
+    containerlab 可能还没把 veth 注入 netns，ip link set 会因"设备不存在"
+    而失败（setup.sh 用了 set -e，会直接中止，导致配置半途而废）。
+    因此统一先轮询等待接口出现。
+    """
+    lines = []
+    for p in ports:
+        lines += [
+            f"n=0; while [ ! -e /sys/class/net/{p} ] && [ $n -lt 60 ]; do sleep 0.5; n=$((n+1)); done",
+        ]
+    return lines
+
+
 def gen_access(node_name, cfg):
     ports = list(cfg["trunks"].keys()) + list(cfg["access"].keys())
-    lines = ["#!/bin/sh", "set -e",
-             "ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0 2>/dev/null || true",
-             "ip link set br0 up"]
+    lines = ["#!/bin/sh", "set -e"]
+    lines += wait_for_ifaces(ports)
+    lines += ["ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0 2>/dev/null || true",
+              "ip link set br0 up"]
     for p in ports:
         lines += [f"ip link set {p} up",
                   f"ip link set {p} master br0 2>/dev/null || true",
@@ -657,6 +685,9 @@ exit 0
 def gen_host(name, ip, gw):
     meta = HOST_META.get(name, {"mode": "static"})
     lines = ["#!/bin/sh", "set -e"]
+    # 等待 veth 就绪：setup.sh 由镜像 ENTRYPOINT 在容器启动瞬间调用，
+    # 此时 containerlab 可能尚未把接口注入 netns（详见 wait_for_ifaces）。
+    lines += wait_for_ifaces(["eth1", "eth2"])
     if meta.get("mode") == "dhcp":
         lines += [
             "ip link set eth1 down",
@@ -869,6 +900,14 @@ def gen_acl(node_name, node):
         lines.append(
             f"    iifname {{ {names} }} ip saddr != @dorm_nets counter drop comment \"iso.src_guard\""
         )
+        # 教学区 -> 宿舍区必须阻断（访问控制矩阵：该方向为 ✗）。
+        # 注意这条规则必须放在 forward 主链里，而不能只写在 dorm_filter 中：
+        # dorm_filter 只对「源地址属于宿舍网段」的流量生效，
+        # 而教学区发往宿舍区的流量源地址不属于宿舍网段，根本不会跳进
+        # dorm_filter，规则形同虚设（会导致 CONN-04 / ISO-13 失败）。
+        lines.append(
+            "    ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment \"iso.teaching2dorm\""
+        )
         lines.append("    ip saddr @dorm_nets jump dorm_filter")
     lines += [
         "    ip saddr @mgmt_nets ip daddr @untrust_nets counter drop comment \"iso.mgmt2untrust\"",
@@ -916,8 +955,11 @@ def gen_acl(node_name, node):
 
 
 def gen_fw(name, cfg):
-    lines = ["#!/bin/sh", "set -e",
-             "ip link set eth1 up", "ip link set eth2 up", "ip link set eth3 up"]
+    lines = ["#!/bin/sh", "set -e"]
+    # 等待 veth 就绪：setup.sh 由镜像 ENTRYPOINT 在容器启动瞬间调用，
+    # 此时 containerlab 可能尚未把接口注入 netns（详见 wait_for_ifaces）。
+    lines += wait_for_ifaces(["eth1", "eth2", "eth3"])
+    lines += ["ip link set eth1 up", "ip link set eth2 up", "ip link set eth3 up"]
     for ifname, ip in cfg["ips"].items():
         lines.append(f"ip addr replace {ip} dev {ifname}")
     # 198.51.100.80/32 is owned by the active firewall via the VI_UNTRUST
@@ -928,7 +970,14 @@ def gen_fw(name, cfg):
               "sysctl -w net.ipv4.conf.all.rp_filter=0 >/dev/null",
               "nft delete table inet fw 2>/dev/null || true",
               "nft -f /configs/fw.nft",
-              "keepalived -D -f /configs/keepalived.conf >/var/log/keepalived.log 2>&1 &",
+              # 同 gen_prestart：配置文件来自 /mnt/d 的 bind mount 时权限为 0777，
+              # keepalived 会拒绝加载可执行文件，先复制到容器本地并去掉可执行位。
+              # pkill 清理旧实例，避免与新实例形成 VRRP 双主。
+              "pkill -x keepalived 2>/dev/null || true",
+              "sleep 1",
+              "cp /configs/keepalived.conf /etc/keepalived.conf 2>/dev/null || true",
+              "chmod 0644 /etc/keepalived.conf 2>/dev/null || true",
+              "keepalived -D -f /etc/keepalived.conf >/var/log/keepalived.log 2>&1 &",
               "exit 0", ""]
     return "\n".join(lines)
 
@@ -1056,9 +1105,12 @@ for name, cfg in ACCESS_NODES.items():
     w(os.path.join(d, "setup.sh"), gen_access(name, cfg))
 
 for name, ports in BRIDGES.items():
-    lines = ["#!/bin/sh", "set -e",
-             "ip link add br0 type bridge 2>/dev/null || true",
-             "ip link set br0 up"]
+    lines = ["#!/bin/sh", "set -e"]
+    # 等待 veth 就绪：setup.sh 由镜像 ENTRYPOINT 在容器启动瞬间调用，
+    # 此时 containerlab 可能尚未把接口注入 netns（详见 wait_for_ifaces）。
+    lines += wait_for_ifaces(ports)
+    lines += ["ip link add br0 type bridge 2>/dev/null || true",
+              "ip link set br0 up"]
     for p in ports:
         lines += [f"ip link set {p} up",
                   f"ip link set {p} master br0 2>/dev/null || true"]
@@ -1108,33 +1160,30 @@ for name in FRR_NODES:
     y += graph_label_lines(name)
 
 for name in ACCESS_NODES:
+    # 不使用 containerlab 的 exec：exec 只在 deploy 时执行一次，
+    # 容器 restart 后不会重跑，配置（br0 / VLAN 过滤）会丢失。
+    # 改为由镜像 ENTRYPOINT（images/l2/start.sh）在容器每次启动时执行。
     y += [f"    {name}:",
           "      kind: linux",
           "      image: campus-l2:latest",
           "      binds:",
-          f"        - ./configs/access/{name}/setup.sh:/setup.sh",
-          "      exec:",
-          "        - sh /setup.sh"]
+          f"        - ./configs/access/{name}/setup.sh:/setup.sh"]
     y += graph_label_lines(name)
 
 for name in FW_NODES:
     y += [f"    {name}:",
           "      kind: linux",
           "      image: campus-fw:latest",
-          "      cmd: sleep infinity",
           "      binds:",
           f"        - ./configs/fw/{name}/setup.sh:/setup.sh",
           f"        - ./configs/fw/{name}/keepalived.conf:/configs/keepalived.conf",
-          "        - ./configs/fw/fw.nft:/configs/fw.nft",
-          "      exec:",
-          "        - sh /setup.sh"]
+          "        - ./configs/fw/fw.nft:/configs/fw.nft"]
     y += graph_label_lines(name)
 
 for name in HOSTS:
     y += [f"    {name}:",
           "      kind: linux",
           "      image: campus-host:latest",
-          "      cmd: sleep infinity",
           "      binds:",
           f"        - ./configs/hosts/{name}/setup.sh:/setup.sh"]
     meta = HOST_META.get(name, {})
@@ -1142,8 +1191,6 @@ for name in HOSTS:
         y.append(f"        - ./configs/hosts/{name}/udhcpc.sh:/configs/udhcpc.sh")
     if name == "srv-dc1":
         y.append(f"        - ./configs/hosts/{name}/dnsmasq.conf:/configs/dnsmasq.conf")
-    y += ["      exec:",
-          "        - sh /setup.sh"]
     y += graph_label_lines(name)
 
 for name in BRIDGES:
@@ -1151,9 +1198,7 @@ for name in BRIDGES:
           "      kind: linux",
           "      image: campus-l2:latest",
           "      binds:",
-          f"        - ./configs/access/{name}/setup.sh:/setup.sh",
-          "      exec:",
-          "        - sh /setup.sh"]
+          f"        - ./configs/access/{name}/setup.sh:/setup.sh"]
     y += graph_label_lines(name)
 
 y.append("  links:")

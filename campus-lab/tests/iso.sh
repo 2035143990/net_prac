@@ -56,5 +56,10 @@ case_begin ISO-12 "$cap" "宿舍 -> 图书馆按默认拒绝"
 assert_unreachable pc-d1 10.55.0.11
 case_end
 
+case_begin ISO-13 "$cap" "教学区 -> 宿舍区阻断"
+# 访问控制矩阵：宿舍区为隔离区域，仅放行宿舍互访、DNS、Internet 与 DMZ。
+assert_unreachable pc-ta1 10.32.0.11
+case_end
+
 suite_end
 exit $?

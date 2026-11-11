@@ -94,5 +94,11 @@ env/
 # 自动化测试结果
 campus-lab/tests/results/
 
+# 部署时记录的 dockerd MainPID（供 preflight 判断环境是否被重启）
+campus-lab/.deploy-dockerd-pid
+
+# 临时验证脚本与输出（.wsl- 前缀）
+campus-lab/.wsl-*
+
 # Containerlab 可能产生的日志
 *.clab.log

@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+n=0; while [ ! -e /sys/class/net/eth1 ] && [ $n -lt 60 ]; do sleep 0.5; n=$((n+1)); done
+n=0; while [ ! -e /sys/class/net/eth2 ] && [ $n -lt 60 ]; do sleep 0.5; n=$((n+1)); done
 ip link set eth1 down 2>/dev/null || true
 ip link set eth2 down 2>/dev/null || true
 ip link add bond0 type bond mode active-backup miimon 100 primary eth1 2>/dev/null || true

@@ -181,8 +181,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-ta/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     acc-tb:
@@ -190,8 +188,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-tb/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     acc-d1:
@@ -199,8 +195,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-d1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     acc-la:
@@ -208,8 +202,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-la/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     acc-lib:
@@ -217,8 +209,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-lib/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     acc-life:
@@ -226,8 +216,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/acc-life/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     dc-sw:
@@ -235,206 +223,147 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/dc-sw/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 8
     fw1:
       kind: linux
       image: campus-fw:latest
-      cmd: sleep infinity
       binds:
         - ./configs/fw/fw1/setup.sh:/setup.sh
         - ./configs/fw/fw1/keepalived.conf:/configs/keepalived.conf
         - ./configs/fw/fw.nft:/configs/fw.nft
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 4
     fw2:
       kind: linux
       image: campus-fw:latest
-      cmd: sleep infinity
       binds:
         - ./configs/fw/fw2/setup.sh:/setup.sh
         - ./configs/fw/fw2/keepalived.conf:/configs/keepalived.conf
         - ./configs/fw/fw.nft:/configs/fw.nft
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 4
     pc-ta1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-ta1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-ta2:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-ta2/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-tb1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-tb1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-d1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-d1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-la1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-la1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-lib:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-lib/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-life:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-life/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     ap-ta:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/ap-ta/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     ap-d1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/ap-d1/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     srv-dc1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/srv-dc1/setup.sh:/setup.sh
         - ./configs/hosts/srv-dc1/dnsmasq.conf:/configs/dnsmasq.conf
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     srv-dc2:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/srv-dc2/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     srv-dmz:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/srv-dmz/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     internet:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/internet/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 0
     mgmt-pc:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/mgmt-pc/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-dyn1:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-dyn1/setup.sh:/setup.sh
         - ./configs/hosts/pc-dyn1/udhcpc.sh:/configs/udhcpc.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-dyn2:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-dyn2/setup.sh:/setup.sh
         - ./configs/hosts/pc-dyn2/udhcpc.sh:/configs/udhcpc.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     pc-dyn3:
       kind: linux
       image: campus-host:latest
-      cmd: sleep infinity
       binds:
         - ./configs/hosts/pc-dyn3/setup.sh:/setup.sh
         - ./configs/hosts/pc-dyn3/udhcpc.sh:/configs/udhcpc.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 9
     trust-sw:
@@ -442,8 +371,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/trust-sw/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 5
     untrust-sw:
@@ -451,8 +378,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/untrust-sw/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 3
     dmz-sw:
@@ -460,8 +385,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/dmz-sw/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 5
     inet-sw:
@@ -469,8 +392,6 @@ topology:
       image: campus-l2:latest
       binds:
         - ./configs/access/inet-sw/setup.sh:/setup.sh
-      exec:
-        - sh /setup.sh
       labels:
         graph-level: 1
   links:

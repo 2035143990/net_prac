@@ -20,6 +20,7 @@ case_end
 
 case_begin CONN-04 "$cap" "教学/实验区 -> 宿舍区 ACL 阻断"
 # 设计方案 6.6 访问控制矩阵：教学区、实验区 -> 宿舍区 = ✗
+# 宿舍区是隔离区域，仅放行宿舍互访、DNS、Internet 与 DMZ 发布服务。
 assert_unreachable pc-ta1 10.32.0.11
 assert_unreachable pc-la1 10.32.0.11
 case_end

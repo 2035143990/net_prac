@@ -8,90 +8,90 @@ all:
     linux:
       hosts:
         clab-campus-lab-acc-d1:
-          ansible_host: 172.31.100.20
-        clab-campus-lab-acc-la:
-          ansible_host: 172.31.100.4
-        clab-campus-lab-acc-lib:
-          ansible_host: 172.31.100.16
-        clab-campus-lab-acc-life:
-          ansible_host: 172.31.100.17
-        clab-campus-lab-acc-ta:
-          ansible_host: 172.31.100.28
-        clab-campus-lab-acc-tb:
-          ansible_host: 172.31.100.40
-        clab-campus-lab-agg-d1:
-          ansible_host: 172.31.100.36
-        clab-campus-lab-agg-d2:
-          ansible_host: 172.31.100.18
-        clab-campus-lab-agg-l1:
-          ansible_host: 172.31.100.29
-        clab-campus-lab-agg-l2:
-          ansible_host: 172.31.100.41
-        clab-campus-lab-agg-lib1:
-          ansible_host: 172.31.100.21
-        clab-campus-lab-agg-lib2:
-          ansible_host: 172.31.100.11
-        clab-campus-lab-agg-life1:
-          ansible_host: 172.31.100.22
-        clab-campus-lab-agg-life2:
-          ansible_host: 172.31.100.23
-        clab-campus-lab-agg-t1:
-          ansible_host: 172.31.100.42
-        clab-campus-lab-agg-t2:
-          ansible_host: 172.31.100.19
-        clab-campus-lab-ap-d1:
-          ansible_host: 172.31.100.5
-        clab-campus-lab-ap-ta:
-          ansible_host: 172.31.100.24
-        clab-campus-lab-core1:
-          ansible_host: 172.31.100.6
-        clab-campus-lab-core2:
-          ansible_host: 172.31.100.30
-        clab-campus-lab-dc-sw:
-          ansible_host: 172.31.100.43
-        clab-campus-lab-dmz-sw:
-          ansible_host: 172.31.100.44
-        clab-campus-lab-fw1:
-          ansible_host: 172.31.100.3
-        clab-campus-lab-fw2:
           ansible_host: 172.31.100.25
-        clab-campus-lab-inet-sw:
-          ansible_host: 172.31.100.12
-        clab-campus-lab-internet:
-          ansible_host: 172.31.100.7
-        clab-campus-lab-mgmt-pc:
-          ansible_host: 172.31.100.13
-        clab-campus-lab-pc-d1:
-          ansible_host: 172.31.100.26
-        clab-campus-lab-pc-dyn1:
-          ansible_host: 172.31.100.31
-        clab-campus-lab-pc-dyn2:
-          ansible_host: 172.31.100.8
-        clab-campus-lab-pc-dyn3:
-          ansible_host: 172.31.100.14
-        clab-campus-lab-pc-la1:
-          ansible_host: 172.31.100.27
-        clab-campus-lab-pc-lib:
-          ansible_host: 172.31.100.32
-        clab-campus-lab-pc-life:
-          ansible_host: 172.31.100.37
-        clab-campus-lab-pc-ta1:
-          ansible_host: 172.31.100.38
-        clab-campus-lab-pc-ta2:
-          ansible_host: 172.31.100.39
-        clab-campus-lab-pc-tb1:
-          ansible_host: 172.31.100.15
-        clab-campus-lab-r1:
-          ansible_host: 172.31.100.9
-        clab-campus-lab-r2:
-          ansible_host: 172.31.100.45
-        clab-campus-lab-srv-dc1:
-          ansible_host: 172.31.100.2
-        clab-campus-lab-srv-dc2:
-          ansible_host: 172.31.100.33
-        clab-campus-lab-srv-dmz:
-          ansible_host: 172.31.100.10
-        clab-campus-lab-trust-sw:
+        clab-campus-lab-acc-la:
           ansible_host: 172.31.100.34
-        clab-campus-lab-untrust-sw:
+        clab-campus-lab-acc-lib:
+          ansible_host: 172.31.100.8
+        clab-campus-lab-acc-life:
+          ansible_host: 172.31.100.4
+        clab-campus-lab-acc-ta:
+          ansible_host: 172.31.100.20
+        clab-campus-lab-acc-tb:
+          ansible_host: 172.31.100.12
+        clab-campus-lab-agg-d1:
+          ansible_host: 172.31.100.26
+        clab-campus-lab-agg-d2:
+          ansible_host: 172.31.100.13
+        clab-campus-lab-agg-l1:
           ansible_host: 172.31.100.35
+        clab-campus-lab-agg-l2:
+          ansible_host: 172.31.100.9
+        clab-campus-lab-agg-lib1:
+          ansible_host: 172.31.100.14
+        clab-campus-lab-agg-lib2:
+          ansible_host: 172.31.100.29
+        clab-campus-lab-agg-life1:
+          ansible_host: 172.31.100.21
+        clab-campus-lab-agg-life2:
+          ansible_host: 172.31.100.36
+        clab-campus-lab-agg-t1:
+          ansible_host: 172.31.100.10
+        clab-campus-lab-agg-t2:
+          ansible_host: 172.31.100.15
+        clab-campus-lab-ap-d1:
+          ansible_host: 172.31.100.16
+        clab-campus-lab-ap-ta:
+          ansible_host: 172.31.100.42
+        clab-campus-lab-core1:
+          ansible_host: 172.31.100.22
+        clab-campus-lab-core2:
+          ansible_host: 172.31.100.37
+        clab-campus-lab-dc-sw:
+          ansible_host: 172.31.100.38
+        clab-campus-lab-dmz-sw:
+          ansible_host: 172.31.100.5
+        clab-campus-lab-fw1:
+          ansible_host: 172.31.100.11
+        clab-campus-lab-fw2:
+          ansible_host: 172.31.100.6
+        clab-campus-lab-inet-sw:
+          ansible_host: 172.31.100.43
+        clab-campus-lab-internet:
+          ansible_host: 172.31.100.39
+        clab-campus-lab-mgmt-pc:
+          ansible_host: 172.31.100.27
+        clab-campus-lab-pc-d1:
+          ansible_host: 172.31.100.17
+        clab-campus-lab-pc-dyn1:
+          ansible_host: 172.31.100.18
+        clab-campus-lab-pc-dyn2:
+          ansible_host: 172.31.100.30
+        clab-campus-lab-pc-dyn3:
+          ansible_host: 172.31.100.31
+        clab-campus-lab-pc-la1:
+          ansible_host: 172.31.100.7
+        clab-campus-lab-pc-lib:
+          ansible_host: 172.31.100.28
+        clab-campus-lab-pc-life:
+          ansible_host: 172.31.100.19
+        clab-campus-lab-pc-ta1:
+          ansible_host: 172.31.100.23
+        clab-campus-lab-pc-ta2:
+          ansible_host: 172.31.100.44
+        clab-campus-lab-pc-tb1:
+          ansible_host: 172.31.100.32
+        clab-campus-lab-r1:
+          ansible_host: 172.31.100.33
+        clab-campus-lab-r2:
+          ansible_host: 172.31.100.40
+        clab-campus-lab-srv-dc1:
+          ansible_host: 172.31.100.41
+        clab-campus-lab-srv-dc2:
+          ansible_host: 172.31.100.45
+        clab-campus-lab-srv-dmz:
+          ansible_host: 172.31.100.2
+        clab-campus-lab-trust-sw:
+          ansible_host: 172.31.100.24
+        clab-campus-lab-untrust-sw:
+          ansible_host: 172.31.100.3

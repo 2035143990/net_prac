@@ -18,6 +18,9 @@ case_end
 
 case_begin FAIL-03 "$cap" "core1 恢复后重新抢占 VIP"
 docker cp configs/frr/core1/keepalived.conf "${P}core1":/tmp/keepalived.conf 2>/dev/null || true
+# keepalived 拒绝加载带可执行位的配置文件；docker cp 复制过来的文件是 0777，
+# 必须去掉可执行位，否则 keepalived 会直接退出（"is not a regular non-executable file"）。
+docker exec "${P}core1" sh -c 'chmod 0644 /tmp/keepalived.conf 2>/dev/null || true' 2>/dev/null || true
 docker exec -d "${P}core1" sh -c 'keepalived -D -f /tmp/keepalived.conf >>/var/log/keepalived.log 2>&1' 2>/dev/null || true
 wait_for core1 20 "ip -4 addr show eth12 | grep -q 10.0.100.253"
 assert_eq "0" "$?"
@@ -36,6 +39,7 @@ docker exec -d "${P}fw1" pkill keepalived 2>/dev/null || true
 wait_for fw2 20 "ip -4 addr show eth1 | grep -q 10.0.100.254"
 assert_eq "0" "$?"
 docker cp configs/fw/fw1/keepalived.conf "${P}fw1":/tmp/keepalived.conf 2>/dev/null || true
+docker exec "${P}fw1" sh -c 'chmod 0644 /tmp/keepalived.conf 2>/dev/null || true' 2>/dev/null || true
 docker exec -d "${P}fw1" sh -c 'keepalived -D -f /tmp/keepalived.conf >>/var/log/keepalived.log 2>&1' 2>/dev/null || true
 case_end
 

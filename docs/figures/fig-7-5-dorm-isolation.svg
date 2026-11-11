@@ -71,7 +71,7 @@
   <text x="830" y="549" class="mono">core1 distance 1 · core2 distance 2</text>
   <text x="830" y="571" class="label">解决 VRRP/ECMP 回程不对称</text>
 
-  <text x="590" y="625" text-anchor="middle" class="label">实测：ISO-01~ISO-12 首次 11/12；ISO-09 修复后 mgmt-pc→pc-ta1 丢包率 0%</text>
+  <text x="590" y="625" text-anchor="middle" class="label">实测：ISO-01~ISO-13 全部通过（13/13），最终全量 65/65</text>
   <text x="590" y="650" text-anchor="middle" class="label">宿舍→管理/教学/实验/数据中心均失败；宿舍→Internet/DMZ 成功；宿舍有线与无线互通</text>
   <text x="590" y="720" text-anchor="middle" class="label">说明：绿色实线为放行，红色虚线为拒绝；所有关键规则均带 iso.* 计数器，便于验收取证</text>
 </svg>

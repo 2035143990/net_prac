@@ -17,7 +17,7 @@
   </style>
   <rect width="1000" height="870" fill="#f8fafc"/>
   <text x="500" y="36" text-anchor="middle" class="title">Containerlab 仿真拓扑与节点规模</text>
-  <text x="500" y="62" text-anchor="middle" class="sub">44 个容器 · 66 条链路 · 8 个测试套件 · 64 条用例</text>
+  <text x="500" y="62" text-anchor="middle" class="sub">44 个容器 · 66 条链路 · 8 个测试套件 · 65 条用例</text>
 
   <rect x="400" y="88" width="200" height="46" class="box internet"/>
   <text x="500" y="116" text-anchor="middle">internet（1）</text>

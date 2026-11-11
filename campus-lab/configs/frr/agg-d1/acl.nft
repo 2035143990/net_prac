@@ -104,6 +104,7 @@ table inet zone {
     ip saddr @mgmt_nets tcp flags & (syn|ack) != syn counter accept comment "zone.return_tcp"
     udp dport { 67, 68 } counter accept comment "iso.dhcp"
     iifname { "eth3.301", "eth3.510" } ip saddr != @dorm_nets counter drop comment "iso.src_guard"
+    ip saddr @teaching_nets ip daddr @dorm_nets counter drop comment "iso.teaching2dorm"
     ip saddr @dorm_nets jump dorm_filter
     ip saddr @mgmt_nets ip daddr @untrust_nets counter drop comment "iso.mgmt2untrust"
     ip saddr @mgmt_nets ip daddr @internet_nets counter drop comment "iso.mgmt2inet"

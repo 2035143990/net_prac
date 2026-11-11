@@ -51,6 +51,17 @@ while :; do
   waited=$((waited + 2))
 done
 
+# 拓扑健康预检：容器数量齐全不等于环境就绪。
+# 容器被 restart 后 setup.sh 不会重跑、二层广播域与 VRRP 会失效，
+# 此时继续跑用例只会得到大批无意义失败（如 37/65），必须先拦下来。
+# 放在收敛等待之后：预检要求 OSPF 已 Full，否则会把"还没收敛"误判成"环境损坏"。
+if [ -f tests/preflight.sh ]; then
+  if ! sh tests/preflight.sh; then
+    printf 'run_id=%s\nstarted=%s\nresult=ENV_UNAVAILABLE\nreason=topology not ready (bridge/OSPF/VRRP check failed)\n' "$RUN_ID" "$START" > "$RESULT_DIR/summary.txt"
+    exit 2
+  fi
+fi
+
 DEFAULT_SUITES="connectivity routing security dhcp iso nat lag failover"
 SUITES=${*:-$DEFAULT_SUITES}
 OVERALL=0

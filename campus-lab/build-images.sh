@@ -26,7 +26,10 @@ echo '==> campus-host:latest'
 docker build -t campus-host:latest images/host
 
 echo '==> checking dnsmasq DHCP relay support (>= 2.86)'
-ver=$(docker run --rm campus-frr:latest dnsmasq --version 2>/dev/null | sed -n '1s/.*version //p')
+# 注意：campus-frr 自带 ENTRYPOINT（start.sh），若不覆盖 entrypoint，
+# 传入的 "dnsmasq --version" 会被 start.sh 忽略，容器会一直 sleep 而不退出，
+# 导致此处 docker run 永久阻塞。必须用 --entrypoint 显式覆盖。
+ver=$(docker run --rm --entrypoint dnsmasq campus-frr:latest --version 2>/dev/null | sed -n '1s/.*version //p')
 case "$ver" in
   2.8[6-9]*|2.9*|3.*) echo "    dnsmasq $ver OK" ;;
   *) echo "    dnsmasq version '$ver' is too old for dhcp-relay" >&2; exit 1 ;;

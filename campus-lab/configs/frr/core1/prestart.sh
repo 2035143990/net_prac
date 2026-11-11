@@ -32,4 +32,6 @@ ip link add link eth13 name eth13.90 type vlan id 90 2>/dev/null || true
 ip link set eth13.90 up
 nft delete table inet zone 2>/dev/null || true
 nft -f /configs/acl.nft 2>/dev/null || true
+cp /configs/keepalived.conf /etc/keepalived.conf 2>/dev/null || true
+chmod 0644 /etc/keepalived.conf 2>/dev/null || true
 exit 0

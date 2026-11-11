@@ -11,4 +11,6 @@ ip link add link eth3 name eth3.510 type vlan id 510 2>/dev/null || true
 ip link set eth3.510 up
 nft delete table inet zone 2>/dev/null || true
 nft -f /configs/acl.nft 2>/dev/null || true
+cp /configs/keepalived.conf /etc/keepalived.conf 2>/dev/null || true
+chmod 0644 /etc/keepalived.conf 2>/dev/null || true
 exit 0
