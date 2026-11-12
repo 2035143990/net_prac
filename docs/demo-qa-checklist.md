@@ -11,6 +11,7 @@
 ```sh
 open -a Docker
 cd net_prac/campus-lab
+sh build-images.sh
 sh run-clab.sh destroy -t campus-lab.clab.yml --cleanup 2>/dev/null
 sh run-clab.sh deploy -t campus-lab.clab.yml
 sleep 25
